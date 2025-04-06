@@ -829,6 +829,7 @@
     let historyIndex = -1;
     let isDragging = false;
     let dragStart = null;
+    let isUploading = false;    
 
     const defaultPersons = [];
 
@@ -1936,60 +1937,58 @@ function autoAssignDuties() {
     }
 
     function uploadPersonnel(event) {
-        if (isUploading) return;
-    
-        const file = event.target.files[0];
-        if (!file) {
-            M.toast({ html: 'Lütfen bir dosya seçin!' });
-            return;
-        }
-        if (!file.name.endsWith('.csv')) {
-            M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
-            return;
-        }
-    
-        isUploading = true;
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        loadingOverlay.style.display = 'flex';
-    
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const arrayBuffer = e.target.result;
-            const data = new Uint8Array(arrayBuffer);
-            const base64String = arrayBufferToBase64(data);
-    
-            fetch('https://script.google.com/macros/s/AKfycbxksDzvxkLsnOYNwBFBhp3xOl8QLExfIAFhT6XDj3R5DAOAbZloPAVvRTSnD1yosdbK/exec', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'uploadPersonnel', base64Data: base64String })
-            })
-            .then(response => response.json())
-            .then(data => {
-                loadingOverlay.style.display = 'none';
-                if (data.success) {
-                    persons = data.persons.map(p => ({
-                        name: p.name,
-                        weekdayDuties: p.weekdayDuties,
-                        weekendDuties: p.weekendDuties,
-                        minDaysBetween: p.minDaysBetween || 1
-                    }));
-                    renderTable();
-                    M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
-                } else {
-                    M.toast({ html: data.error || 'Bilinmeyen bir hata oluştu!' });
-                }
-                isUploading = false;
-            })
-            .catch(error => {
-                M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message });
-                loadingOverlay.style.display = 'none';
-                isUploading = false;
-            });
-        };
-        reader.readAsArrayBuffer(file);
-    
-        event.target.value = '';
+    if (isUploading) return;
+
+    const file = event.target.files[0];
+    if (!file) {
+        M.toast({ html: 'Lütfen bir dosya seçin!' });
+        return;
     }
+    if (!file.name.endsWith('.csv')) {
+        M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
+        return;
+    }
+
+    isUploading = true;
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    loadingOverlay.style.display = 'flex';
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        const rows = text.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+        const headers = rows[0];
+
+        if (headers[0] !== 'İsim') {
+            M.toast({ html: 'Geçersiz CSV formatı! Başlık "İsim" olmalı.' });
+            loadingOverlay.style.display = 'none';
+            isUploading = false;
+            return;
+        }
+
+        const newPersons = [];
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (row[0]) {
+                const name = row[0].replace(/"/g, '').trim().toUpperCase();
+                newPersons.push({
+                    name: name,
+                    weekdayDuties: row[1] ? parseInt(row[1]) : undefined,
+                    weekendDuties: row[2] ? parseInt(row[2]) : undefined,
+                    minDaysBetween: row[3] ? parseInt(row[3]) : 1
+                });
+            }
+        }
+
+        persons = newPersons.filter(p => p.name && !persons.some(existing => existing.name === p.name));
+        renderTable();
+        M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
+        loadingOverlay.style.display = 'none';
+        isUploading = false;
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
 
     function arrayBufferToBase64(buffer) {
         let binary = '';
@@ -2001,28 +2000,32 @@ function autoAssignDuties() {
         return window.btoa(binary);
     }
 
-    function downloadPersonnel() {
-        fetch('https://script.google.com/macros/s/AKfycbxksDzvxkLsnOYNwBFBhp3xOl8QLExfIAFhT6XDj3R5DAOAbZloPAVvRTSnD1yosdbK/exec', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'downloadPersonnel', persons: persons })
-        })
-        .then(response => response.text())
-        .then(csvContent => {
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
-        })
-        .catch(error => {
-            M.toast({ html: 'İndirme hatası: ' + error.message });
-        });
-    }
+   function downloadPersonnel() {
+    const csvRows = [];
+    const headers = ['İsim', 'Hafta İçi', 'Hafta Sonu', 'Nöbet Ertesi Boşluk'];
+    csvRows.push(headers.join(','));
+
+    persons.forEach(person => {
+        const row = [
+            `"${person.name}"`,
+            person.weekdayDuties !== undefined ? person.weekdayDuties : '',
+            person.weekendDuties !== undefined ? person.weekendDuties : '',
+            person.minDaysBetween
+        ];
+        csvRows.push(row.join(','));
+    });
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
+}
 
     function clearCalendar() {
         // Geçmişi kaydet
