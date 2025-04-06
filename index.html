@@ -547,30 +547,84 @@
             max-width: 400px;
         }
 
-        @media only screen and (max-width: 600px) {
+       @media only screen and (max-width: 600px) {
             .custom-container {
                 max-width: 100%;
                 padding: 10px;
             }
+
             .custom-container.expanded {
                 max-width: 100%;
             }
-            .btn-floating {
-                width: 25px !important;
-                height: 25px !important;
-                line-height: 25px !important;
-            }
+
+            /* Genel Butonlar (btn) */
             .btn {
-                width: 25px !important;
-                 height: 25px !important;
-                line-height: 25px !important;
+                height: 28px; /* Mobil için küçültülmüş yükseklik */
+                line-height: 28px; /* Yazıyı ortalamak için */
+                font-size: 12px; /* Yazı boyutunu küçült */
+                padding: 0 12px; /* İç boşlukları küçült */
+                min-width: auto; /* Minimum genişlik sınırlamasını kaldır */
             }
+
+            .btn i {
+                font-size: 14px; /* Simge boyutunu küçült */
+                line-height: 28px; /* Simgeyi ortalamak için */
+                margin-right: 6px; /* Simge ile yazı arası boşluğu küçült */
+            }
+
+            /* Yuvarlak Butonlar (btn-floating) */
+            .btn-floating {
+                width: 28px !important; /* Mobil için küçültülmüş boyut */
+                height: 28px !important;
+                line-height: 28px !important;
+            }
+
+            .btn-floating i {
+                font-size: 14px !important; /* Simge boyutunu küçült */
+                line-height: 28px !important; /* Simgeyi ortalamak için */
+            }
+
+            /* Personel Tablosundaki Butonlar */
+            #personTable tbody td .btn-floating {
+                width: 24px !important; /* Daha küçük yuvarlak buton */
+                height: 24px !important;
+                line-height: 24px !important;
+            }
+
+            #personTable tbody td .btn-floating i {
+                font-size: 12px !important; /* Simgeyi küçült */
+                line-height: 24px !important;
+            }
+
+            /* Rehber Bölümündeki Tiny Butonlar */
+            #guideCollapsible ul li .btn-floating.tiny {
+                width: 18px !important; /* Daha küçük boyut */
+                height: 18px !important;
+                line-height: 18px !important;
+            }
+
+            #guideCollapsible ul li .btn-floating.tiny i {
+                font-size: 10px !important; /* Simgeyi küçült */
+                line-height: 18px !important;
+            }
+
+            /* Takvim Tablosu */
             #calendarTable th, #calendarTable td {
                 font-size: 12px;
                 padding: 5px !important;
             }
+
             header h3 {
                 font-size: 1.8rem;
+            }
+
+            /* Kontrol Butonları Arası Boşluk ve Hizalama */
+            .control-buttons .btn {
+                margin-right: 10px !important; /* Mobil için boşlukları küçült */
+            }
+
+            .row {
+                margin-bottom: 10px; /* Satır aralarını küçült */
             }
         }
 </style>
