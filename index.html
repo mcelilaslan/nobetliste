@@ -1725,17 +1725,26 @@ function sendEmailWithRecipient() {
         return;
     }
     const { base64Data, fileName } = window.emailData;
-    google.script.run
-        .withSuccessHandler(function(response) {
-            M.toast({ html: response });
+
+    fetch('https://script.google.com/macros/s/AKfycbxksDzvxkLsnOYNwBFBhp3xOl8QLExfIAFhT6XDj3R5DAOAbZloPAVvRTSnD1yosdbK/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sendEmail', recipient: recipient, base64Data: base64Data, fileName: fileName })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            M.toast({ html: data.message });
             const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
             emailModal.close();
             document.getElementById('recipientEmail').value = '';
-        })
-        .withFailureHandler(function(error) {
-            M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + error.message });
-        })
-        .sendEmail(recipient, base64Data, fileName);
+        } else {
+            M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + (data.error || 'Bilinmeyen hata') });
+        }
+    })
+    .catch(error => {
+        M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message });
+    });
 }
 
 function autoAssignDuties() {
@@ -1926,12 +1935,9 @@ function autoAssignDuties() {
         }
     }
 
-    let isUploading = false;
     function uploadPersonnel(event) {
-        if (isUploading) {
-            return;
-        }
-
+        if (isUploading) return;
+    
         const file = event.target.files[0];
         if (!file) {
             M.toast({ html: 'Lütfen bir dosya seçin!' });
@@ -1941,59 +1947,48 @@ function autoAssignDuties() {
             M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
             return;
         }
-
+    
         isUploading = true;
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingMessage = loadingOverlay.querySelector('span');
-        loadingMessage.textContent = 'Nöbetler atanıyor...';
         loadingOverlay.style.display = 'flex';
-
+    
         const reader = new FileReader();
         reader.onload = function(e) {
             const arrayBuffer = e.target.result;
-            if (!arrayBuffer || arrayBuffer.byteLength === 0) {
-                M.toast({ html: 'Dosya boş veya okunamadı!' });
-                loadingOverlay.style.display = 'none';
-                isUploading = false;
-                return;
-            }
             const data = new Uint8Array(arrayBuffer);
             const base64String = arrayBufferToBase64(data);
-
-            google.script.run
-                .withSuccessHandler(function(response) {
-                    loadingOverlay.style.display = 'none';
-                    if (response.success) {
-                        persons = response.persons.map(p => ({
-                            name: p.name,
-                            weekdayDuties: p.weekdayDuties,
-                            weekendDuties: p.weekendDuties,
-                            minDaysBetween: p.minDaysBetween || 1
-                        }));
-                        renderTable();
-                        M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
-                    } else {
-                        M.toast({ html: response.error || 'Bilinmeyen bir hata oluştu!' });
-                    }
-                    isUploading = false;
-                })
-                .withFailureHandler(function(error) {
-                    M.toast({ html: 'Sunucu hatası: ' + error.message });
-                    loadingOverlay.style.display = 'none';
-                    isUploading = false;
-                })
-                .uploadPersonnelServer(base64String);
-        };
-        reader.onerror = function() {
-            M.toast({ html: 'Dosya okunurken bir hata oluştu: ' + (reader.error ? reader.error.message : 'Bilinmeyen hata') });
-            loadingOverlay.style.display = 'none';
-            isUploading = false;
+    
+            fetch('https://script.google.com/macros/s/AKfycbxksDzvxkLsnOYNwBFBhp3xOl8QLExfIAFhT6XDj3R5DAOAbZloPAVvRTSnD1yosdbK/exec', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'uploadPersonnel', base64Data: base64String })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingOverlay.style.display = 'none';
+                if (data.success) {
+                    persons = data.persons.map(p => ({
+                        name: p.name,
+                        weekdayDuties: p.weekdayDuties,
+                        weekendDuties: p.weekendDuties,
+                        minDaysBetween: p.minDaysBetween || 1
+                    }));
+                    renderTable();
+                    M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
+                } else {
+                    M.toast({ html: data.error || 'Bilinmeyen bir hata oluştu!' });
+                }
+                isUploading = false;
+            })
+            .catch(error => {
+                M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message });
+                loadingOverlay.style.display = 'none';
+                isUploading = false;
+            });
         };
         reader.readAsArrayBuffer(file);
-
-        setTimeout(() => {
-            event.target.value = '';
-        }, 0);
+    
+        event.target.value = '';
     }
 
     function arrayBufferToBase64(buffer) {
@@ -2007,38 +2002,41 @@ function autoAssignDuties() {
     }
 
     function downloadPersonnel() {
-        google.script.run
-            .withSuccessHandler(function(csvContent) {
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
-            })
-            .withFailureHandler(function(error) {
-                M.toast({ html: 'İndirme hatası: ' + error.message });
-            })
-            .downloadPersonnelServer(persons);
+        fetch('https://script.google.com/macros/s/AKfycbxksDzvxkLsnOYNwBFBhp3xOl8QLExfIAFhT6XDj3R5DAOAbZloPAVvRTSnD1yosdbK/exec', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'downloadPersonnel', persons: persons })
+        })
+        .then(response => response.text())
+        .then(csvContent => {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
+        })
+        .catch(error => {
+            M.toast({ html: 'İndirme hatası: ' + error.message });
+        });
     }
 
     function clearCalendar() {
-    // Geçmişi kaydet
-    saveToHistory();
-    
-    // Tüm işaretlemeleri temizle
-    selectedCells = {};
-    unavailableCells = {};
-    
-    // Takvimi güncelle
-    updateCalendar();
-    updateStatistics();
-    
-    M.toast({ html: 'Takvimdeki tüm işaretlemeler temizlendi!' });
+        // Geçmişi kaydet
+        saveToHistory();
+        
+        // Tüm işaretlemeleri temizle
+        selectedCells = {};
+        unavailableCells = {};
+        
+        // Takvimi güncelle
+        updateCalendar();
+        updateStatistics();
+        
+        M.toast({ html: 'Takvimdeki tüm işaretlemeler temizlendi!' });
     }
 
 </script>
