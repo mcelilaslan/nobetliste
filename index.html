@@ -1711,21 +1711,19 @@ function autoAssignDuties() {
 
     const startInput = document.getElementById('startDate').value;
     const endInput = document.getElementById('endDate').value;
-    const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim(); // Boşlukları temizle
+    const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
 
-    // Önce dutyPerDay kontrolü
     if (!dutyPerDayInput || dutyPerDayInput === "") {
         M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
         return;
     }
 
-    const dutyPerDay = parseInt(dutyPerDayInput); // Değeri integer'a çevir
+    const dutyPerDay = parseInt(dutyPerDayInput);
     if (isNaN(dutyPerDay) || dutyPerDay < 1) {
         M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
         return;
     }
 
-    // Tarih kontrolü
     if (!startInput || !endInput) {
         M.toast({ html: 'Lütfen tarih seçin!' });
         return;
@@ -1836,9 +1834,9 @@ function autoAssignDuties() {
 
     saveToHistory();
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
+    const CLOUD_FUNCTIONS_URL = 'https://optimize-nobet-174463354439.us-central1.run.app'; // Cloud Functions URL'niz
 
-    fetch(APPS_SCRIPT_URL, {
+    fetch(CLOUD_FUNCTIONS_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -1853,8 +1851,8 @@ function autoAssignDuties() {
     })
     .then(result => {
         document.getElementById('loadingOverlay').style.display = 'none';
-        if (Array.isArray(result)) {
-            result.forEach(a => {
+        if (Array.isArray(result.assignments)) { // Cloud Functions yanıt yapısına göre ayarlayın
+            result.assignments.forEach(a => {
                 const cellKey = `${a.pIndex}-${a.dayIndex}`;
                 selectedCells[cellKey] = true;
             });
