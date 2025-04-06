@@ -556,9 +556,14 @@
                 max-width: 100%;
             }
             .btn-floating {
-                width: 36px !important;
-                height: 36px !important;
-                line-height: 36px !important;
+                width: 25px !important;
+                height: 25px !important;
+                line-height: 25px !important;
+            }
+            .btn {
+                width: 25px !important;
+                 height: 25px !important;
+                line-height: 25px !important;
             }
             #calendarTable th, #calendarTable td {
                 font-size: 12px;
@@ -846,36 +851,14 @@
         statsCollapsible = M.Collapsible.init(document.querySelector('#statsCollapsible'), { accordion: false });
         guideCollapsible = M.Collapsible.init(document.querySelector('#guideCollapsible'), { accordion: false });
     
-       // Mobil cihaz kontrolü ve buton boyutlarını %50 küçültme
+       // Mobil cihaz kontrolü ve optimizasyon
     if (isMobileDevice()) {
-        // .btn-floating butonlarını küçült
         document.querySelectorAll('.btn-floating').forEach(btn => {
-            const currentWidth = parseFloat(window.getComputedStyle(btn).width) || 20; // Varsayılan 20px
-            const currentHeight = parseFloat(window.getComputedStyle(btn).height) || 20;
-            const currentLineHeight = parseFloat(window.getComputedStyle(btn).lineHeight) || 20;
-            const currentFontSize = parseFloat(window.getComputedStyle(btn).fontSize) || 12;
-
-            btn.style.width = `${currentWidth * 1.5}px`; // %50 küçült
-            btn.style.height = `${currentHeight * 1.5}px`;
-            btn.style.lineHeight = `${currentLineHeight * 1.5}px`;
-            btn.style.fontSize = `${currentFontSize * 1.5}px`;
+            btn.style.width = '36px';
+            btn.style.height = '36px';
+            btn.style.lineHeight = '36px';
         });
-
-        // .btn butonlarını küçült
-        document.querySelectorAll('.btn').forEach(btn => {
-            const currentWidth = parseFloat(window.getComputedStyle(btn).width) || 100; // Varsayılan genişlik tahmini
-            const currentHeight = parseFloat(window.getComputedStyle(btn).height) || 36; // Materialize varsayılanı
-            const currentLineHeight = parseFloat(window.getComputedStyle(btn).lineHeight) || 36;
-            const currentFontSize = parseFloat(window.getComputedStyle(btn).fontSize) || 14;
-
-            btn.style.width = `${currentWidth * 1.5}px`;
-            btn.style.height = `${currentHeight * 1.5}px`;
-            btn.style.lineHeight = `${currentLineHeight * 1.5}px`;
-            btn.style.fontSize = `${currentFontSize * 1.5}px`;
-            btn.style.padding = '0 10px'; // İç boşlukları da küçültmek için sabit bir değer
-        });
-
-        M.toast({ html: 'Daha iyi bir deneyim için telefonu yan çevirebilirsiniz' });
+        M.toast({ html: 'Yatay modda daha iyi bir deneyim elde edebilirsiniz!' });
     }
     
         const datepickers = document.querySelectorAll('.datepicker');
