@@ -1,6 +1,2004 @@
 <!DOCTYPE html>
-<html>
-  <body>
-    <iframe style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;" src="https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec"></iframe>
-  </body>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nöbet Hazırlayıcı v1.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            background: url("https://static.vecteezy.com/system/resources/previews/007/852/290/large_2x/modern-wave-background-with-a-geometric-line-pattern-overlay-minimalist-smooth-curve-shapes-illustration-design-vector.jpg") !important;
+            background-position: right top;
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1600px;
+        }
+
+        .custom-container {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 780px;
+            box-sizing: border-box;
+            transition: max-width 0.3s ease;
+            position: relative;
+        }
+
+        .custom-container.expanded {
+            max-width: 1573px;
+        }
+
+        header h3 {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: black;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .input-field label {
+            color: #26a69a;
+        }
+
+        .weekend, .holiday {
+            background-color: #757575 !important;
+            color: #ffffff;
+        }
+
+        .unavailable {
+            background-color: #ffebee !important;
+            position: relative;
+        }
+
+        .unavailable::after {
+            content: "✖";
+            color: #ff1744;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+        }
+
+        .dragging {
+            background-color: rgba(200, 230, 201, 0.8);
+        }
+
+        .selected {
+            background-color: #c8e6c9 !important;
+            position: relative;
+        }
+
+        .selected::after {
+            content: "✓";
+            color: #2e7d32;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .collapsible.popout {
+            margin: 0;
+        }
+
+        .collapsible-header {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            background-color: rgba(119,190,186,255) !important;
+            font-weight: 500;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .collapsible-body {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            background: white;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: none;
+            overflow: visible;
+        }
+
+        #calendarTable {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            width: 100%;
+            overflow-x: auto;
+            table-layout: fixed;
+        }
+
+        #calendarTable th:first-child {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            width: 100px !important;
+            min-width: 100px !important;
+            text-align: left;
+        }
+
+        #calendarTable th {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .calendar-cell {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            position: relative;
+            min-width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #ddd; /* İnce çerçeve eklendi */
+        }
+
+        .name-column {
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            min-width: 100px !important;
+            width: 100px !important;
+            max-width: 200px !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 5px;
+            font-size: 14px;
+        }
+
+        .no-personnel-message {
+            font-style: italic;
+            font-size: 14px; /* Daha büyük ve okunabilir */
+            color: #757575;
+            text-align: center;
+            padding: 20px 0; /* Daha iyi hizalama */
+        }
+
+        .modal-content h4 {
+            color: #d32f2f;
+        }
+
+        .error-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .error-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .error-type {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+
+        .warning-type {
+            font-weight: bold;
+            color: #f57c00;
+        }
+
+        #statsTable td {
+            padding: 10px 15px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .left-align {
+            text-align: left;
+        }
+
+        .duty-gap-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            width: 100%; /* Eklendi: Tüm genişliği kaplar */
+            height: 100%; /* Eklendi: Tüm yüksekliği kaplar */
+            text-align: center; /* Eklendi: Metni ortalar */
+        }
+
+        .duty-gap-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .increment-btn, .decrement-btn {
+            padding: 0 10px;
+            margin: 0 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        table.striped > tbody > tr > td,
+        table.striped > tbody > tr > th,
+        td, th {
+            padding: 0 !important;
+        }
+
+        #personTable tbody tr {
+            height: 30px !important;
+            min-height: 30px !important;
+            max-height: 30px !important;
+            overflow: hidden !important; /* Eklendi */
+        }
+
+        #personTable tbody td {
+            padding: 0 3px !important;
+            height: 30px !important;
+            vertical-align: middle !important;
+            line-height: 30px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important; /* Eklendi */
+        }
+
+        #personTable tbody td input[type="number"] {
+            height: 20px !important;
+            padding: 0 5px !important;
+            line-height: 20px !important;
+            font-size: 12px !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            border: 1px solid #9e9e9e !important; /* Eklendi */
+            border-radius: 2px !important; /* Eklendi */
+        }
+
+        #personTable tbody td input[type="number"]:focus {
+            border-bottom: 1px solid #26a69a !important;
+            box-shadow: 0 1px 0 0 #26a69a !important;
+        }
+
+        #personTable tbody td .btn-floating {
+            width: 20px !important;
+            height: 20px !important;
+            line-height: 20px !important;
+            font-size: 10px !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+            display: flex !important; /* Değiştirildi: display zaten flex, ancak !important eklendi */
+            align-items: center !important; /* !important eklendi */
+            justify-content: center !important; /* !important eklendi */
+            box-shadow: none !important; /* Eklendi: Materialize'in varsayılan gölgesini kaldırır */
+        }
+
+        #personTable tbody td .btn-floating i {
+            line-height: 20px !important;
+            font-size: 12px !important; /* Eklendi: İkon boyutunu küçülttük */
+            margin: 0 !important;
+            display: flex !important; /* Eklendi */
+            align-items: center !important; /* Eklendi */
+            justify-content: center !important; /* Eklendi */
+        }
+
+        #personTable tbody td .duty-gap-cell span {
+            font-size: 12px !important;
+            line-height: 20px !important;
+            margin-right: 5px !important;
+        }
+
+        table#personTable thead th {
+            text-align: center !important;
+            vertical-align: middle !important;
+            padding: 5px !important; /* Daha iyi bir görünüm için hafif padding */
+        }
+
+        #guideContainer {
+            /* Artık .custom-container kullanıyor, özel stiller kaldırıldı */
+        }
+
+        #guideCollapsible {
+            margin: 0;
+        }
+
+        #guideCollapsible .collapsible-header {
+            background-color: rgba(119,190,186,0.9) !important;
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+
+        #guideCollapsible .collapsible-body {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 0 0 8px 8px;
+            box-shadow: none;
+        }
+
+        #guideCollapsible ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #guideCollapsible ul li {
+            font-size: 1rem;
+            color: #424242;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        #guideCollapsible ul li:before {
+            content: "•";
+            color: #26a69a;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #guideCollapsible ul li .btn-floating.tiny {
+            width: 20px !important;
+            height: 20px !important;
+            line-height: 20px !important;
+            font-size: 12px !important;
+            margin-right: 5px;
+            vertical-align: middle;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        #guideCollapsible ul li .btn-floating.tiny i {
+            font-size: 12px !important;
+            line-height: 20px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dropdown-content {
+            min-width: 100px !important;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-content li {
+            display: flex;
+            justify-content: flex-start; /* Sola hizala */
+            align-items: center;
+            padding: 5px 0 !important;
+        }
+
+        .dropdown-content li > a {
+            color: #26a69a !important;
+            font-size: 14px;
+            padding: 10px 16px !important;
+            display: flex;
+            align-items: center; /* Simgeler ve metin hizalı */
+            gap: 8px; /* Simge ile metin arasında boşluk */
+        }
+
+        .dropdown-content li > a > i {
+            font-size: 24px !important;
+            color: #26a69a !important;
+        }
+
+        .dropdown-content li:hover {
+            background-color: #f5f5f5 !important;
+        }
+
+        .switch input[type="checkbox"] + .lever {
+            background-color: #f44336 !important;
+        }
+
+        .switch input[type="checkbox"]:checked + .lever {
+            background-color: #4caf50 !important;
+        }
+
+        .switch input[type="checkbox"] + .lever:after {
+            background-color: #d32f2f !important;
+        }
+
+        .switch input[type="checkbox"]:checked + .lever:after {
+            background-color: #388e3c !important;
+        }
+
+        .switch label .lever {
+            width: 48px !important;
+            height: 20px !important;
+        }
+
+        .switch label .lever:after {
+            width: 28px !important;
+            height: 28px !important;
+            top: -4px !important;
+        }
+
+        .switch label input[type="checkbox"]:checked + .lever:after {
+            left: 18px !important;
+        }
+
+        .switch-container {
+            background-color: rgba(119,190,186,255) !important;
+            border: 1px solid #b0bec5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #2F4F4F;
+            padding: 6.5px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+        }
+
+        .footer-content {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.0rem;
+            font-weight: 500;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+        }
+
+        .tooltip-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            white-space: nowrap;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .tooltip-wrapper:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-icon {
+            font-size: 16px !important;
+            vertical-align: middle;
+            margin: 0 2px;
+            color: #26a69a;
+        }
+
+        .btn {
+            transition: 0.5s !important;
+        }
+
+        .btn:hover {
+            transform: scale(1.1) !important;
+        }
+
+        .control-buttons .btn {
+            margin-right: 20px !important;
+        }
+
+        .control-buttons .btn:last-child {
+            margin-right: 0 !important;
+        }
+
+        .btn-floating {
+            transition: 0.5s !important;
+        }
+
+        .btn-floating:hover {
+            transform: scale(1.1) !important;
+        }
+
+        #emailModal {
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-wrapper">
+        <!-- "Nasıl Kullanılır" Konteynırı -->
+        <div class="custom-container" id="guideContainer">
+            <ul class="collapsible" id="guideCollapsible">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">help_outline</i>Nasıl Kullanılır</div>
+                    <div class="collapsible-body">
+                        <ul>
+                            <li>Nöbet yazılacak tarih aralığını ve nöbetçi sayısını girerek süreci başlatınız.</li>
+                            <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
+                            <li><a class="btn-floating tiny waves-effect waves-light grey"><i class="material-icons">more_vert</i></a>tuşu ile oluşturduğunuz personel listesini indirebilir, sonraki kullanımlarda yükleyerek süreci hızlandırabilirsiniz.</li>
+                            <li><a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet dağıtımını sisteme bırakabilir veya kendiniz planlayabilirsiniz.</li>
+                            <li>Kişilere ayrı ayrı Hafta içi/sonu nöbet sayıları belirleyebilirsiniz.</li>
+                            <li>Nöbet ertesi en az boşluk toplu veya kişiye özel olabilir.</li>
+                            <li><a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Personel planı bittiğinde "Takvim Oluştur" tuşuna basınız.</li>
+                            <li>Cuma günlerini de dengelemek isterseniz ilgili kutucuğu tikleyiniz.</li>
+                            <li>Varsa <font color="red">istenmeyen</font>/<font color="green">istenen</font> günleri takvim üzerinde işaretleyerek "<a class="btn-floating tiny waves-effect waves-light purple"><i class="material-icons">auto_fix_high</i></a>Otomatik Ata" tuşuna basınız.</li>
+                            <li>Geri al tuşu ile takvimdeki son değişikliği geri alabilirsiniz.</li>
+                            <li>Listeyi excel formatında indirmek için "<a class="btn-floating tiny waves-effect waves-light green"><i class="material-icons">send</i></a>Excel'e Gönder" tuşuna basınız.</li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- İlk Orijinal Konteynır -->
+        <div class="custom-container">
+            <header>
+                <h3 style="text-align: center;">NÖBET LİSTESİ HAZIRLAYICI</h3>
+            </header>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input type="text" class="datepicker" id="startDate">
+                    <label>Başlangıç Tarihi</label>
+                </div>
+                <div class="input-field col s6">
+                    <input type="text" class="datepicker" id="endDate">
+                    <label>Bitiş Tarihi</label>
+                </div>
+            </div>
+            <div class="row">
+               <div class="input-field col s6 tooltipped" data-position="top" data-tooltip="Ay içinde resmi tatil varsa günleri buraya yazarak haftasonu olarak sayabilirsiniz">
+                  <input id="holidays" type="text" class="validate">
+                  <label for="holidays">Resmi Tatil Günleri (virgülle ayırarak gün numaraları)</label>
+              </div>
+              <div class="input-field col s6 tooltipped" data-position="top" data-tooltip="Bir nöbetteki kişi sayısı">
+                  <input id="dutyPerDay" type="number" class="validate" min="1">
+                  <label for="dutyPerDay">Kaçar Kişi Nöbet Tutacak?</label>
+              </div>
+            </div>
+        </div>
+
+        <!-- Personel Listesi Konteynırı -->
+        <div class="custom-container">
+            <ul class="collapsible popout" id="personelCollapsible">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">people</i>Personel Planı</div>
+                    <div class="collapsible-body">
+                      <div class="row" style="margin-bottom: 20px;">
+                        <div class="input-field col s8">
+                            <input type="text" id="personName" placeholder="Personel Adı Giriniz">
+                        </div>
+                        <div class="col s4" style="display: flex; justify-content: flex-start; align-items: center;">
+                            <a class="btn-floating waves-effect waves-light teal" onclick="addPerson()" style="margin-right: 10px;">
+                                <i class="material-icons">add</i>
+                            </a>
+                            <a class="dropdown-trigger btn-floating waves-effect waves-light grey tooltipped" href="#" data-target="personnelDropdown" data-position="top" data-tooltip="Hazırladığınız liste varsa, csv formatında yükleyebilirsiniz">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <ul id="personnelDropdown" class="dropdown-content">
+                                <li><a onclick="triggerFileUpload()">Personel Listesi Yükle</a></li>
+                               <li><a class="tooltipped" onclick="downloadPersonnel()" data-position="right" data-tooltip="Hazırladığınız listeyi daha sonra kullanmak üzere csv formatında indirebilirsiniz">Personel Listesini İndir</a></li>
+                            </ul>
+                            <input type="file" id="csvUpload" accept=".csv" style="display: none;" onchange="uploadPersonnel(event)">
+                        </div>
+                    </div>
+                      <!-- "Henüz Personel Eklenmedi" mesajını buraya taşıyoruz -->
+                      <div id="noPersonnelMessage" class="no-personnel-message" style="display: block;">
+                          Henüz Personel Eklenmedi
+                      </div>
+                      <!-- Tabloyu başlangıçta gizli yapıyoruz -->
+                      <table class="striped" style="position: relative; display: none;" id="personnelTableContainer">
+                          <tbody id="personTable"></tbody>
+                      </table>
+                      <div class="row control-buttons">
+                          <div class="col s12">
+                              <button class="btn waves-effect waves-light blue" onclick="generateCalendar()">
+                                  <i class="material-icons left">event</i>Nöbet Dağıt ve Takvim Oluştur
+                              </button>
+                              <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
+                                  <i class="material-icons left">refresh</i>Sıfırla
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Takvim Konteynırı -->
+        <div class="custom-container" id="calendarContainer">
+            <ul class="collapsible popout" id="calendarCollapsible">
+                <li>
+                    <div class="collapsible-header">
+                        <i class="material-icons">calendar_today</i>Takvim
+                    </div>
+                    <div class="collapsible-body">
+                        <div style="overflow-x: hidden;">
+                            <table id="calendarTable" class="striped"></table>
+                        </div>
+                        <div class="row" style="margin-top: 20px; display: flex; justify-content: space-evenly; align-items: center; flex-wrap: wrap;">
+                            <!-- İstenmeyen Gün Modu Butonu -->
+                              <div class="col s3" style="display: flex; align-items: center; justify-content: center;">
+                                  <div class="switch-container tooltipped" 
+                                      data-position="bottom" 
+                                      data-tooltip="İstenen gün/istenmeyen gün modları arasında geçiş yaparak hücrelerde işaretleme yapabilirsiniz">
+                                      <div class="switch">
+                                          <label style="display: flex; align-items: center;">
+                                              <span style="color: #000; margin-right: 10px; font-size: 1rem;">İstenmeyen Gün</span>
+                                              <input type="checkbox" id="modeSwitch" onchange="toggleAvailabilityMode()">
+                                              <span class="lever"></span>
+                                              <span style="color: #000; margin-left: 10px; font-size: 1rem;">İstenen Gün</span>
+                                          </label>
+                                      </div>
+                                  </div>
+                              </div>
+                            
+                            <!-- Cuma Günlerini Dengeli Dağıt Checkbox -->
+                            <div class="col s2" style="display: flex; align-items: center; justify-content: center;">
+                                <div class="switch-container">
+                                    <label>
+                                        <input type="checkbox" id="balanceFridays" />
+                                        <span style="color: #000;">Cumaları Dengele</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Otomatik Ata Butonu -->
+                            <div class="col s2">
+                              <button class="waves-effect waves-light btn purple tooltipped" 
+                                      onclick="autoAssignDuties()" 
+                                      style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
+                                      data-position="bottom" 
+                                      data-tooltip="&lt;i class='material-icons tooltip-icon'&gt;undo&lt;/i&gt; ve &lt;i class='material-icons tooltip-icon'&gt;auto_fix_high&lt;/i&gt; tuşu ile değişik atamalar deneyebilirsiniz">
+                                  <i class="material-icons left">auto_fix_high</i>Otomatik Ata
+                              </button>
+                          </div>
+                            
+                            <!-- Geri-İleri Butonları -->
+                            <div class="col s2">
+                              <div style="display: inline-flex; align-items: center; white-space: nowrap;">
+                                  <button id="undoBtn" class="waves-effect waves-light btn grey" onclick="undo()" disabled style="margin-left: 0;">
+                                      <i class="material-icons">undo</i>
+                                  </button>
+                                  <button id="redoBtn" class="waves-effect waves-light btn grey" onclick="redo()" disabled>
+                                      <i class="material-icons">redo</i>
+                                  </button>
+                                  <button id="clearBtn" class="waves-effect waves-light btn grey" onclick="clearCalendar()">
+                                      Temizle
+                                  </button>
+                              </div>
+                          </div>
+                            
+                            <!-- Paylaş Butonu -->
+                            <div class="col s3">
+                              <a class="dropdown-trigger btn waves-effect waves-light teal tooltipped" 
+                                href="#" 
+                                data-target="shareDropdown" 
+                                style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
+                                data-position="bottom" 
+                                data-tooltip="Paylaşım Seçenekleri">
+                                  <i class="material-icons left">share</i>Paylaş
+                              </a>
+                              <ul id="shareDropdown" class="dropdown-content">
+                                  <li><a onclick="downloadSchedule()"><i class="material-icons">file_download</i>İndir</a></li>
+                                  <li><a onclick="emailSchedule()"><i class="material-icons">email</i>E-posta Gönder</a></li>
+                              </ul>
+                          </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Nöbet İstatistikleri Konteynırı -->
+        <div class="custom-container">
+            <ul class="collapsible popout" id="statsCollapsible">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">assessment</i>Nöbet İstatistikleri</div>
+                    <div class="collapsible-body">
+                        <table class="striped">
+                            <thead>
+                                <tr>
+                                    <th>Personel</th>
+                                    <th>Hafta İçi</th>
+                                    <th>Hafta Sonu</th>
+                                    <th>Cuma</th>
+                                    <th>Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody id="statsTable"></tbody>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Hata Modalı -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <h4>Uyarılar ve Hatalar</h4>
+            <div class="error-list" id="errorList"></div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="confirmSend()">Devam Et</a>
+        </div>
+    </div>
+
+    <!-- Yükleme Ekranı -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="preloader-wrapper active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+        <span style="color: white; margin-left: 10px; font-size: 1.2rem;">Nöbetler Atanıyor...</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+    let persons = [];
+    let availabilityMode = true;
+    let unavailableCells = {};
+    let selectedCells = {};
+    let collapsiblePersonel;
+    let collapsibleCalendar;
+    let statsCollapsible;
+    let guideCollapsible;
+    let validationErrors = [];
+    let history = [];
+    let historyIndex = -1;
+    let isDragging = false;
+    let dragStart = null;
+
+    const defaultPersons = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+    M.AutoInit();
+    collapsiblePersonel = M.Collapsible.init(document.querySelector('#personelCollapsible'), { accordion: false });
+    collapsibleCalendar = M.Collapsible.init(document.querySelector('#calendarCollapsible'), {
+        accordion: false,
+        onOpenStart: function() {
+            document.getElementById('calendarContainer').classList.add('expanded');
+        },
+        onCloseEnd: function() {
+            document.getElementById('calendarContainer').classList.remove('expanded');
+        }
+    });
+    statsCollapsible = M.Collapsible.init(document.querySelector('#statsCollapsible'), { accordion: false });
+    guideCollapsible = M.Collapsible.init(document.querySelector('#guideCollapsible'), { accordion: false });
+
+    const datepickers = document.querySelectorAll('.datepicker');
+    M.Datepicker.init(datepickers, {
+        format: 'dd-mm-yyyy',
+        autoClose: true,
+        firstDay: 1,
+        i18n: {
+            months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+            monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+            weekdays: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+            weekdaysShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+            weekdaysAbbrev: ['P', 'P', 'S', 'Ç', 'P', 'C', 'C']
+        },
+        onOpen: function() {
+            const instance = this;
+            setTimeout(() => {
+                const days = instance.el.parentElement.querySelectorAll('.datepicker-table th');
+                days.forEach((day, index) => {
+                    day.textContent = this.options.i18n.weekdaysShort[index];
+                });
+            }, 0);
+        }
+    });
+
+    const startDatePicker = document.getElementById('startDate');
+    const endDatePicker = document.getElementById('endDate');
+    startDatePicker.addEventListener('change', function() {
+        const startDate = M.Datepicker.getInstance(startDatePicker).date;
+        if (startDate) {
+            const lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+            const endDateInstance = M.Datepicker.getInstance(endDatePicker);
+            endDateInstance.setDate(lastDay);
+            endDatePicker.value = lastDay.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, '-');
+            M.updateTextFields();
+        }
+        if (startDatePicker.value && endDatePicker.value && collapsiblePersonel) {
+            collapsiblePersonel.open(0);
+        }
+    });
+
+    endDatePicker.addEventListener('change', function() {
+        if (startDatePicker.value && endDatePicker.value && collapsiblePersonel) {
+            collapsiblePersonel.open(0);
+        }
+    });
+
+    const personNameInput = document.getElementById('personName');
+    if (personNameInput) {
+        personNameInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addPerson();
+            }
+        });
+    }
+
+    persons = [...defaultPersons];
+    renderTable();
+
+    var dropdowns = document.querySelectorAll('.dropdown-trigger');
+    M.Dropdown.init(dropdowns, {
+        coverTrigger: false,
+        constrainWidth: false
+    });
+    
+     // Modal başlatma kodu buraya ekleniyor
+    const emailModal = M.Modal.init(document.getElementById('emailModal'));
+
+    const csvUploadInput = document.getElementById('csvUpload');
+    if (csvUploadInput) {
+        csvUploadInput.removeEventListener('change', uploadPersonnel);
+        csvUploadInput.addEventListener('change', uploadPersonnel);
+    } else {
+        console.error('csvUpload input elementi bulunamadı!');
+    }
+});
+
+    function saveToHistory() {
+        const currentState = {
+            selectedCells: JSON.parse(JSON.stringify(selectedCells)),
+            unavailableCells: JSON.parse(JSON.stringify(unavailableCells))
+        };
+        if (historyIndex < history.length - 1) {
+            history = history.slice(0, historyIndex + 1);
+        }
+        history.push(currentState);
+        historyIndex++;
+        updateUndoRedoButtons();
+    }
+
+    function undo() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            applyState(history[historyIndex]);
+            updateCalendar();
+            updateStatistics();
+        }
+        updateUndoRedoButtons();
+    }
+
+    function redo() {
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            applyState(history[historyIndex]);
+            updateCalendar();
+            updateStatistics();
+        }
+        updateUndoRedoButtons();
+    }
+
+    function applyState(state) {
+        selectedCells = JSON.parse(JSON.stringify(state.selectedCells));
+        unavailableCells = JSON.parse(JSON.stringify(state.unavailableCells));
+    }
+
+    function updateUndoRedoButtons() {
+        document.getElementById('undoBtn').disabled = historyIndex <= 0;
+        document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1;
+    }
+
+    function addPerson() {
+        const name = document.getElementById('personName').value.trim().toUpperCase();
+        if (!name) return M.toast({html: 'Lütfen isim girin!'});
+        if (persons.some(p => p.name === name)) return M.toast({html: 'Bu isim zaten var!'});
+
+        persons.push({
+            name: name,
+            weekdayDuties: undefined,
+            weekendDuties: undefined,
+            minDaysBetween: 1
+        });
+
+        document.getElementById('personName').value = '';
+        renderTable();
+        if (collapsiblePersonel) collapsiblePersonel.open(0);
+        M.toast({html: `${name} eklendi!`});
+    }
+
+    function deletePerson(index) {
+        const name = persons[index].name;
+        persons.splice(index, 1);
+        renderTable();
+        M.toast({html: `${name} silindi!`});
+    }
+
+    function incrementDutyGap(index) {
+        persons[index].minDaysBetween++;
+        renderTable();
+    }
+
+    function decrementDutyGap(index) {
+        if (persons[index].minDaysBetween > 0) {
+            persons[index].minDaysBetween--;
+            renderTable();
+        }
+    }
+
+    function incrementAllDutyGaps() {
+        persons.forEach(p => p.minDaysBetween++);
+        renderTable();
+    }
+
+    function decrementAllDutyGaps() {
+        persons.forEach(p => { if (p.minDaysBetween > 0) p.minDaysBetween--; });
+        renderTable();
+    }
+
+    function toggleAvailabilityMode() {
+    const switchInput = document.getElementById('modeSwitch');
+    availabilityMode = !switchInput.checked;
+    }
+
+    function renderTable() {
+    const tableContainer = document.getElementById('personnelTableContainer');
+    const noPersonnelMessage = document.getElementById('noPersonnelMessage');
+
+    if (persons.length === 0) {
+        // Personel yoksa: Tabloyu gizle, mesajı göster
+        tableContainer.style.display = 'none';
+        noPersonnelMessage.style.display = 'block';
+    } else {
+        // Personel varsa: Tabloyu göster, mesajı gizle, başlık ve içeriği ekle
+        tableContainer.style.display = 'table';
+        noPersonnelMessage.style.display = 'none';
+
+        let html = `
+            <thead>
+                <tr>
+                    <th>İsim</th>
+                    <th>Hafta İçi</th>
+                    <th>Hafta Sonu</th>
+                    <th class="duty-gap-header">
+                        Nöbet Ertesi Boşluk
+                        <a class="btn-floating btn-small waves-effect waves-light teal decrement-btn" onclick="decrementAllDutyGaps()">
+                            <i class="material-icons">arrow_downward</i>
+                        </a>
+                        <a class="btn-floating btn-small waves-effect waves-light teal increment-btn" onclick="incrementAllDutyGaps()">
+                            <i class="material-icons">arrow_upward</i>
+                        </a>
+                    </th>
+                    <th style="text-align: center;">Sil</th>
+                </tr>
+            </thead>
+            <tbody id="personTable">
+        `;
+
+        persons.forEach((person, index) => {
+            html += `
+               <tr style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; background-color: #f9fafb; transition: background-color 0.2s;">
+    <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box; font-family: 'Arial', sans-serif; color: #374151;">
+        ${person.name}
+    </td>
+    <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
+        <input type="number" class="planning-input" min="0" 
+            value="${person.weekdayDuties === undefined ? '' : person.weekdayDuties}" 
+            onchange="updateDuty(${index}, 'weekdayDuties', this.value)"
+            style="height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 13px; margin: 0; padding: 0 6px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 4px; background-color: #ffffff; transition: border-color 0.2s; outline: none; overflow: hidden;">
+    </td>
+    <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
+        <input type="number" class="planning-input" min="0" 
+            value="${person.weekendDuties === undefined ? '' : person.weekendDuties}" 
+            onchange="updateDuty(${index}, 'weekendDuties', this.value)"
+            style="height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 13px; margin: 0; padding: 0 6px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 4px; background-color: #ffffff; transition: border-color 0.2s; outline: none; overflow: hidden;">
+    </td>
+    <td class="duty-gap-cell" style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
+        <span style="margin-right: 8px; font-size: 13px; line-height: 24px; height: 24px; display: inline-block; color: #4b5563;">${person.minDaysBetween}</span>
+        <a class="btn-floating btn-small waves-effect waves-light" onclick="decrementDutyGap(${index})"
+           style="width: 24px; height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 12px; margin: 0 4px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #10b981; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.2s; overflow: hidden;">
+            <i class="material-icons" style="line-height: 24px; font-size: 14px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 24px; width: 24px; color: #ffffff;">arrow_downward</i>
+        </a>
+        <a class="btn-floating btn-small waves-effect waves-light" onclick="incrementDutyGap(${index})"
+           style="width: 24px; height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 12px; margin: 0 4px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #10b981; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.2s; overflow: hidden;">
+            <i class="material-icons" style="line-height: 24px; font-size: 14px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 24px; width: 24px; color: #ffffff;">arrow_upward</i>
+        </a>
+    </td>
+    <td class="left-align" style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
+        <a class="btn-floating btn-small" onclick="deletePerson(${index})"
+           style="width: 24px; height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 12px; margin: 0 4px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #ef4444; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.2s; overflow: hidden;">
+            <i class="material-icons" style="line-height: 24px; font-size: 14px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 24px; width: 24px; color: #ffffff;">delete</i>
+        </a>
+    </td>
+</tr>
+            `;
+        });
+
+        html += `</tbody>`;
+        tableContainer.innerHTML = html;
+    }
+}
+
+    function updateDuty(index, type, value) {
+        if (value === "" || value === null) {
+            persons[index][type] = undefined;
+        } else {
+            persons[index][type] = parseInt(value) || 0;
+        }
+    }
+    
+    function resetDuties() {
+    persons.forEach(person => {
+        person.weekdayDuties = undefined;
+        person.weekendDuties = undefined;
+    });
+    renderTable();
+    if (collapsibleCalendar) collapsibleCalendar.close(0);
+    document.getElementById('calendarTable').innerHTML = '';
+    M.toast({html: 'Nöbet dağıtımı ve takvim sıfırlandı!'});
+}
+
+function generateCalendar() {
+    const startInput = document.getElementById('startDate').value;
+    const endInput = document.getElementById('endDate').value;
+    const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim(); // Boşlukları temizle
+
+    // Önce dutyPerDay kontrolü
+    if (!dutyPerDayInput || dutyPerDayInput === "") {
+        M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
+        return;
+    }
+
+    const dutyPerDay = parseInt(dutyPerDayInput); // Değeri integer'a çevir
+    if (isNaN(dutyPerDay) || dutyPerDay < 1) {
+        M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
+        return;
+    }
+
+    // Tarih kontrolü
+    if (!startInput || !endInput) {
+        M.toast({ html: 'Lütfen tarih seçin!' });
+        return;
+    }
+
+    const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+    const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+    const start = new Date(startYear, startMonth - 1, startDay);
+    const end = new Date(endYear, endMonth - 1, endDay);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const holidayInput = document.getElementById('holidays').value;
+    const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+
+    selectedCells = {};
+    history = [];
+    historyIndex = -1;
+    saveToHistory();
+
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    const dates = [];
+    let weekendDays = 0;
+    let weekdayDays = 0;
+    for (let i = 0; i < days; i++) {
+        const date = new Date(start);
+        date.setDate(date.getDate() + i);
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+        dates.push({ date: date.toISOString(), isWeekend });
+        if (isWeekend) weekendDays++;
+        else weekdayDays++;
+    }
+
+    const totalDuties = days * dutyPerDay;
+    const totalWeekendDuties = weekendDays * dutyPerDay;
+    const totalWeekdayDuties = weekdayDays * dutyPerDay;
+
+    let preplannedWeekendDuties = 0;
+    let preplannedWeekdayDuties = 0;
+    persons.forEach(person => {
+        if (person.weekendDuties !== undefined) preplannedWeekendDuties += person.weekendDuties;
+        if (person.weekdayDuties !== undefined) preplannedWeekdayDuties += person.weekdayDuties;
+    });
+
+    const adjustedTotalDuties = totalDuties - (preplannedWeekendDuties + preplannedWeekdayDuties);
+    const adjustedWeekendDuties = totalWeekendDuties - preplannedWeekendDuties;
+    const adjustedWeekdayDuties = totalWeekdayDuties - preplannedWeekdayDuties;
+
+    const unplannedPersons = persons.filter(p => p.weekdayDuties === undefined && p.weekendDuties === undefined);
+    const shuffledUnplanned = shuffleArray([...unplannedPersons]);
+    const unplannedCount = unplannedPersons.length;
+
+    const avgDutiesPerPerson = unplannedCount ? Math.floor(adjustedTotalDuties / unplannedCount) : 0;
+    const extraTotalDuties = unplannedCount ? adjustedTotalDuties % unplannedCount : 0;
+    const avgWeekendPerPerson = unplannedCount ? Math.floor(adjustedWeekendDuties / unplannedCount) : 0;
+    const extraWeekendDuties = unplannedCount ? adjustedWeekendDuties % unplannedCount : 0;
+
+    let personDutyAssignments = persons.map(person => {
+        if (person.weekdayDuties !== undefined || person.weekendDuties !== undefined) {
+            return {
+                person,
+                totalDuties: (person.weekdayDuties || 0) + (person.weekendDuties || 0),
+                weekendDuties: person.weekendDuties || 0,
+                weekdayDuties: person.weekdayDuties || 0
+            };
+        }
+        return null;
+    }).filter(p => p !== null);
+
+    shuffledUnplanned.forEach((person, index) => {
+        personDutyAssignments.push({
+            person,
+            totalDuties: avgDutiesPerPerson + (index < extraTotalDuties ? 1 : 0),
+            weekendDuties: avgWeekendPerPerson + (index < extraWeekendDuties ? 1 : 0),
+            weekdayDuties: 0
+        });
+    });
+
+    personDutyAssignments.forEach(assignment => {
+        if (assignment.person.weekdayDuties === undefined) {
+            assignment.weekdayDuties = assignment.totalDuties - assignment.weekendDuties;
+        }
+    });
+
+    personDutyAssignments.forEach(assignment => {
+        const originalPerson = persons.find(p => p.name === assignment.person.name);
+        originalPerson.weekdayDuties = assignment.weekdayDuties;
+        originalPerson.weekendDuties = assignment.weekendDuties;
+    });
+
+    renderTable();
+
+    let html = '<tr><th class="name-column">İsim</th>';
+      const displayDates = [];
+      for (let i = 0; i < days; i++) {
+          const date = new Date(start);
+          date.setDate(date.getDate() + i);
+          displayDates.push(date);
+          html += `<th>${date.getDate()}</th>`;
+      }
+      html += '</tr>';
+
+    persons.forEach((person, pIndex) => {
+        html += `<tr><td class="name-column">${person.name}</td>`;
+        dates.forEach((dateObj, dIndex) => {
+            const isWeekend = dateObj.isWeekend;
+            const cellKey = `${pIndex}-${dIndex}`;
+            const isUnavailable = unavailableCells[cellKey];
+            const isSelected = selectedCells[cellKey];
+
+            html += `
+                <td class="calendar-cell 
+                    ${isWeekend ? 'holiday' : ''} 
+                    ${isUnavailable ? 'unavailable' : ''} 
+                    ${isSelected ? 'selected' : ''}"
+                    data-pindex="${pIndex}" 
+                    data-dindex="${dIndex}">
+                </td>`;
+        });
+        html += '</tr>';
+    });
+
+    document.getElementById('calendarTable').innerHTML = html;
+
+    const cells = document.querySelectorAll('.calendar-cell');
+    cells.forEach(cell => {
+        cell.addEventListener('mousedown', startDragging);
+        cell.addEventListener('mousemove', dragOver);
+        cell.addEventListener('mouseup', stopDragging);
+        cell.addEventListener('click', () => {
+            const pIndex = parseInt(cell.dataset.pindex);
+            const dIndex = parseInt(cell.dataset.dindex);
+            handleCellClick(pIndex, dIndex);
+        });
+    });
+
+    if (collapsibleCalendar) collapsibleCalendar.open(0);
+    M.toast({html: 'Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!'});
+    updateStatistics();
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+    function startDragging(event) {
+        const cell = event.target;
+        const pIndex = parseInt(cell.dataset.pindex);
+        const dIndex = parseInt(cell.dataset.dindex);
+        dragStart = { pIndex, dIndex };
+        isDragging = true;
+        event.preventDefault();
+    }
+
+    function dragOver(event) {
+    if (!isDragging || !dragStart) return;
+
+    const cell = event.target;
+    if (!cell.classList.contains('calendar-cell')) return;
+
+    const pIndex = parseInt(cell.dataset.pindex);
+    const dIndex = parseInt(cell.dataset.dindex);
+    const cellKey = `${pIndex}-${dIndex}`;
+
+    cell.classList.remove('dragging');
+
+    const dragColor = availabilityMode ? 'rgba(255, 182, 193, 0.8)' : 'rgba(200, 230, 201, 0.8)';
+    cell.style.backgroundColor = dragColor;
+
+    cell.classList.add('dragging');
+    event.preventDefault();
+}
+
+    function stopDragging(event) {
+        if (!isDragging || !dragStart) return;
+
+        const cells = document.querySelectorAll('.calendar-cell.dragging');
+        const totalDays = document.querySelectorAll('th').length - 1;
+        saveToHistory();
+
+        let hasConsecutive = false;
+        const tempSelected = [...cells].map(cell => {
+            const pIndex = parseInt(cell.dataset.pindex);
+            const dIndex = parseInt(cell.dataset.dindex);
+            return `${pIndex}-${dIndex}`;
+        });
+
+        tempSelected.forEach(cellKey => {
+            const [pIndex, dIndex] = cellKey.split('-').map(Number);
+            const prevDay = dIndex - 1;
+            const nextDay = dIndex + 1;
+            const prevCellKey = `${pIndex}-${prevDay}`;
+            const nextCellKey = `${pIndex}-${nextDay}`;
+
+            if ((prevDay >= 0 && (selectedCells[prevCellKey] || tempSelected.includes(prevCellKey))) ||
+                (nextDay < totalDays && (selectedCells[nextCellKey] || tempSelected.includes(nextCellKey)))) {
+                hasConsecutive = true;
+            }
+        });
+
+        if (!availabilityMode && hasConsecutive) {
+            M.toast({ html: 'Seçilen günlerde üst üste nöbet ataması tespit edildi!' });
+        }
+
+        cells.forEach(cell => {
+            const pIndex = parseInt(cell.dataset.pindex);
+            const dIndex = parseInt(cell.dataset.dindex);
+            const cellKey = `${pIndex}-${dIndex}`;
+
+            if (availabilityMode) {
+                unavailableCells[cellKey] = !unavailableCells[cellKey];
+                cell.classList.toggle('unavailable', unavailableCells[cellKey]);
+                if (unavailableCells[cellKey]) {
+                    delete selectedCells[cellKey];
+                    cell.classList.remove('selected');
+                }
+            } else {
+                if (!unavailableCells[cellKey] && !selectedCells[cellKey]) {
+                    selectedCells[cellKey] = true;
+                    cell.classList.add('selected');
+                }
+            }
+            cell.classList.remove('dragging');
+            cell.style.backgroundColor = '';
+        });
+
+        checkScheduleValidity();
+        updateStatistics();
+        isDragging = false;
+        dragStart = null;
+    }
+
+function handleCellClick(pIndex, dIndex) {
+    const cellKey = `${pIndex}-${dIndex}`;
+    const cell = document.querySelector(`td[data-pindex="${pIndex}"][data-dindex="${dIndex}"]`);
+    saveToHistory();
+
+    if (availabilityMode) {
+        unavailableCells[cellKey] = !unavailableCells[cellKey];
+        cell.classList.toggle('unavailable', unavailableCells[cellKey]);
+        if (unavailableCells[cellKey]) {
+            delete selectedCells[cellKey];
+            cell.classList.remove('selected');
+        }
+    } else {
+        if (!unavailableCells[cellKey]) {
+            if (selectedCells[cellKey]) {
+                delete selectedCells[cellKey];
+                cell.classList.remove('selected');
+            } else {
+                const prevDay = dIndex - 1;
+                const nextDay = dIndex + 1;
+                const prevCellKey = `${pIndex}-${prevDay}`;
+                const nextCellKey = `${pIndex}-${nextDay}`;
+                const totalDays = document.querySelectorAll('th').length - 1;
+
+                if ((prevDay >= 0 && selectedCells[prevCellKey]) || (nextDay < totalDays && selectedCells[nextCellKey])) {
+                    M.toast({ html: `${persons[pIndex].name} için üst üste nöbet ataması tespit edildi!` });
+                }
+
+                selectedCells[cellKey] = true;
+                cell.classList.add('selected');
+            }
+        }
+    }
+    checkScheduleValidity();
+    updateStatistics();
+}
+
+    function updateStatistics() {
+    const startInput = document.getElementById('startDate').value;
+    const endInput = document.getElementById('endDate').value;
+    if (!startInput || !endInput) return;
+
+    const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+    const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+    const start = new Date(startYear, startMonth - 1, startDay);
+    const end = new Date(endYear, endMonth - 1, endDay);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const holidayInput = document.getElementById('holidays').value;
+    const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+
+    const stats = persons.map(p => ({name: p.name, weekday: 0, weekend: 0, friday: 0}));
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    for (let d = 0; d < days; d++) {
+        const date = new Date(start);
+        date.setDate(date.getDate() + d);
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+        const isFriday = date.getDay() === 5;
+
+        persons.forEach((person, pIndex) => {
+            if (selectedCells[`${pIndex}-${d}`]) {
+                if (isWeekend) {
+                    stats[pIndex].weekend++;
+                } else {
+                    stats[pIndex].weekday++;
+                    if (isFriday) {
+                        stats[pIndex].friday++;
+                    }
+                }
+            }
+        });
+    }
+
+    const html = stats.map(stat => `
+        <tr>
+            <td>${stat.name}</td>
+            <td>${stat.weekday}</td>
+            <td>${stat.weekend}</td>
+            <td>${stat.friday}</td>
+            <td>${stat.weekday + stat.weekend}</td>
+        </tr>
+    `).join('');
+
+    document.getElementById('statsTable').innerHTML = html;
+    if (statsCollapsible) statsCollapsible.open(0);
+}
+    function checkScheduleValidity() {
+    validationErrors = [];
+    const startInput = document.getElementById('startDate').value;
+    const endInput = document.getElementById('endDate').value;
+    if (!startInput || !endInput) return;
+
+    const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+    const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+    const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+    const start = new Date(startYear, startMonth - 1, startDay);
+    const end = new Date(endYear, endMonth - 1, endDay);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    for (let d = 0; d < days; d++) {
+        const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
+        if (assigned < dutyPerDay) {
+            const date = new Date(start);
+            date.setDate(date.getDate() + d);
+            validationErrors.push({
+                type: 'error',
+                message: `${date.toLocaleDateString('tr-TR')} tarihine ${dutyPerDay} nöbetçi atanmamış, atanan: ${assigned}`
+            });
+        }
+    }
+
+    for (let d = 0; d < days; d++) {
+        const assigned = [];
+        document.querySelectorAll(`td[data-dindex="${d}"].selected`).forEach(td => {
+            assigned.push(td.closest('tr').querySelector('td:first-child').innerText);
+        });
+        if (assigned.length > dutyPerDay) {
+            const date = new Date(start);
+            date.setDate(date.getDate() + d);
+            validationErrors.push({
+                type: 'warning',
+                message: `${date.toLocaleDateString('tr-TR')} tarihinde fazla atama: ${assigned.join(', ')} (${assigned.length} > ${dutyPerDay})`
+            });
+        }
+    }
+
+    persons.forEach((person, pIndex) => {
+        const duties = [];
+        for (let d = 0; d < days; d++) {
+            if (selectedCells[`${pIndex}-${d}`]) duties.push(d);
+        }
+        for (let i = 1; i < duties.length; i++) {
+            if (duties[i] - duties[i-1] === 1) {
+                const date1 = new Date(start);
+                date1.setDate(date1.getDate() + duties[i-1]);
+                const date2 = new Date(start);
+                date2.setDate(date2.getDate() + duties[i]);
+                validationErrors.push({
+                    type: 'warning',
+                    message: `${person.name} üst üste nöbet: ${date1.toLocaleDateString('tr-TR')} - ${date2.toLocaleDateString('tr-TR')}`
+                });
+            }
+        }
+    });
+
+    Object.keys(selectedCells).forEach(key => {
+        if (selectedCells[key] && unavailableCells[key]) {
+            const [pIndex, dIndex] = key.split('-');
+            const person = persons[pIndex].name;
+            const date = new Date(start);
+            date.setDate(date.getDate() + parseInt(dIndex));
+            validationErrors.push({
+                type: 'error',
+                message: `${person} istenmeyen günde nöbet: ${date.toLocaleDateString('tr-TR')}`
+            });
+        }
+    });
+
+    persons.forEach((person, index) => {
+        const plannedWeekday = person.weekdayDuties;
+        const plannedWeekend = person.weekendDuties;
+        const stats = updateStatsForPerson(index);
+        const actualWeekday = stats.weekday;
+        const actualWeekend = stats.weekend;
+        if (plannedWeekday !== undefined && plannedWeekday > 0 && actualWeekday !== plannedWeekday) {
+            validationErrors.push({
+                type: 'warning',
+                message: `${person.name}: Planlanan hafta içi nöbet (${plannedWeekday}), atanan nöbet (${actualWeekday})`
+            });
+        }
+        if (plannedWeekend !== undefined && plannedWeekend > 0 && actualWeekend !== plannedWeekend) {
+            validationErrors.push({
+                type: 'warning',
+                message: `${person.name}: Planlanan hafta sonu nöbet (${plannedWeekend}), atanan nöbet (${actualWeekend})`
+            });
+        }
+    });
+}
+
+    function updateStatsForPerson(pIndex) {
+        const startInput = document.getElementById('startDate').value;
+        const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+        const start = new Date(startYear, startMonth - 1, startDay);
+        start.setHours(0, 0, 0, 0);
+
+        const holidayInput = document.getElementById('holidays').value;
+        const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+
+        const days = Math.ceil((new Date(document.getElementById('endDate').value.split('-').reverse().join('-')) - start) / (1000 * 60 * 60 * 24)) + 1;
+        let weekday = 0, weekend = 0;
+
+        for (let d = 0; d < days; d++) {
+            const date = new Date(start);
+            date.setDate(date.getDate() + d);
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+            if (selectedCells[`${pIndex}-${d}`]) {
+                if (isWeekend) weekend++;
+                else weekday++;
+            }
+        }
+        return { weekday, weekend };
+    }
+
+    function showErrorModal() {
+        const errorList = document.getElementById('errorList');
+        errorList.innerHTML = validationErrors.map(error => `
+            <div class="error-item">
+                <span class="${error.type === 'error' ? 'error-type' : 'warning-type'}">
+                    ${error.type === 'error' ? 'HATA' : 'UYARI'}:
+                </span>
+                ${error.message}
+            </div>
+        `).join('');
+        const modal = M.Modal.init(document.getElementById('errorModal'));
+        modal.open();
+    }
+
+   function confirmSend() {
+    performExport();
+}
+
+    function sendSchedule() {
+    checkScheduleValidity();
+    updateStatistics();
+    if (validationErrors.length > 0) {
+        showErrorModal();
+    } else {
+        M.toast({ html: 'Lütfen bir paylaşım seçeneği seçin!' });
+    }
+}
+
+function performExport(callback) {
+    const startInput = document.getElementById('startDate').value;
+    const endInput = document.getElementById('endDate').value;
+    const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+    if (!startInput || !endInput) {
+        M.toast({ html: 'Lütfen tarih seçin!' });
+        return;
+    }
+
+    const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+    const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+    const start = new Date(startYear, startMonth - 1, startDay);
+    const end = new Date(endYear, endMonth - 1, endDay);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    const scheduleData = {};
+
+    for (let d = 0; d < days; d++) {
+        const currentDate = new Date(start);
+        currentDate.setDate(currentDate.getDate() + d);
+        const dateStr = currentDate.toLocaleDateString('tr-TR');
+        scheduleData[dateStr] = [];
+        document.querySelectorAll(`td[data-dindex="${d}"].selected`).forEach(td => {
+            const person = td.closest('tr').querySelector('td:first-child').innerText;
+            scheduleData[dateStr].push(person);
+        });
+    }
+
+    let maxAssignedPerDay = 0;
+    for (const date in scheduleData) {
+        const assignedCount = scheduleData[date].length;
+        maxAssignedPerDay = Math.max(maxAssignedPerDay, assignedCount);
+    }
+    const columnCount = Math.max(dutyPerDay, maxAssignedPerDay);
+    const headers = ['Tarih'];
+    for (let i = 1; i <= columnCount; i++) {
+        headers.push(`Nöbetçi ${i}`);
+    }
+    const data = [headers];
+
+    for (let d = 0; d < days; d++) {
+        const currentDate = new Date(start);
+        currentDate.setDate(currentDate.getDate() + d);
+        const dateStr = currentDate.toLocaleDateString('tr-TR');
+        const row = [dateStr];
+        const assigned = scheduleData[dateStr] || [];
+        for (let i = 0; i < columnCount; i++) {
+            row.push(assigned[i] || '');
+        }
+        data.push(row);
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Nöbet Listesi");
+    const blob = new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/octet-stream' });
+    const fileName = `nobet_listesi_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    if (callback) callback(blob, fileName);
+}
+
+function downloadSchedule() {
+    performExport(function(blob, fileName) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        M.toast({ html: 'Nöbet listesi indirildi!' });
+    });
+}
+
+function emailSchedule() {
+    performExport(function(blob, fileName) {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            const base64Data = reader.result.split(',')[1];
+            window.emailData = { base64Data, fileName };
+            const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
+            emailModal.open();
+        };
+        reader.readAsDataURL(blob);
+    });
+}
+
+function sendEmailWithRecipient() {
+    const recipient = document.getElementById('recipientEmail').value.trim();
+    if (!recipient) {
+        M.toast({ html: 'Lütfen bir e-posta adresi girin!' });
+        return;
+    }
+    const { base64Data, fileName } = window.emailData;
+    google.script.run
+        .withSuccessHandler(function(response) {
+            M.toast({ html: response });
+            const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
+            emailModal.close();
+            document.getElementById('recipientEmail').value = '';
+        })
+        .withFailureHandler(function(error) {
+            M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + error.message });
+        })
+        .sendEmail(recipient, base64Data, fileName);
+}
+
+function autoAssignDuties() {
+    if (!document.getElementById('calendarTable').innerHTML) {
+        M.toast({ html: 'Önce takvim oluşturun!' });
+        return;
+    }
+
+    const startInput = document.getElementById('startDate').value;
+    const endInput = document.getElementById('endDate').value;
+    const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim(); // Boşlukları temizle
+
+    // Önce dutyPerDay kontrolü
+    if (!dutyPerDayInput || dutyPerDayInput === "") {
+        M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
+        return;
+    }
+
+    const dutyPerDay = parseInt(dutyPerDayInput); // Değeri integer'a çevir
+    if (isNaN(dutyPerDay) || dutyPerDay < 1) {
+        M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
+        return;
+    }
+
+    // Tarih kontrolü
+    if (!startInput || !endInput) {
+        M.toast({ html: 'Lütfen tarih seçin!' });
+        return;
+    }
+
+    const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+    const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+    const start = new Date(startYear, startMonth - 1, startDay);
+    const end = new Date(endYear, endMonth - 1, endDay);
+    // Mevcut kodun geri kalanı buradan devam eder...
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    const holidayInput = document.getElementById('holidays').value;
+    const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+
+    const dates = [];
+      for (let i = 0; i < days; i++) {
+          const date = new Date(start);
+          date.setDate(date.getDate() + i);
+          const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+          const isFriday = date.getDay() === 5;
+          dates.push({ index: i, isWeekend, isFriday });
+      }
+
+    const totalExpectedDuties = days * dutyPerDay;
+    const expectedWeekdayDuties = dates.filter(d => !d.isWeekend).length * dutyPerDay;
+    const expectedWeekendDuties = dates.filter(d => d.isWeekend).length * dutyPerDay;
+
+    let totalPlannedDuties = 0;
+    let plannedWeekdayDuties = 0;
+    let plannedWeekendDuties = 0;
+
+    persons.forEach(person => {
+        plannedWeekdayDuties += person.weekdayDuties || 0;
+        plannedWeekendDuties += person.weekendDuties || 0;
+        totalPlannedDuties += (person.weekdayDuties || 0) + (person.weekendDuties || 0);
+    });
+
+    if (totalPlannedDuties !== totalExpectedDuties || 
+        plannedWeekdayDuties !== expectedWeekdayDuties || 
+        plannedWeekendDuties !== expectedWeekendDuties) {
+        const weekdayDiff = plannedWeekdayDuties - expectedWeekdayDuties;
+        const weekendDiff = plannedWeekendDuties - expectedWeekendDuties;
+        let customMessage = "";
+
+        if (totalPlannedDuties > totalExpectedDuties) {
+            customMessage = "Fazla nöbet yazdınız! ";
+            if (weekdayDiff > 0) customMessage += `${weekdayDiff} miktar hafta içini azaltın`;
+            if (weekendDiff > 0) customMessage += `${weekdayDiff > 0 && weekendDiff > 0 ? ' ve ' : ''}${weekendDiff} miktar hafta sonunu azaltın`;
+            customMessage += ".";
+        } else if (totalPlannedDuties < totalExpectedDuties) {
+            customMessage = "Az nöbet yazdınız! ";
+            if (weekdayDiff < 0) customMessage += `${Math.abs(weekdayDiff)} miktar hafta içini artırın`;
+            if (weekendDiff < 0) customMessage += `${weekdayDiff < 0 && weekendDiff < 0 ? ' ve ' : ''}${Math.abs(weekendDiff)} miktar hafta sonunu artırın`;
+            customMessage += ".";
+        } else {
+            customMessage = "Nöbet dağılımı uyumsuz! ";
+            if (weekdayDiff > 0) customMessage += `${weekdayDiff} miktar hafta içini azaltın`;
+            if (weekendDiff < 0) customMessage += `${weekdayDiff > 0 ? ' ve ' : ''}${Math.abs(weekendDiff)} miktar hafta sonunu artırın`;
+            if (weekendDiff > 0) customMessage += `${weekdayDiff > 0 || weekendDiff < 0 ? ' ve ' : ''}${weekendDiff} miktar hafta sonunu azaltın`;
+            if (weekdayDiff < 0) customMessage += `${weekendDiff > 0 || weekdayDiff > 0 ? ' ve ' : ''}${Math.abs(weekdayDiff)} miktar hafta içini artırın`;
+            customMessage += ".";
+        }
+
+        M.toast({ html: customMessage, displayLength: 8000 });
+        return;
+    }
+
+    document.getElementById('loadingOverlay').style.display = 'flex';
+
+    const personnelDuties = persons.map(person => ({
+        name: person.name,
+        weekdayLeft: person.weekdayDuties || 0,
+        weekendLeft: person.weekendDuties || 0,
+        minDaysBetween: person.minDaysBetween,
+        dutyDays: [],
+        originalIndex: persons.findIndex(p => p.name === person.name)
+    }));
+
+    const preAssignedDays = {};
+    Object.keys(selectedCells).forEach(key => {
+        if (selectedCells[key]) {
+            const [pIndex, dIndex] = key.split('-').map(Number);
+            const person = personnelDuties.find(p => p.originalIndex === pIndex);
+            if (person && dIndex >= 0 && dIndex < dates.length) {
+                preAssignedDays[key] = true;
+                if (dates[dIndex].isWeekend) {
+                    person.weekendLeft = Math.max(0, person.weekendLeft - 1);
+                } else {
+                    person.weekdayLeft = Math.max(0, person.weekdayLeft - 1);
+                }
+                person.dutyDays.push(dIndex);
+            }
+        }
+    });
+
+    const balanceFridays = document.getElementById('balanceFridays').checked;
+
+    const data = {
+        personnel: personnelDuties,
+        totalDays: days,
+        weekendDays: dates.map(d => d.isWeekend ? d.index : null).filter(d => d !== null),
+        fridayDays: dates.map(d => d.isFriday ? d.index : null).filter(d => d !== null),
+        unavailableCells: unavailableCells || {},
+        preAssignedDays: preAssignedDays,
+        maxConsecutiveDuties: 1,
+        dutyPerDay: dutyPerDay,
+        balanceFridays: balanceFridays
+    };
+
+    saveToHistory();
+    google.script.run
+        .withSuccessHandler(function(response) {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            if (Array.isArray(response)) {
+                response.forEach(a => {
+                    const cellKey = `${a.pIndex}-${a.dayIndex}`;
+                    selectedCells[cellKey] = true;
+                });
+                updateCalendar();
+                updateStatistics();
+                saveToHistory();
+                M.toast({ html: 'Tüm nöbetler atandı!' });
+            } else {
+                M.toast({ html: response.error, displayLength: 8000 });
+            }
+        })
+        .withFailureHandler(function(error) {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            M.toast({ html: 'Sunucuyla bağlantı kurulamadı, lütfen internet bağlantınızı kontrol edin', displayLength: 8000 });
+        })
+        .optimize(data);
+}
+    function updateCalendar() {
+        const cells = document.querySelectorAll('.calendar-cell');
+        cells.forEach(cell => {
+            const pIndex = cell.dataset.pindex;
+            const dIndex = cell.dataset.dindex;
+            const cellKey = `${pIndex}-${dIndex}`;
+            cell.classList.toggle('selected', !!selectedCells[cellKey]);
+            cell.classList.toggle('unavailable', !!unavailableCells[cellKey]);
+        });
+        updateUndoRedoButtons();
+    }
+
+    function triggerFileUpload() {
+        const csvUploadInput = document.getElementById('csvUpload');
+        if (csvUploadInput) {
+            csvUploadInput.click();
+        } else {
+            console.error('csvUpload input elementi bulunamadı!');
+            M.toast({ html: 'Dosya yükleme alanı bulunamadı!' });
+        }
+    }
+
+    let isUploading = false;
+    function uploadPersonnel(event) {
+        if (isUploading) {
+            return;
+        }
+
+        const file = event.target.files[0];
+        if (!file) {
+            M.toast({ html: 'Lütfen bir dosya seçin!' });
+            return;
+        }
+        if (!file.name.endsWith('.csv')) {
+            M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
+            return;
+        }
+
+        isUploading = true;
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = loadingOverlay.querySelector('span');
+        loadingMessage.textContent = 'Nöbetler atanıyor...';
+        loadingOverlay.style.display = 'flex';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const arrayBuffer = e.target.result;
+            if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+                M.toast({ html: 'Dosya boş veya okunamadı!' });
+                loadingOverlay.style.display = 'none';
+                isUploading = false;
+                return;
+            }
+            const data = new Uint8Array(arrayBuffer);
+            const base64String = arrayBufferToBase64(data);
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    loadingOverlay.style.display = 'none';
+                    if (response.success) {
+                        persons = response.persons.map(p => ({
+                            name: p.name,
+                            weekdayDuties: p.weekdayDuties,
+                            weekendDuties: p.weekendDuties,
+                            minDaysBetween: p.minDaysBetween || 1
+                        }));
+                        renderTable();
+                        M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
+                    } else {
+                        M.toast({ html: response.error || 'Bilinmeyen bir hata oluştu!' });
+                    }
+                    isUploading = false;
+                })
+                .withFailureHandler(function(error) {
+                    M.toast({ html: 'Sunucu hatası: ' + error.message });
+                    loadingOverlay.style.display = 'none';
+                    isUploading = false;
+                })
+                .uploadPersonnelServer(base64String);
+        };
+        reader.onerror = function() {
+            M.toast({ html: 'Dosya okunurken bir hata oluştu: ' + (reader.error ? reader.error.message : 'Bilinmeyen hata') });
+            loadingOverlay.style.display = 'none';
+            isUploading = false;
+        };
+        reader.readAsArrayBuffer(file);
+
+        setTimeout(() => {
+            event.target.value = '';
+        }, 0);
+    }
+
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
+    function downloadPersonnel() {
+        google.script.run
+            .withSuccessHandler(function(csvContent) {
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
+            })
+            .withFailureHandler(function(error) {
+                M.toast({ html: 'İndirme hatası: ' + error.message });
+            })
+            .downloadPersonnelServer(persons);
+    }
+
+    function clearCalendar() {
+    // Geçmişi kaydet
+    saveToHistory();
+    
+    // Tüm işaretlemeleri temizle
+    selectedCells = {};
+    unavailableCells = {};
+    
+    // Takvimi güncelle
+    updateCalendar();
+    updateStatistics();
+    
+    M.toast({ html: 'Takvimdeki tüm işaretlemeler temizlendi!' });
+    }
+
+    </script>
+    <footer class="fixed-footer">
+        <div class="footer-content">
+            © 2025 - M. Celil Aslan - CK
+        </div>
+    </footer>
+
+
+    <div id="emailModal" class="modal">
+    <div class="modal-content">
+        <h4>E-posta Adresi Girin</h4>
+        <input type="email" id="recipientEmail" placeholder="E-posta adresi">
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
+        <a href="#!" class="waves-effect waves-green btn-flat" onclick="sendEmailWithRecipient()">Gönder</a>
+    </div>
+</div>
+
+</body>
 </html>
