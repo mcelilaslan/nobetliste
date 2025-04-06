@@ -1799,6 +1799,48 @@ function autoAssignDuties() {
         dates.push({ index: i, isWeekend, isFriday });
     }
 
+    // Yeni Kontrol 1: Tüm personellere "istenmeyen gün" işaretlenmişse uyarı
+    for (let d = 0; d < days; d++) {
+        let unavailableCount = 0;
+        for (let p = 0; p < persons.length; p++) {
+            const cellKey = `${p}-${d}`;
+            if (unavailableCells[cellKey]) {
+                unavailableCount++;
+            }
+        }
+        if (unavailableCount === persons.length) {
+            const date = new Date(start);
+            date.setDate(date.getDate() + d);
+            const dateStr = date.toLocaleDateString('tr-TR');
+            M.toast({ html: `${dateStr} gününe müsait personel bırakmalısınız!`, displayLength: 8000 });
+            return;
+        }
+    }
+
+    // Yeni Kontrol 2: "Kaçar kişi nöbetçi" sayısı ile işaretlenen nöbetçi sayısı uyumsuzsa uyarı
+    for (let d = 0; d < days; d++) {
+        let selectedCount = 0;
+        for (let p = 0; p < persons.length; p++) {
+            const cellKey = `${p}-${d}`;
+            if (selectedCells[cellKey]) {
+                selectedCount++;
+            }
+        }
+        if (selectedCount > dutyPerDay) {
+            const date = new Date(start);
+            date.setDate(date.getDate() + d);
+            const dateStr = date.toLocaleDateString('tr-TR');
+            M.toast({ html: `${dateStr} gününe fazla nöbetçi yazdınız! Beklenen: ${dutyPerDay}, Atanan: ${selectedCount}`, displayLength: 8000 });
+            return;
+        } else if (selectedCount < dutyPerDay && selectedCount > 0) {
+            const date = new Date(start);
+            date.setDate(date.getDate() + d);
+            const dateStr = date.toLocaleDateString('tr-TR');
+            M.toast({ html: `${dateStr} gününe az nöbetçi yazdınız! Beklenen: ${dutyPerDay}, Atanan: ${selectedCount}`, displayLength: 8000 });
+            return;
+        }
+    }
+
     const totalExpectedDuties = days * dutyPerDay;
     const expectedWeekdayDuties = dates.filter(d => !d.isWeekend).length * dutyPerDay;
     const expectedWeekendDuties = dates.filter(d => d.isWeekend).length * dutyPerDay;
