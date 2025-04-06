@@ -546,6 +546,28 @@
         #emailModal {
             max-width: 400px;
         }
+
+        @media only screen and (max-width: 600px) {
+            .custom-container {
+                max-width: 100%;
+                padding: 10px;
+            }
+            .custom-container.expanded {
+                max-width: 100%;
+            }
+            .btn-floating {
+                width: 36px !important;
+                height: 36px !important;
+                line-height: 36px !important;
+            }
+            #calendarTable th, #calendarTable td {
+                font-size: 12px;
+                padding: 5px !important;
+            }
+            header h3 {
+                font-size: 1.8rem;
+            }
+        }
 </style>
 </head>
 <body>
@@ -805,96 +827,112 @@
 
     const defaultPersons = [];
 
+    function isMobileDevice() {
+        return /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth <= 600;
+    }
+        
     document.addEventListener('DOMContentLoaded', function() {
-    M.AutoInit();
-    collapsiblePersonel = M.Collapsible.init(document.querySelector('#personelCollapsible'), { accordion: false });
-    collapsibleCalendar = M.Collapsible.init(document.querySelector('#calendarCollapsible'), {
-        accordion: false,
-        onOpenStart: function() {
-            document.getElementById('calendarContainer').classList.add('expanded');
-        },
-        onCloseEnd: function() {
-            document.getElementById('calendarContainer').classList.remove('expanded');
-        }
-    });
-    statsCollapsible = M.Collapsible.init(document.querySelector('#statsCollapsible'), { accordion: false });
-    guideCollapsible = M.Collapsible.init(document.querySelector('#guideCollapsible'), { accordion: false });
-
-    const datepickers = document.querySelectorAll('.datepicker');
-    M.Datepicker.init(datepickers, {
-        format: 'dd-mm-yyyy',
-        autoClose: true,
-        firstDay: 1,
-        i18n: {
-            months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-            monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
-            weekdays: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
-            weekdaysShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
-            weekdaysAbbrev: ['P', 'P', 'S', 'Ç', 'P', 'C', 'C']
-        },
-        onOpen: function() {
-            const instance = this;
-            setTimeout(() => {
-                const days = instance.el.parentElement.querySelectorAll('.datepicker-table th');
-                days.forEach((day, index) => {
-                    day.textContent = this.options.i18n.weekdaysShort[index];
-                });
-            }, 0);
-        }
-    });
-
-    const startDatePicker = document.getElementById('startDate');
-    const endDatePicker = document.getElementById('endDate');
-    startDatePicker.addEventListener('change', function() {
-        const startDate = M.Datepicker.getInstance(startDatePicker).date;
-        if (startDate) {
-            const lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
-            const endDateInstance = M.Datepicker.getInstance(endDatePicker);
-            endDateInstance.setDate(lastDay);
-            endDatePicker.value = lastDay.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, '-');
-            M.updateTextFields();
-        }
-        if (startDatePicker.value && endDatePicker.value && collapsiblePersonel) {
-            collapsiblePersonel.open(0);
-        }
-    });
-
-    endDatePicker.addEventListener('change', function() {
-        if (startDatePicker.value && endDatePicker.value && collapsiblePersonel) {
-            collapsiblePersonel.open(0);
-        }
-    });
-
-    const personNameInput = document.getElementById('personName');
-    if (personNameInput) {
-        personNameInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                addPerson();
+        M.AutoInit();
+        collapsiblePersonel = M.Collapsible.init(document.querySelector('#personelCollapsible'), { accordion: false });
+        collapsibleCalendar = M.Collapsible.init(document.querySelector('#calendarCollapsible'), {
+            accordion: false,
+            onOpenStart: function() {
+                document.getElementById('calendarContainer').classList.add('expanded');
+            },
+            onCloseEnd: function() {
+                document.getElementById('calendarContainer').classList.remove('expanded');
             }
         });
-    }
-
-    persons = [...defaultPersons];
-    renderTable();
-
-    var dropdowns = document.querySelectorAll('.dropdown-trigger');
-    M.Dropdown.init(dropdowns, {
-        coverTrigger: false,
-        constrainWidth: false
-    });
+        statsCollapsible = M.Collapsible.init(document.querySelector('#statsCollapsible'), { accordion: false });
+        guideCollapsible = M.Collapsible.init(document.querySelector('#guideCollapsible'), { accordion: false });
     
-     // Modal başlatma kodu buraya ekleniyor
-    const emailModal = M.Modal.init(document.getElementById('emailModal'));
+        // Mobil cihaz kontrolü ve optimizasyon
+            if (isMobileDevice()) {
+                document.querySelectorAll('.btn-floating').forEach(btn => {
+                    btn.style.width = '36px';
+                    btn.style.height = '36px';
+                    btn.style.lineHeight = '36px';
+                });
+                M.toast({ html: 'Mobil cihaz algılandı, arayüz optimize edildi.' });
+            }
+    
+        const datepickers = document.querySelectorAll('.datepicker');
+        M.Datepicker.init(datepickers, {
+            format: 'dd-mm-yyyy',
+            autoClose: true,
+            firstDay: 1,
+            i18n: {
+                months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+                weekdays: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+                weekdaysShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+                weekdaysAbbrev: ['P', 'P', 'S', 'Ç', 'P', 'C', 'C']
+            },
+            onOpen: function() {
+                const instance = this;
+                setTimeout(() => {
+                    const days = instance.el.parentElement.querySelectorAll('.datepicker-table th');
+                    days.forEach((day, index) => {
+                        day.textContent = this.options.i18n.weekdaysShort[index];
+                    });
+                }, 0);
+            }
+        });
+    
+        const startDatePicker = document.getElementById('startDate');
+        const endDatePicker = document.getElementById('endDate');
+        startDatePicker.addEventListener('change', function() {
+            const startDate = M.Datepicker.getInstance(startDatePicker).date;
+            if (startDate) {
+                const lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+                const endDateInstance = M.Datepicker.getInstance(endDatePicker);
+                endDateInstance.setDate(lastDay);
+                endDatePicker.value = lastDay.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, '-');
+                M.updateTextFields();
+            }
+            if (startDatePicker.value && endDatePicker.value && collapsiblePersonel) {
+                collapsiblePersonel.open(0);
+            }
+        });
+    
+        endDatePicker.addEventListener('change', function() {
+            if (startDatePicker.value && endDatePicker.value && collapsiblePersonel) {
+                collapsiblePersonel.open(0);
+            }
+        });
+    
+        const personNameInput = document.getElementById('personName');
+        if (personNameInput) {
+            personNameInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addPerson();
+                }
+            });
+        }
+    
+        persons = [...defaultPersons];
+        renderTable();
+    
+        var dropdowns = document.querySelectorAll('.dropdown-trigger');
+        M.Dropdown.init(dropdowns, {
+            coverTrigger: false,
+            constrainWidth: false
+        });
+        
+         // Modal başlatma kodu buraya ekleniyor
+        const emailModal = M.Modal.init(document.getElementById('emailModal'));
+    
+        const csvUploadInput = document.getElementById('csvUpload');
+        if (csvUploadInput) {
+            csvUploadInput.removeEventListener('change', uploadPersonnel);
+            csvUploadInput.addEventListener('change', uploadPersonnel);
+        } else {
+            console.error('csvUpload input elementi bulunamadı!');
+        }
+    });
 
-    const csvUploadInput = document.getElementById('csvUpload');
-    if (csvUploadInput) {
-        csvUploadInput.removeEventListener('change', uploadPersonnel);
-        csvUploadInput.addEventListener('change', uploadPersonnel);
-    } else {
-        console.error('csvUpload input elementi bulunamadı!');
-    }
-});
+
 
     function saveToHistory() {
         const currentState = {
@@ -1232,16 +1270,22 @@ function generateCalendar() {
     document.getElementById('calendarTable').innerHTML = html;
 
     const cells = document.querySelectorAll('.calendar-cell');
-    cells.forEach(cell => {
-        cell.addEventListener('mousedown', startDragging);
-        cell.addEventListener('mousemove', dragOver);
-        cell.addEventListener('mouseup', stopDragging);
-        cell.addEventListener('click', () => {
-            const pIndex = parseInt(cell.dataset.pindex);
-            const dIndex = parseInt(cell.dataset.dindex);
-            handleCellClick(pIndex, dIndex);
-        });
+cells.forEach(cell => {
+    // Fare olayları
+    cell.addEventListener('mousedown', startDragging);
+    cell.addEventListener('mousemove', dragOver);
+    cell.addEventListener('mouseup', stopDragging);
+    // Dokunmatik olaylar
+    cell.addEventListener('touchstart', startDragging, { passive: false });
+    cell.addEventListener('touchmove', dragOver, { passive: false });
+    cell.addEventListener('touchend', stopDragging);
+    // Tıklama olayı (hem fare hem dokunmatik için)
+    cell.addEventListener('click', () => {
+        const pIndex = parseInt(cell.dataset.pindex);
+        const dIndex = parseInt(cell.dataset.dindex);
+        handleCellClick(pIndex, dIndex);
     });
+});
 
     if (collapsibleCalendar) collapsibleCalendar.open(0);
     M.toast({html: 'Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!'});
