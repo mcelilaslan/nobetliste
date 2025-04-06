@@ -740,20 +740,15 @@
                           </div>
                             
                             <!-- Paylaş Butonu -->
-                            <div class="col s3">
-                              <a class="dropdown-trigger btn waves-effect waves-light teal tooltipped" 
-                                href="#" 
-                                data-target="shareDropdown" 
+                           <div class="col s3">
+                            <button class="waves-effect waves-light btn teal tooltipped" 
+                                onclick="downloadSchedule()" 
                                 style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
                                 data-position="bottom" 
-                                data-tooltip="Paylaşım Seçenekleri">
-                                  <i class="material-icons left">share</i>Paylaş
-                              </a>
-                              <ul id="shareDropdown" class="dropdown-content">
-                                  <li><a onclick="downloadSchedule()"><i class="material-icons">file_download</i>İndir</a></li>
-                                  <li><a onclick="emailSchedule()"><i class="material-icons">email</i>E-posta Gönder</a></li>
-                              </ul>
-                          </div>
+                                data-tooltip="Nöbet listesini Excel formatında indirir">
+                                <i class="material-icons left">file_download</i>İndir
+                            </button>
+                        </div>
                         </div>
                     </div>
                 </li>
@@ -2050,17 +2045,6 @@ function autoAssignDuties() {
         </div>
     </footer>
 
-
-    <div id="emailModal" class="modal">
-    <div class="modal-content">
-        <h4>E-posta Adresi Girin</h4>
-        <input type="email" id="recipientEmail" placeholder="E-posta adresi">
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
-        <a href="#!" class="waves-effect waves-green btn-flat" onclick="sendEmailWithRecipient()">Gönder</a>
-    </div>
-</div>
 
 </body>
 </html>
