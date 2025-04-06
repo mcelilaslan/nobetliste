@@ -1799,7 +1799,7 @@ function autoAssignDuties() {
         dates.push({ index: i, isWeekend, isFriday });
     }
 
-    // Yeni Kontrol 1: Tüm personellere "istenmeyen gün" işaretlenmişse uyarı
+    // Kontrol 1: Tüm personellere "istenmeyen gün" işaretlenmişse uyarı
     for (let d = 0; d < days; d++) {
         let unavailableCount = 0;
         for (let p = 0; p < persons.length; p++) {
@@ -1817,7 +1817,7 @@ function autoAssignDuties() {
         }
     }
 
-    // Yeni Kontrol 2: "Kaçar kişi nöbetçi" sayısı ile işaretlenen nöbetçi sayısı uyumsuzsa uyarı
+    // Kontrol 2: "Kaçar kişi nöbetçi" sayısı ile işaretlenen nöbetçi sayısı uyumsuzsa uyarı (sadece fazla nöbetçi için)
     for (let d = 0; d < days; d++) {
         let selectedCount = 0;
         for (let p = 0; p < persons.length; p++) {
@@ -1832,13 +1832,8 @@ function autoAssignDuties() {
             const dateStr = date.toLocaleDateString('tr-TR');
             M.toast({ html: `${dateStr} gününe fazla nöbetçi yazdınız! Beklenen: ${dutyPerDay}, Atanan: ${selectedCount}`, displayLength: 8000 });
             return;
-        } else if (selectedCount < dutyPerDay && selectedCount > 0) {
-            const date = new Date(start);
-            date.setDate(date.getDate() + d);
-            const dateStr = date.toLocaleDateString('tr-TR');
-            M.toast({ html: `${dateStr} gününe az nöbetçi yazdınız! Beklenen: ${dutyPerDay}, Atanan: ${selectedCount}`, displayLength: 8000 });
-            return;
         }
+        // Az nöbetçi yazılmışsa hata vermiyor, bu kısım kaldırıldı
     }
 
     const totalExpectedDuties = days * dutyPerDay;
