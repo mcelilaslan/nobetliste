@@ -546,7 +546,6 @@
         #emailModal {
             max-width: 400px;
         }
-
     </style>
 </head>
 <body>
@@ -1677,31 +1676,17 @@ function sendEmailWithRecipient() {
         return;
     }
     const { base64Data, fileName } = window.emailData;
-
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
-
-    fetch(APPS_SCRIPT_URL + '?action=sendEmail', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ recipient, base64Data, fileName })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(response => {
-        M.toast({ html: response });
-        const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
-        emailModal.close();
-        document.getElementById('recipientEmail').value = '';
-    })
-    .catch(error => {
-        M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + error.message });
-    });
+    google.script.run
+        .withSuccessHandler(function(response) {
+            M.toast({ html: response });
+            const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
+            emailModal.close();
+            document.getElementById('recipientEmail').value = '';
+        })
+        .withFailureHandler(function(error) {
+            M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + error.message });
+        })
+        .sendEmail(recipient, base64Data, fileName);
 }
 
 function autoAssignDuties() {
@@ -1835,7 +1820,7 @@ function autoAssignDuties() {
 
     saveToHistory();
 
-    const CLOUD_FUNCTIONS_URL = 'https://optimize-nobet-174463354439.us-central1.run.app'; // Cloud Functions URL'niz
+    const CLOUD_FUNCTIONS_URL = 'https://deneme-174463354439.europe-west4.run.app'; // Cloud Functions URL'niz
 
     fetch(CLOUD_FUNCTIONS_URL, {
         method: 'POST',
@@ -1893,130 +1878,104 @@ function autoAssignDuties() {
     }
 
     let isUploading = false;
-function uploadPersonnel(event) {
-    if (isUploading) {
-        return;
-    }
-
-    const file = event.target.files[0];
-    if (!file) {
-        M.toast({ html: 'Lütfen bir dosya seçin!' });
-        return;
-    }
-    if (!file.name.endsWith('.csv')) {
-        M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
-        return;
-    }
-
-    isUploading = true;
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const loadingMessage = loadingOverlay.querySelector('span');
-    loadingMessage.textContent = 'Dosya yükleniyor...';
-    loadingOverlay.style.display = 'flex';
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const arrayBuffer = e.target.result;
-        if (!arrayBuffer || arrayBuffer.byteLength === 0) {
-            M.toast({ html: 'Dosya boş veya okunamadı!' });
-            loadingOverlay.style.display = 'none';
-            isUploading = false;
+    function uploadPersonnel(event) {
+        if (isUploading) {
             return;
         }
-        const data = new Uint8Array(arrayBuffer);
-        const base64String = arrayBufferToBase64(data);
 
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
-
-        fetch(APPS_SCRIPT_URL + '?action=uploadPersonnel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ base64Data: base64String })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(response => {
-            loadingOverlay.style.display = 'none';
-            if (response.success) {
-                persons = response.persons.map(p => ({
-                    name: p.name,
-                    weekdayDuties: p.weekdayDuties,
-                    weekendDuties: p.weekendDuties,
-                    minDaysBetween: p.minDaysBetween || 1
-                }));
-                renderTable();
-                M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
-            } else {
-                M.toast({ html: response.error || 'Bilinmeyen bir hata oluştu!' });
-            }
-            isUploading = false;
-        })
-        .catch(error => {
-            M.toast({ html: 'Sunucu hatası: ' + error.message });
-            loadingOverlay.style.display = 'none';
-            isUploading = false;
-        });
-    };
-    reader.onerror = function() {
-        M.toast({ html: 'Dosya okunurken bir hata oluştu: ' + (reader.error ? reader.error.message : 'Bilinmeyen hata') });
-        loadingOverlay.style.display = 'none';
-        isUploading = false;
-    };
-    reader.readAsArrayBuffer(file);
-
-    setTimeout(() => {
-        event.target.value = '';
-    }, 0);
-}
-
-function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-}
-
-   function downloadPersonnel() {
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
-
-    fetch(APPS_SCRIPT_URL + '?action=downloadPersonnel', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ persons: persons })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const file = event.target.files[0];
+        if (!file) {
+            M.toast({ html: 'Lütfen bir dosya seçin!' });
+            return;
         }
-        return response.text();
-    })
-    .then(csvContent => {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
-    })
-    .catch(error => {
-        M.toast({ html: 'İndirme hatası: ' + error.message });
-    });
-}
+        if (!file.name.endsWith('.csv')) {
+            M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
+            return;
+        }
+
+        isUploading = true;
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = loadingOverlay.querySelector('span');
+        loadingMessage.textContent = 'Nöbetler atanıyor...';
+        loadingOverlay.style.display = 'flex';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const arrayBuffer = e.target.result;
+            if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+                M.toast({ html: 'Dosya boş veya okunamadı!' });
+                loadingOverlay.style.display = 'none';
+                isUploading = false;
+                return;
+            }
+            const data = new Uint8Array(arrayBuffer);
+            const base64String = arrayBufferToBase64(data);
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    loadingOverlay.style.display = 'none';
+                    if (response.success) {
+                        persons = response.persons.map(p => ({
+                            name: p.name,
+                            weekdayDuties: p.weekdayDuties,
+                            weekendDuties: p.weekendDuties,
+                            minDaysBetween: p.minDaysBetween || 1
+                        }));
+                        renderTable();
+                        M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
+                    } else {
+                        M.toast({ html: response.error || 'Bilinmeyen bir hata oluştu!' });
+                    }
+                    isUploading = false;
+                })
+                .withFailureHandler(function(error) {
+                    M.toast({ html: 'Sunucu hatası: ' + error.message });
+                    loadingOverlay.style.display = 'none';
+                    isUploading = false;
+                })
+                .uploadPersonnelServer(base64String);
+        };
+        reader.onerror = function() {
+            M.toast({ html: 'Dosya okunurken bir hata oluştu: ' + (reader.error ? reader.error.message : 'Bilinmeyen hata') });
+            loadingOverlay.style.display = 'none';
+            isUploading = false;
+        };
+        reader.readAsArrayBuffer(file);
+
+        setTimeout(() => {
+            event.target.value = '';
+        }, 0);
+    }
+
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
+    function downloadPersonnel() {
+        google.script.run
+            .withSuccessHandler(function(csvContent) {
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
+            })
+            .withFailureHandler(function(error) {
+                M.toast({ html: 'İndirme hatası: ' + error.message });
+            })
+            .downloadPersonnelServer(persons);
+    }
 
     function clearCalendar() {
     // Geçmişi kaydet
@@ -2032,7 +1991,6 @@ function arrayBufferToBase64(buffer) {
     
     M.toast({ html: 'Takvimdeki tüm işaretlemeler temizlendi!' });
     }
-
 
     </script>
     <footer class="fixed-footer">
