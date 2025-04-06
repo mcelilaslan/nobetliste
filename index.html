@@ -1676,17 +1676,31 @@ function sendEmailWithRecipient() {
         return;
     }
     const { base64Data, fileName } = window.emailData;
-    google.script.run
-        .withSuccessHandler(function(response) {
-            M.toast({ html: response });
-            const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
-            emailModal.close();
-            document.getElementById('recipientEmail').value = '';
-        })
-        .withFailureHandler(function(error) {
-            M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + error.message });
-        })
-        .sendEmail(recipient, base64Data, fileName);
+
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
+
+    fetch(APPS_SCRIPT_URL + '?action=sendEmail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ recipient, base64Data, fileName })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(response => {
+        M.toast({ html: response });
+        const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
+        emailModal.close();
+        document.getElementById('recipientEmail').value = '';
+    })
+    .catch(error => {
+        M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + error.message });
+    });
 }
 
 function autoAssignDuties() {
@@ -1721,19 +1735,18 @@ function autoAssignDuties() {
     const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
     const start = new Date(startYear, startMonth - 1, startDay);
     const end = new Date(endYear, endMonth - 1, endDay);
-    // Mevcut kodun geri kalanı buradan devam eder...
     const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
     const holidayInput = document.getElementById('holidays').value;
     const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
 
     const dates = [];
-      for (let i = 0; i < days; i++) {
-          const date = new Date(start);
-          date.setDate(date.getDate() + i);
-          const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
-          const isFriday = date.getDay() === 5;
-          dates.push({ index: i, isWeekend, isFriday });
-      }
+    for (let i = 0; i < days; i++) {
+        const date = new Date(start);
+        date.setDate(date.getDate() + i);
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+        const isFriday = date.getDay() === 5;
+        dates.push({ index: i, isWeekend, isFriday });
+    }
 
     const totalExpectedDuties = days * dutyPerDay;
     const expectedWeekdayDuties = dates.filter(d => !d.isWeekend).length * dutyPerDay;
@@ -1822,27 +1835,41 @@ function autoAssignDuties() {
     };
 
     saveToHistory();
-    google.script.run
-        .withSuccessHandler(function(response) {
-            document.getElementById('loadingOverlay').style.display = 'none';
-            if (Array.isArray(response)) {
-                response.forEach(a => {
-                    const cellKey = `${a.pIndex}-${a.dayIndex}`;
-                    selectedCells[cellKey] = true;
-                });
-                updateCalendar();
-                updateStatistics();
-                saveToHistory();
-                M.toast({ html: 'Tüm nöbetler atandı!' });
-            } else {
-                M.toast({ html: response.error, displayLength: 8000 });
-            }
-        })
-        .withFailureHandler(function(error) {
-            document.getElementById('loadingOverlay').style.display = 'none';
-            M.toast({ html: 'Sunucuyla bağlantı kurulamadı, lütfen internet bağlantınızı kontrol edin', displayLength: 8000 });
-        })
-        .optimize(data);
+
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
+
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        if (Array.isArray(result)) {
+            result.forEach(a => {
+                const cellKey = `${a.pIndex}-${a.dayIndex}`;
+                selectedCells[cellKey] = true;
+            });
+            updateCalendar();
+            updateStatistics();
+            saveToHistory();
+            M.toast({ html: 'Tüm nöbetler atandı!' });
+        } else {
+            M.toast({ html: result.error || 'Bilinmeyen bir hata oluştu', displayLength: 8000 });
+        }
+    })
+    .catch(error => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message, displayLength: 8000 });
+    });
 }
     function updateCalendar() {
         const cells = document.querySelectorAll('.calendar-cell');
@@ -1867,104 +1894,130 @@ function autoAssignDuties() {
     }
 
     let isUploading = false;
-    function uploadPersonnel(event) {
-        if (isUploading) {
-            return;
-        }
+function uploadPersonnel(event) {
+    if (isUploading) {
+        return;
+    }
 
-        const file = event.target.files[0];
-        if (!file) {
-            M.toast({ html: 'Lütfen bir dosya seçin!' });
-            return;
-        }
-        if (!file.name.endsWith('.csv')) {
-            M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
-            return;
-        }
+    const file = event.target.files[0];
+    if (!file) {
+        M.toast({ html: 'Lütfen bir dosya seçin!' });
+        return;
+    }
+    if (!file.name.endsWith('.csv')) {
+        M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
+        return;
+    }
 
-        isUploading = true;
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const loadingMessage = loadingOverlay.querySelector('span');
-        loadingMessage.textContent = 'Nöbetler atanıyor...';
-        loadingOverlay.style.display = 'flex';
+    isUploading = true;
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingMessage = loadingOverlay.querySelector('span');
+    loadingMessage.textContent = 'Dosya yükleniyor...';
+    loadingOverlay.style.display = 'flex';
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const arrayBuffer = e.target.result;
-            if (!arrayBuffer || arrayBuffer.byteLength === 0) {
-                M.toast({ html: 'Dosya boş veya okunamadı!' });
-                loadingOverlay.style.display = 'none';
-                isUploading = false;
-                return;
-            }
-            const data = new Uint8Array(arrayBuffer);
-            const base64String = arrayBufferToBase64(data);
-
-            google.script.run
-                .withSuccessHandler(function(response) {
-                    loadingOverlay.style.display = 'none';
-                    if (response.success) {
-                        persons = response.persons.map(p => ({
-                            name: p.name,
-                            weekdayDuties: p.weekdayDuties,
-                            weekendDuties: p.weekendDuties,
-                            minDaysBetween: p.minDaysBetween || 1
-                        }));
-                        renderTable();
-                        M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
-                    } else {
-                        M.toast({ html: response.error || 'Bilinmeyen bir hata oluştu!' });
-                    }
-                    isUploading = false;
-                })
-                .withFailureHandler(function(error) {
-                    M.toast({ html: 'Sunucu hatası: ' + error.message });
-                    loadingOverlay.style.display = 'none';
-                    isUploading = false;
-                })
-                .uploadPersonnelServer(base64String);
-        };
-        reader.onerror = function() {
-            M.toast({ html: 'Dosya okunurken bir hata oluştu: ' + (reader.error ? reader.error.message : 'Bilinmeyen hata') });
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const arrayBuffer = e.target.result;
+        if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+            M.toast({ html: 'Dosya boş veya okunamadı!' });
             loadingOverlay.style.display = 'none';
             isUploading = false;
-        };
-        reader.readAsArrayBuffer(file);
-
-        setTimeout(() => {
-            event.target.value = '';
-        }, 0);
-    }
-
-    function arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
+            return;
         }
-        return window.btoa(binary);
-    }
+        const data = new Uint8Array(arrayBuffer);
+        const base64String = arrayBufferToBase64(data);
 
-    function downloadPersonnel() {
-        google.script.run
-            .withSuccessHandler(function(csvContent) {
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
-            })
-            .withFailureHandler(function(error) {
-                M.toast({ html: 'İndirme hatası: ' + error.message });
-            })
-            .downloadPersonnelServer(persons);
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
+
+        fetch(APPS_SCRIPT_URL + '?action=uploadPersonnel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ base64Data: base64String })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(response => {
+            loadingOverlay.style.display = 'none';
+            if (response.success) {
+                persons = response.persons.map(p => ({
+                    name: p.name,
+                    weekdayDuties: p.weekdayDuties,
+                    weekendDuties: p.weekendDuties,
+                    minDaysBetween: p.minDaysBetween || 1
+                }));
+                renderTable();
+                M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
+            } else {
+                M.toast({ html: response.error || 'Bilinmeyen bir hata oluştu!' });
+            }
+            isUploading = false;
+        })
+        .catch(error => {
+            M.toast({ html: 'Sunucu hatası: ' + error.message });
+            loadingOverlay.style.display = 'none';
+            isUploading = false;
+        });
+    };
+    reader.onerror = function() {
+        M.toast({ html: 'Dosya okunurken bir hata oluştu: ' + (reader.error ? reader.error.message : 'Bilinmeyen hata') });
+        loadingOverlay.style.display = 'none';
+        isUploading = false;
+    };
+    reader.readAsArrayBuffer(file);
+
+    setTimeout(() => {
+        event.target.value = '';
+    }, 0);
+}
+
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
     }
+    return window.btoa(binary);
+}
+
+   function downloadPersonnel() {
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx-84tIP0jZ-dIHTqC1c1XFoGzIoGNKz-dSBzNyX3hqLy7kC6l8-UtyyfWjarXj3I5OQ/exec'; // Apps Script URL'nizi buraya ekleyin
+
+    fetch(APPS_SCRIPT_URL + '?action=downloadPersonnel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ persons: persons })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(csvContent => {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `personel_listesi_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
+    })
+    .catch(error => {
+        M.toast({ html: 'İndirme hatası: ' + error.message });
+    });
+}
 
     function clearCalendar() {
     // Geçmişi kaydet
