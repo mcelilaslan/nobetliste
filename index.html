@@ -12,13 +12,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
            body {
-            background: url('background.jpg') !important;
-            background-position: right top;
-            margin-bottom: 60px;
-            background-size: cover;
+            background: url('background.jpg') #F5E9D9 !important; /* Boşluklar için arkaplan rengi */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center; /* Veya 'top', 'bottom' gibi */
             background-attachment: fixed;
-            padding-top: 5vh;
-            overflow: overlay
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         .container-wrapper {
