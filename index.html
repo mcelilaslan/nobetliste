@@ -1701,47 +1701,6 @@ function downloadSchedule() {
     });
 }
 
-function emailSchedule() {
-    performExport(function(blob, fileName) {
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            const base64Data = reader.result.split(',')[1];
-            window.emailData = { base64Data, fileName };
-            const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
-            emailModal.open();
-        };
-        reader.readAsDataURL(blob);
-    });
-}
-
-function sendEmailWithRecipient() {
-    const recipient = document.getElementById('recipientEmail').value.trim();
-    if (!recipient) {
-        M.toast({ html: 'Lütfen bir e-posta adresi girin!' });
-        return;
-    }
-    const { base64Data, fileName } = window.emailData;
-
-    fetch('https://script.google.com/macros/s/AKfycbxksDzvxkLsnOYNwBFBhp3xOl8QLExfIAFhT6XDj3R5DAOAbZloPAVvRTSnD1yosdbK/exec', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'sendEmail', recipient: recipient, base64Data: base64Data, fileName: fileName })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            M.toast({ html: data.message });
-            const emailModal = M.Modal.getInstance(document.getElementById('emailModal'));
-            emailModal.close();
-            document.getElementById('recipientEmail').value = '';
-        } else {
-            M.toast({ html: 'E-posta gönderilirken hata oluştu: ' + (data.error || 'Bilinmeyen hata') });
-        }
-    })
-    .catch(error => {
-        M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message });
-    });
-}
 
 function autoAssignDuties() {
     if (!document.getElementById('calendarTable').innerHTML) {
