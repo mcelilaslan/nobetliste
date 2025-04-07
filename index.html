@@ -1876,20 +1876,14 @@ function autoAssignDuties() {
         return;
     }
 
-    // maxReasonableGap kontrolü
-    const maxReasonableGap = Math.floor(days / (dutyPerDay * persons.length)) + 1;
-    const personnelDuties = persons.map(person => ({
-        name: person.name,
-        weekdayLeft: person.weekdayDuties || 0,
-        weekendLeft: person.weekendDuties || 0,
-        minDaysBetween: person.minDaysBetween,
-        dutyDays: [],
-        originalIndex: persons.findIndex(p => p.name === person.name)
-    }));
-    if (personnelDuties.some(p => p.minDaysBetween > maxReasonableGap)) {
-        M.toast({ html: `Nöbet ertesi boşluk süresi (${maxReasonableGap}'dan büyük) çok yüksek, lütfen azaltın!`, displayLength: 8000 });
-        return;
-    }
+   const personnelDuties = persons.map(person => ({
+    name: person.name,
+    weekdayLeft: person.weekdayDuties || 0,
+    weekendLeft: person.weekendDuties || 0,
+    minDaysBetween: person.minDaysBetween,
+    dutyDays: [],
+    originalIndex: persons.findIndex(p => p.name === person.name)
+}));
 
     document.getElementById('loadingOverlay').style.display = 'flex';
 
