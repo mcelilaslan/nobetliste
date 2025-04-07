@@ -1876,7 +1876,7 @@ function autoAssignDuties() {
         return;
     }
 
-    // Yeni eklenen kontrol: maxReasonableGap
+    // maxReasonableGap kontrolü
     const maxReasonableGap = Math.floor(days / (dutyPerDay * persons.length)) + 1;
     const personnelDuties = persons.map(person => ({
         name: person.name,
@@ -1936,15 +1936,12 @@ function autoAssignDuties() {
         body: JSON.stringify(data)
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
+        return response.json().then(data => ({ status: response.status, data })); // Yanıtı ve durum kodunu birlikte al
     })
-    .then(result => {
+    .then(({ status, data }) => {
         document.getElementById('loadingOverlay').style.display = 'none';
-        if (Array.isArray(result.assignments)) { // Cloud Functions yanıt yapısına göre ayarlayın
-            result.assignments.forEach(a => {
+        if (status === 200 && Array.isArray(data.assignments)) { // Başarılı durum
+            data.assignments.forEach(a => {
                 const cellKey = `${a.pIndex}-${a.dayIndex}`;
                 selectedCells[cellKey] = true;
             });
@@ -1952,13 +1949,14 @@ function autoAssignDuties() {
             updateStatistics();
             saveToHistory();
             M.toast({ html: 'Tüm nöbetler atandı!' });
-        } else {
-            M.toast({ html: result.error || 'Bilinmeyen bir hata oluştu', displayLength: 8000 });
+        } else { // Hata durumu
+            const errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
+            M.toast({ html: errorMessage, displayLength: 8000 });
         }
     })
     .catch(error => {
         document.getElementById('loadingOverlay').style.display = 'none';
-        M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message, displayLength: 8000 });
+        M.toast({ html: 'Sunucuyla bağlantı kurulamadı veya yanıt alınamadı: ' + error.message, displayLength: 8000 });
     });
 }
     function updateCalendar() {
