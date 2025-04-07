@@ -1830,7 +1830,6 @@ function autoAssignDuties() {
             M.toast({ html: `${dateStr} gününe fazla nöbetçi yazdınız! Beklenen: ${dutyPerDay}, Atanan: ${selectedCount}`, displayLength: 8000 });
             return;
         }
-        
     }
 
     const totalExpectedDuties = days * dutyPerDay;
@@ -1877,8 +1876,8 @@ function autoAssignDuties() {
         return;
     }
 
-    document.getElementById('loadingOverlay').style.display = 'flex';
-
+    // Yeni eklenen kontrol: maxReasonableGap
+    const maxReasonableGap = Math.floor(days / (dutyPerDay * persons.length)) + 1;
     const personnelDuties = persons.map(person => ({
         name: person.name,
         weekdayLeft: person.weekdayDuties || 0,
@@ -1887,6 +1886,12 @@ function autoAssignDuties() {
         dutyDays: [],
         originalIndex: persons.findIndex(p => p.name === person.name)
     }));
+    if (personnelDuties.some(p => p.minDaysBetween > maxReasonableGap)) {
+        M.toast({ html: `Nöbet ertesi boşluk süresi (${maxReasonableGap}'dan büyük) çok yüksek, lütfen azaltın!`, displayLength: 8000 });
+        return;
+    }
+
+    document.getElementById('loadingOverlay').style.display = 'flex';
 
     const preAssignedDays = {};
     Object.keys(selectedCells).forEach(key => {
