@@ -1936,7 +1936,7 @@ function autoAssignDuties() {
         body: JSON.stringify(data)
     })
     .then(response => {
-        return response.json().then(data => ({ status: response.status, data })); // Yanıtı ve durum kodunu birlikte al
+        return response.json().then(jsonData => ({ status: response.status, data: jsonData }));
     })
     .then(({ status, data }) => {
         document.getElementById('loadingOverlay').style.display = 'none';
@@ -1950,13 +1950,19 @@ function autoAssignDuties() {
             saveToHistory();
             M.toast({ html: 'Tüm nöbetler atandı!' });
         } else { // Hata durumu
-            const errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
+            let errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
+            // INFEASIBLE durumunu kontrol et (backend mesajına bağlı)
+            if (status === 400 && errorMessage.includes('Nöbet atamaları yapılamadı')) {
+                errorMessage = 'Hata: Nöbet ertesi boşluk sayısını azaltmayı deneyin!';
+            } else if (status === 400 && errorMessage.includes('Cuma günlerini dengeleme başarısız')) {
+                errorMessage = 'Hata: Cuma günlerini dengeleme başarısız, bu seçeneği kapatıp tekrar deneyin!';
+            }
             M.toast({ html: errorMessage, displayLength: 8000 });
         }
     })
     .catch(error => {
         document.getElementById('loadingOverlay').style.display = 'none';
-        M.toast({ html: 'Sunucuyla bağlantı kurulamadı veya yanıt alınamadı: ' + error.message, displayLength: 8000 });
+        M.toast({ html: 'Sunucuyla bağlantı kurulamadı: ' + error.message, displayLength: 8000 });
     });
 }
     function updateCalendar() {
