@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-           body {
+        body {
             background: url('background.png') #F5E9D9 !important;
             background-size: cover !important;
             background-repeat: no-repeat !important;
@@ -142,20 +142,17 @@
         }
 
         #calendarTable th:first-child {
-            font-family: 'Bricolage Grotesque', sans-serif !important;
             width: 100px !important;
             min-width: 100px !important;
             text-align: left;
         }
 
         #calendarTable th {
-            font-family: 'Bricolage Grotesque', sans-serif !important;
             text-align: center;
             vertical-align: middle;
         }
 
         .calendar-cell {
-            font-family: 'Bricolage Grotesque', sans-serif !important;
             position: relative;
             min-width: 40px;
             height: 40px;
@@ -163,11 +160,10 @@
             transition: all 0.3s ease;
             text-align: center;
             vertical-align: middle;
-            border: 1px solid #ddd; /* İnce çerçeve eklendi */
+            border: 1px solid #ddd;
         }
 
         .name-column {
-            font-family: 'Bricolage Grotesque', sans-serif !important;
             min-width: 100px !important;
             width: 100px !important;
             max-width: 200px !important;
@@ -179,10 +175,10 @@
 
         .no-personnel-message {
             font-style: italic;
-            font-size: 14px; /* Daha büyük ve okunabilir */
+            font-size: 14px;
             color: #757575;
             text-align: center;
-            padding: 20px 0; /* Daha iyi hizalama */
+            padding: 20px 0;
         }
 
         .modal-content h4 {
@@ -414,8 +410,8 @@
             font-size: 14px;
             padding: 10px 16px !important;
             display: flex;
-            align-items: center; /* Simgeler ve metin hizalı */
-            gap: 8px; /* Simge ile metin arasında boşluk */
+            align-items: center;
+            gap: 8px;
         }
 
         .dropdown-content li > a > i {
@@ -553,7 +549,7 @@
             max-width: 400px;
         }
 
-       @media only screen and (max-width: 600px) {
+        @media only screen and (max-width: 800px) {
             .custom-container {
                 max-width: 100%;
                 padding: 10px;
@@ -563,77 +559,88 @@
                 max-width: 100%;
             }
 
-            /* Genel Butonlar (btn) */
-            .btn {
-                height: 21px; 
-                line-height: 21px; /* Yazıyı ortalama */
-                font-size: 9px; 
-                padding: 0 9px; 
-                min-width: auto;
+            .custom-container .row .input-field {
+                margin-left: 0 !important; /* Varsayılan marginleri sıfırla */
+                padding-left: 0 !important; /* Sol padding'i sıfırla */
+                text-align: left !important; /* Metni sola hizala */
+                display: block !important; /* Flex yerine block kullanarak kontrolü ele al */
+                width: 100% !important; /* Tam genişlik */
+            }
+        
+            .custom-container .row .input-field input {
+                text-align: left !important; /* Input içindeki metni sola hizala */
+                margin-left: 0 !important; /* Input'un sol boşluğunu sıfırla */
+                width: 100% !important; /* Input genişliğini tam yap */
+            }
+        
+            /* İkinci konteynırdaki personel adı input alanını sola daya */
+            #personelCollapsible .row .input-field.col.s8 {
+                margin-left: 0 !important; /* Sol margin'i sıfırla */
+                padding-left: 0 !important; /* Sol padding'i sıfırla */
+                text-align: left !important; /* Metni sola hizala */
+                display: block !important; /* Flex yerine block kullan */
+                width: 100% !important; /* Tam genişlik */
+            }
+        
+            #personelCollapsible .row .input-field.col.s8 input {
+                text-align: left !important; /* Input içindeki metni sola hizala */
+                margin-left: 0 !important; /* Sol boşluğu sıfırla */
+                width: 100% !important; /* Input genişliğini tam yap */
             }
 
-            .btn i {
-                font-size: 10.5px; 
-                line-height: 21px; /* Simgeyi ortalama*/
-                margin-right: 4.5px; 
-            }
-
-            /* Yuvarlak Butonlar (btn-floating) */
-            .btn-floating {
-                width: 21px !important; 
-                height: 21px !important;
-                line-height: 21px !important;
-            }
-
-            .btn-floating i {
-                font-size: 10.5px !important; 
-                line-height: 21px !important;
-            }
-
-            /* Personel Tablosundaki Butonlar */
-            #personTable tbody td .btn-floating {
-                width: 18px !important; 
-                height: 18px !important;
-                line-height: 18px !important;
-            }
-
-            #personTable tbody td .btn-floating i {
-                font-size: 9px !important; 
-                line-height: 18px !important;
-            }
-
-            /* Rehber Bölümündeki Tiny Butonlar */
-            #guideCollapsible ul li .btn-floating.tiny {
-                width: 14px !important; 
-                height: 14px !important;
-                line-height: 14px !important;
-            }
-
-            #guideCollapsible ul li .btn-floating.tiny i {
-                font-size: 7.5px !important; 
-                line-height: 14px !important;
-            }
-
-            /* Takvim Tablosu */
-            #calendarTable th, #calendarTable td {
-                font-size: 12px;
-                padding: 5px !important;
-            }
-
-            header h3 {
-                font-size: 1.8rem;
-            }
-
-            /* Kontrol Butonları Arası Boşluk ve Hizalama */
-            .control-buttons .btn {
-                margin-right: 10px !important;
-            }
-
+            /* Mobil cihazlarda 3 satırlı düzenleme */
             .row {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .row .col {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .control-buttons .col.s12 {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .control-buttons .btn {
+                width: 100%;
+                margin-bottom: 10px;
+                margin-right: 0 !important;
+            }
+
+            #calendarContainer .row {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #calendarContainer .col {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #calendarContainer .col.s3, 
+            #calendarContainer .col.s2 {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            #calendarContainer .switch-container {
+                width: 100%;
+                justify-content: center;
+            }
+
+            #calendarContainer .btn {
+                width: 100%;
                 margin-bottom: 10px;
             }
         }
-</style>
+    </style>
 </head>
 <body>
     <div class="container-wrapper">
@@ -747,22 +754,22 @@
                         <div style="overflow-x: hidden;">
                             <table id="calendarTable" class="striped"></table>
                         </div>
-                        <div class="row" style="margin-top: 20px; display: flex; justify-content: space-evenly; align-items: center; flex-wrap: wrap;">
+                        <div class="row" style="margin-top: 20px; display: flex; justify-content: space-evenly; align-items: center; flex-wrap: nowrap;">
                             <!-- İstenmeyen Gün Modu Butonu -->
-                              <div class="col s3" style="display: flex; align-items: center; justify-content: center;">
-                                  <div class="switch-container tooltipped" 
-                                      data-position="bottom" 
-                                      data-tooltip="İstenen gün/istenmeyen gün modları arasında geçiş yaparak hücrelerde işaretleme yapabilirsiniz">
-                                      <div class="switch">
-                                          <label style="display: flex; align-items: center;">
-                                              <span style="color: #000; margin-right: 10px; font-size: 1rem;">İstenmeyen Gün</span>
-                                              <input type="checkbox" id="modeSwitch" onchange="toggleAvailabilityMode()">
-                                              <span class="lever"></span>
-                                              <span style="color: #000; margin-left: 10px; font-size: 1rem;">İstenen Gün</span>
-                                          </label>
-                                      </div>
-                                  </div>
-                              </div>
+                            <div class="col s3" style="display: flex; align-items: center; justify-content: center;">
+                                <div class="switch-container tooltipped" 
+                                    data-position="bottom" 
+                                    data-tooltip="İstenen gün/istenmeyen gün modları arasında geçiş yaparak hücrelerde işaretleme yapabilirsiniz">
+                                    <div class="switch">
+                                        <label style="display: flex; align-items: center;">
+                                            <span style="color: #000; margin-right: 10px; font-size: 1rem;">İstenmeyen Gün</span>
+                                            <input type="checkbox" id="modeSwitch" onchange="toggleAvailabilityMode()">
+                                            <span class="lever"></span>
+                                            <span style="color: #000; margin-left: 10px; font-size: 1rem;">İstenen Gün</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <!-- Cumaları Dengele Checkbox -->
                             <div class="col s2" style="display: flex; align-items: center; justify-content: center;">
@@ -776,40 +783,40 @@
                             
                             <!-- Otomatik Ata -->
                             <div class="col s2">
-                              <button class="waves-effect waves-light btn purple tooltipped" 
-                                      onclick="autoAssignDuties()" 
-                                      style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
-                                      data-position="bottom" 
-                                      data-tooltip="&lt;i class='material-icons tooltip-icon'&gt;undo&lt;/i&gt; ve &lt;i class='material-icons tooltip-icon'&gt;auto_fix_high&lt;/i&gt; tuşu ile değişik atamalar deneyebilirsiniz">
-                                  <i class="material-icons left">auto_fix_high</i>Otomatik Ata
-                              </button>
-                          </div>
+                                <button class="waves-effect waves-light btn purple tooltipped" 
+                                    onclick="autoAssignDuties()" 
+                                    style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
+                                    data-position="bottom" 
+                                    data-tooltip="<i class='material-icons tooltip-icon'>undo</i> ve <i class='material-icons tooltip-icon'>auto_fix_high</i> tuşu ile değişik atamalar deneyebilirsiniz">
+                                    <i class="material-icons left">auto_fix_high</i>Otomatik Ata
+                                </button>
+                            </div>
                             
                             <!-- Geri-İleri -->
                             <div class="col s2">
-                              <div style="display: inline-flex; align-items: center; white-space: nowrap;">
-                                  <button id="undoBtn" class="waves-effect waves-light btn grey" onclick="undo()" disabled style="margin-left: 0;">
-                                      <i class="material-icons">undo</i>
-                                  </button>
-                                  <button id="redoBtn" class="waves-effect waves-light btn grey" onclick="redo()" disabled>
-                                      <i class="material-icons">redo</i>
-                                  </button>
-                                  <button id="clearBtn" class="waves-effect waves-light btn grey" onclick="clearCalendar()">
-                                      Temizle
-                                  </button>
-                              </div>
-                          </div>
+                                <div style="display: inline-flex; align-items: center; white-space: nowrap;">
+                                    <button id="undoBtn" class="waves-effect waves-light btn grey" onclick="undo()" disabled style="margin-left: 0;">
+                                        <i class="material-icons">undo</i>
+                                    </button>
+                                    <button id="redoBtn" class="waves-effect waves-light btn grey" onclick="redo()" disabled>
+                                        <i class="material-icons">redo</i>
+                                    </button>
+                                    <button id="clearBtn" class="waves-effect waves-light btn grey" onclick="clearCalendar()">
+                                        Temizle
+                                    </button>
+                                </div>
+                            </div>
                             
-                            <!-- İndir-->
-                           <div class="col s3">
-                            <button class="waves-effect waves-light btn teal tooltipped" 
-                                onclick="downloadSchedule()" 
-                                style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
-                                data-position="bottom" 
-                                data-tooltip="Nöbet listesini Excel formatında indirir">
-                                <i class="material-icons left">file_download</i>İndir
-                            </button>
-                        </div>
+                            <!-- İndir -->
+                            <div class="col s3">
+                                <button class="waves-effect waves-light btn teal tooltipped" 
+                                    onclick="downloadSchedule()" 
+                                    style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
+                                    data-position="bottom" 
+                                    data-tooltip="Nöbet listesini Excel formatında indirir">
+                                    <i class="material-icons left">file_download</i>İndir
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </li>
@@ -869,7 +876,6 @@
         </div>
         <span style="color: white; margin-left: 10px; font-size: 1.2rem;">Nöbetler Atanıyor...</span>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
     let persons = [];
