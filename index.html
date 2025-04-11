@@ -788,25 +788,25 @@
 </head>
 <body>
     <div class="container-wrapper">
-        <!-- "Nasıl Kullanılır" Konteynırı -->
+        <!-- "Kılavuz" Konteynırı -->
         <div class="custom-container">
             <ul class="collapsible" id="guideCollapsible">
                 <li>
-                    <div class="collapsible-header"><i class="material-icons">help_outline</i>Nasıl Kullanılır</div>
+                    <div class="collapsible-header"><i class="material-icons">help_outline</i>Kullanma Kılavuzu</div>
                     <div class="collapsible-body">
                         <ul>
                             <li>Masaüstü tarayıcıda optimal çalışmaktadır.</li>
                             <li>Nöbet yazılacak tarih aralığını ve 1 nöbette bulunacak kişi sayısını girerek süreci başlatınız.</li>
                             <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
-                            <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller var aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
+                            <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
                             <li><a class="btn-floating tiny waves-effect waves-light grey"><i class="material-icons">more_vert</i></a>tuşu ile oluşturduğunuz personel listesini indirebilir, sonraki kullanımlarda yükleyerek süreci hızlandırabilirsiniz.</li>
                             <li>Nöbet sayılarını "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet dağıt ve Takvim oluştur" tuşu ile otomatik dağıtabilir veya kendiniz dağıtabilirsiniz.</li>
-                            <li>Kişilere ayrı ayrı Hafta içi/sonu nöbet sayıları belirleyebilirsiniz.</li>
-                            <li>Nöbet ertesi en az boşluk toplu veya kişiye özel olabilir.</li>
+                            <li>Kişilere ayrı ayrı hafta içi / hafta sonu nöbet sayıları belirleyebilirsiniz.</li>
+                            <li>İki nöbet arası en az boşluk toplu veya kişiye özel olabilir.</li>
                             <li>Personel planı bittiğinde "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet dağıt ve Takvim oluştur" tuşuna basınız.</li>
                             <li>Cuma günlerini de dengelemek isterseniz ilgili kutucuğu tikleyiniz.</li>
                             <li>Varsa <font color="red">istenmeyen ✖</font>/<font color="green">istenen ✓</font> günleri takvim üzerinde işaretleyerek "<a class="btn-floating tiny waves-effect waves-light purple"><i class="material-icons">auto_fix_high</i></a>Otomatik Ata" tuşuna basınız.</li>
-                            <li>Geri al tuşu ile takvimdeki son değişikliği geri alabilirsiniz. Temizle butonu takvimi sıfırlar</li>
+                            <li>Geri al tuşu ile takvimdeki son değişikliği geri alabilirsiniz. Temizle butonu takvimi sıfırlar.</li>
                             <li>Listeyi excel formatında indirmek için "<a class="btn-floating tiny waves-effect waves-light green"><i class="material-icons">file_download</i></a>İndir" tuşuna basınız.</li>
                         </ul>
                     </div>
@@ -834,7 +834,7 @@
                     <input id="holidays" type="text" class="validate">
                     <label for="holidays">Resmi Tatil Günleri</label>
                 </div>
-                <div class="standalone-select-wrapper col s6" data-tooltip="Bir nöbetteki kişi sayısı" style="padding-top: 20px;">
+                <div class="standalone-select-wrapper col s6" data-tooltip="Bir nöbette bulunan kişi sayısı" style="padding-top: 20px;">
                     <div class="select-container">
                         <select id="dutyPerDay">
                             <option value="" disabled selected>Seçiniz</option>
@@ -900,7 +900,7 @@
                                         <i class="material-icons left">event</i>Nöbet Dağıt ve Takvim Oluştur
                                     </button>
                                     <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
-                                        <i class="material-icons left">refresh</i>Sıfırla
+                                        <i class="material-icons left">refresh</i>Dağıtımı Sıfırla
                                     </button>
                                 </div>
                             </div>
@@ -939,7 +939,8 @@
                             
                             <!-- Cumaları Dengele Checkbox -->
                             <div class="col s2" style="display: flex; align-items: center; justify-content: center;">
-                                <div class="switch-container">
+                                <div class="switch-container"
+                                    data-position="bottom" data-tooltip="Cuma günlerini personele dengeli paylaştırmak için tikleyin.">
                                     <label>
                                         <input type="checkbox" id="balanceFridays" />
                                         <span style="color: #000;">Cumaları Dengele</span>
@@ -2378,7 +2379,7 @@
     
     <footer class="fixed-footer">
         <div class="footer-content">
-            © 2025 - M. Celil Aslan - CK
+            © 2025 - Dr. M. Celil Aslan - CK
         </div>
     </footer>
 
