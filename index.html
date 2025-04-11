@@ -276,22 +276,23 @@
             height: 30px !important;
             min-height: 30px !important;
             max-height: 30px !important;
-            overflow: hidden !important; 
+            overflow: visible !important; 
         }
     
         #personTable tbody td {
-            padding: 0 3px !important;
+            padding: 0 6px !important;
             height: 30px !important;
             vertical-align: middle !important;
             line-height: 30px !important;
             box-sizing: border-box !important;
-            overflow: hidden !important; 
+            overflow: visible !important; 
         }
     
         #personTable tbody td input[type="number"] {
             height: 20px !important;
             padding: 0 5px !important;
             line-height: 20px !important;
+            margin: 0 2px !important;
             font-size: 12px !important;
             margin: 0 !important;
             box-sizing: border-box !important;
@@ -676,7 +677,24 @@
             margin: 0 !important;
             padding-left: 15px !important;
         }
-        @keyframes bounce {
+
+        .glow {
+            animation: glow 4s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 5px 5px #26a69a;
+            }
+            50% {
+                box-shadow: 0 0 20px 10px #26a69a; 
+            }
+            100% {
+                box-shadow: 0 0 5px 5px #26a69a; 
+            }
+        }
+        
+       @keyframes bounce {
         0%, 20%, 50%, 80%, 100% {
             transform: translateY(0);
         }
@@ -834,9 +852,8 @@
                         <ul>
                             <li>Masaüstü tarayıcıda optimal çalışmaktadır.</li>
                             <li>Nöbet yazılacak tarih aralığını ve 1 nöbette bulunacak kişi sayısını girerek süreci başlatınız.</li>
-                            <li>Dini bayram, 23 Nisan gibi tarihleri seçerek haftasonu olarak sayılmasını sağyalabilirsiniz.</li>
                             <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
-                            <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz.</li>
+                            <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
                             <li><a class="btn-floating tiny waves-effect waves-light grey"><i class="material-icons">more_vert</i></a>tuşu ile oluşturduğunuz personel listesini indirebilir, sonraki kullanımlarda yükleyerek süreci hızlandırabilirsiniz.</li>
                             <li>Nöbet sayılarını "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet dağıt ve Takvim oluştur" tuşu ile otomatik dağıtabilir veya kendiniz dağıtabilirsiniz.</li>
                             <li>Kişilere ayrı ayrı hafta içi / hafta sonu nöbet sayıları belirleyebilirsiniz.</li>
@@ -1603,9 +1620,10 @@
         
             alertDiv.innerHTML = `
                 <div class="card-content white-text center-align" style="padding: 12px;">
-                    <span style="font-weight: bold; font-size: 1rem; display: block; margin-bottom: 6px;">
+                    <span style="font-weight: bold; font-size: 1rem; display: block; margin-bottom: 8px;">
                         Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!<br>
-                        Seçimlerinizi yaparak <span style="color: #e040fb;">‘Otomatik Ata’</span> tuşuna basınız.
+                        Dağıtımı kendiniz de değiştirebilirsiniz!<br>
+                        Takvimde seçimlerinizi yaparak <span style="color: #e040fb;">‘Otomatik Ata’</span> tuşuna basınız.
                     </span>
                 </div>
                 <div style="display: flex; justify-content: center; padding-bottom: 8px;">
@@ -1634,17 +1652,30 @@
                     alertDiv.style.transition = 'opacity 0.3s ease';
                     setTimeout(() => {
                         if (alertDiv.parentNode) alertDiv.remove();
-                    }, 500);
+                    }, 800);
                 }
-            }, 5000);
+            }, 6000);
         
             // Mobil cihazlarda otomatik takvim kaydırma (değişmedi)
             if (isMobileDevice()) {
                 setTimeout(() => {
                     const calendarContainer = document.getElementById('calendarContainer');
                     calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 500);
+                }, 800);
             }
+        }
+
+        function addGlowEffect() {
+            // Personel tablosundaki tüm number tipi input alanlarını seç
+            const inputs = document.querySelectorAll('#personTable input[type="number"]');
+            inputs.forEach(input => {
+                // Glow efektini ekle
+                input.classList.add('glow');
+                // 2 saniye sonra efekti kaldır
+                setTimeout(() => {
+                    input.classList.remove('glow');
+                }, 4500);
+            });
         }
 
 
@@ -1819,7 +1850,8 @@
             });
         
             if (collapsibleCalendar) collapsibleCalendar.open(0);
-            showCustomAlert(); // M.toast yerine yeni uyarı
+            showCustomAlert();
+            addGlowEffect();
             updateStatistics();
         }
 
