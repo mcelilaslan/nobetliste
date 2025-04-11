@@ -1591,25 +1591,26 @@
        
                 
                
-        function showCustomAlert() {
+       function showCustomAlert() {
             // Mevcut uyarıyı kaldır
             const existingAlert = document.querySelector('#calendarAlert');
             if (existingAlert) existingAlert.remove();
         
-            // Uyarı HTML'sini oluştur
             const alertDiv = document.createElement('div');
             alertDiv.id = 'calendarAlert';
-            alertDiv.className = 'card teal lighten-2';
+            alertDiv.className = 'card';
             alertDiv.style.position = 'fixed';
             alertDiv.style.width = '90%';
             alertDiv.style.maxWidth = '400px';
             alertDiv.style.zIndex = '10001';
             alertDiv.style.margin = '0';
-            alertDiv.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            alertDiv.style.backgroundColor = '#f5e9d9'; 
+            alertDiv.style.border = '2px solid #26a69a'; 
+            alertDiv.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)'; 
+            alertDiv.style.borderRadius = '8px'; // 
         
-            // Masaüstü ve mobil için farklı konumlandırma
             if (isMobileDevice()) {
-                alertDiv.style.top = '10px';
+                alertDiv.style.top = '20px';
                 alertDiv.style.left = '50%';
                 alertDiv.style.transform = 'translateX(-50%)';
             } else {
@@ -1619,7 +1620,7 @@
             }
         
             alertDiv.innerHTML = `
-                <div class="card-content white-text center-align" style="padding: 12px;">
+                <div class="card-content center-align" style="padding: 12px; color: #e0e0e0;">
                     <span style="font-weight: bold; font-size: 1rem; display: block; margin-bottom: 8px;">
                         Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!<br>
                         Dağıtımı kendiniz de değiştirebilirsiniz!<br>
@@ -1633,19 +1634,14 @@
                 </div>
             `;
         
-            // Uyarıyı body'ye ekle
             document.body.appendChild(alertDiv);
         
-            // Bounce simgesine tıklama olayı ekle (sadece masaüstü)
             const bounceButton = alertDiv.querySelector('.btn-floating.bounce');
-            if (!isMobileDevice()) {
-                bounceButton.addEventListener('click', () => {
-                    const calendarContainer = document.getElementById('calendarContainer');
-                    calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-            }
+            bounceButton.addEventListener('click', () => {
+                const calendarContainer = document.getElementById('calendarContainer');
+                calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
         
-            // 3 saniye sonra kaldır
             setTimeout(() => {
                 if (alertDiv.parentNode) {
                     alertDiv.style.opacity = '0';
@@ -1655,26 +1651,18 @@
                     }, 800);
                 }
             }, 6000);
-        
-            // Mobil cihazlarda otomatik takvim kaydırma (değişmedi)
-            if (isMobileDevice()) {
-                setTimeout(() => {
-                    const calendarContainer = document.getElementById('calendarContainer');
-                    calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 3000);
-            }
         }
 
         function addGlowEffect() {
-            // Personel tablosundaki tüm number tipi input alanlarını seç
+            
             const inputs = document.querySelectorAll('#personTable input[type="number"]');
             inputs.forEach(input => {
-                // Glow efektini ekle
+                
                 input.classList.add('glow');
-                // 2 saniye sonra efekti kaldır
+            
                 setTimeout(() => {
                     input.classList.remove('glow');
-                }, 4000);
+                }, 3000);
             });
         }
 
