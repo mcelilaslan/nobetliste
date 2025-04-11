@@ -168,7 +168,8 @@
             border: 1px solid #ddd;
             touch-action: manipulation; /* iOS’ta gecikmeyi kaldırır */
             -webkit-user-select: none; /* Seçimi engeller */
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1); /* Tıklama vurgulamasını kaldırır */
+            user-select: none; /* Seçimi engeller */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .name-column {
