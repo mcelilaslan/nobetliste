@@ -676,7 +676,24 @@
             margin: 0 !important;
             padding-left: 15px !important;
         }
-    
+        @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-10px);
+        }
+        60% {
+            transform: translateY(-5px);
+        }
+        }
+        
+        .bounce {
+            animation: bounce 1s infinite;
+        }
+
+
+
         /* Mobil Stiller */
         @media only screen and (max-width: 900px) {
             .custom-container {
@@ -769,6 +786,22 @@
                 white-space: nowrap;
                 margin-bottom: 10px;
             }
+
+            #calendarAlert .card-content span {
+                font-size: 0.9rem !important;
+                line-height: 1.3;
+            }
+            
+            #calendarAlert .btn-floating {
+                width: 36px !important;
+                height: 36px !important;
+                line-height: 36px !important;
+            }
+            
+            #calendarAlert .material-icons {
+                font-size: 24px !important;
+                line-height: 36px !important;
+            }
             
             .grouping-container {
                 margin-left: 0;
@@ -834,9 +867,9 @@
                 </div>
             </div>
            <div class="row">
-                <div class="input-field col s6 tooltipped" data-position="top" data-tooltip="Ay içinde resmi tatil varsa günleri buraya yazarak(virgülle ayırarak gün numaraları) haftasonu olarak sayabilirsiniz">
-                    <input id="holidays" type="text" class="validate">
-                    <label for="holidays">Resmi Tatil Günleri</label>
+                <div class="input-field col s6 tooltipped" data-position="top" data-tooltip="Resmi tatil günlerini seçerek, onları da haftasonu olarak sayabilirsiniz.">
+                    <input id="holidays" type="text" class="validate datepicker" readonly pattern="^(\d{1,2}(,\d{1,2})*)?$">
+                    <label for="holidays">Ekstra Resmi Tatil Günü var mı</label>
                 </div>
                 <div class="standalone-select-wrapper col s6" data-tooltip="Bir nöbette bulunan kişi sayısı" style="padding-top: 20px;">
                     <div class="select-container">
@@ -1096,6 +1129,114 @@
                     }, 0);
                 }
             });
+
+           const holidaysInput = document.getElementById('holidays');
+                let selectedDays = []; // Seçilen günleri tutacak dizi
+            
+                const holidaysPicker = M.Datepicker.init(holidaysInput, {
+                    format: 'dd-mm-yyyy',
+                    autoClose: false, // Kullanıcı seçim yapana kadar kapanmasın
+                    firstDay: 1,
+                    i18n: {
+                        months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                        monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+                        weekdays: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+                        weekdaysShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+                        weekdaysAbbrev: ['P', 'P', 'S', 'Ç', 'P', 'C', 'C']
+                    },
+                    onOpen: function() {
+                        const startDatePicker = document.getElementById('startDate');
+                        const startDateInstance = M.Datepicker.getInstance(startDatePicker);
+                        if (startDateInstance && startDateInstance.date) {
+                            this.gotoDate(startDateInstance.date);
+                        }
+                
+                        // Önceki seçimleri işaretle
+                        setTimeout(() => {
+                            const dayElements = this.el.parentElement.querySelectorAll('.datepicker-day-button');
+                            dayElements.forEach(day => {
+                                const dayNum = parseInt(day.textContent);
+                                if (selectedDays.includes(dayNum)) {
+                                    day.classList.add('selected-day'); // Özel stil ekle
+                                } else {
+                                    day.classList.remove('selected-day');
+                                }
+                            });
+                        }, 0);
+                    },
+                    onSelect: function(date) {
+                        const day = date.getDate();
+                        const index = selectedDays.indexOf(day);
+                
+                        // Gün zaten seçiliyse çıkar, değilse ekle
+                        if (index !== -1) {
+                            selectedDays.splice(index, 1);
+                        } else {
+                            selectedDays.push(day);
+                        }
+                
+                        // Günleri sıralı şekilde güncelle (boşluksuz)
+                        selectedDays.sort((a, b) => a - b);
+                        holidaysInput.value = selectedDays.join(',');
+                
+                        // Görsel geri bildirim için seçili günleri işaretle
+                        const dayElements = this.el.parentElement.querySelectorAll('.datepicker-day-button');
+                        dayElements.forEach(dayEl => {
+                            const dayNum = parseInt(dayEl.textContent);
+                            if (selectedDays.includes(dayNum)) {
+                                dayEl.classList.add('selected-day');
+                            } else {
+                                dayEl.classList.remove('selected-day');
+                            }
+                        });
+                
+                        // Doğrulamayı tetikle
+                        M.updateTextFields();
+                        holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
+                        // Manuel doğrulama kontrolü
+                        if (selectedDays.length > 0 && holidaysInput.value.match(/^(\d{1,2}(,\d{1,2})*)?$/)) {
+                            holidaysInput.classList.remove('invalid');
+                            holidaysInput.classList.add('valid');
+                        } else {
+                            holidaysInput.classList.remove('valid');
+                            holidaysInput.classList.add('invalid');
+                        }
+                    },
+                    onClose: function() {
+                        // Kapanırken son durumu input’a yaz (boşluksuz)
+                        holidaysInput.value = selectedDays.join(',');
+                        M.updateTextFields();
+                        holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
+                        // Manuel doğrulama kontrolü
+                        if (selectedDays.length > 0 && holidaysInput.value.match(/^(\d{1,2}(,\d{1,2})*)?$/)) {
+                            holidaysInput.classList.remove('invalid');
+                            holidaysInput.classList.add('valid');
+                        } else {
+                            holidaysInput.classList.remove('valid');
+                            holidaysInput.classList.add('invalid');
+                        }
+                    }
+                });
+                
+                // Özel stil için CSS ekleme (seçili günlerin görünümünü değiştirmek için)
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    .datepicker-day-button.selected-day {
+                        background-color: #26a69a !important;
+                        color: white !important;
+                        border-radius: 50%;
+                    }
+                    input.validate.valid:not([type]), input.validate.valid[type="text"] {
+                        border-bottom: 1px solid #4caf50 !important;
+                        box-shadow: 0 1px 0 0 #4caf50 !important;
+                    }
+                    input.validate.invalid:not([type]), input.validate.invalid[type="text"] {
+                        border-bottom: 1px solid #f44336 !important;
+                        box-shadow: 0 1px 0 0 #f44336 !important;
+                    }
+                `;
+                document.head.appendChild(style);
+
             M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), {
                 coverTrigger: false,
                 constrainWidth: false
@@ -1314,7 +1455,7 @@
                         <tr>
                             ${groupingEnabled ? '<th>Grup</th>' : ''}
                             <th>İsim</th>
-                            <th>Hf İçi</th>
+                            <th>Hafta İçi</th>
                             <th>Hf Sonu</th>
                             <th class="duty-gap-header">
                                 2 Nöbet Arası Boşluk
@@ -1427,6 +1568,84 @@
             document.getElementById('calendarTable').innerHTML = '';
             M.toast({html: 'Nöbet dağıtımı ve takvim sıfırlandı!'});
         }
+
+
+       
+                
+               
+        function showCustomAlert() {
+            // Mevcut uyarıyı kaldır
+            const existingAlert = document.querySelector('#calendarAlert');
+            if (existingAlert) existingAlert.remove();
+        
+            // Uyarı HTML'sini oluştur
+            const alertDiv = document.createElement('div');
+            alertDiv.id = 'calendarAlert';
+            alertDiv.className = 'card teal lighten-2';
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.width = '90%';
+            alertDiv.style.maxWidth = '400px';
+            alertDiv.style.zIndex = '10001';
+            alertDiv.style.margin = '0';
+            alertDiv.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        
+            // Masaüstü ve mobil için farklı konumlandırma
+            if (isMobileDevice()) {
+                alertDiv.style.top = '10px';
+                alertDiv.style.left = '50%';
+                alertDiv.style.transform = 'translateX(-50%)';
+            } else {
+                alertDiv.style.top = '50%';
+                alertDiv.style.left = '50%';
+                alertDiv.style.transform = 'translate(-50%, -50%)';
+            }
+        
+            alertDiv.innerHTML = `
+                <div class="card-content white-text center-align" style="padding: 12px;">
+                    <span style="font-weight: bold; font-size: 1rem; display: block; margin-bottom: 6px;">
+                        Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!<br>
+                        Seçimlerinizi yaparak <span style="color: #e040fb;">‘Otomatik Ata’</span> tuşuna basınız.
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: center; padding-bottom: 8px;">
+                    <a class="btn-floating teal bounce" style="width: 40px; height: 40px; line-height: 40px;">
+                        <i class="material-icons" style="font-size: 30px; line-height: 40px; color: white;">arrow_downward</i>
+                    </a>
+                </div>
+            `;
+        
+            // Uyarıyı body'ye ekle
+            document.body.appendChild(alertDiv);
+        
+            // Bounce simgesine tıklama olayı ekle (sadece masaüstü)
+            const bounceButton = alertDiv.querySelector('.btn-floating.bounce');
+            if (!isMobileDevice()) {
+                bounceButton.addEventListener('click', () => {
+                    const calendarContainer = document.getElementById('calendarContainer');
+                    calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+        
+            // 3 saniye sonra kaldır
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.style.opacity = '0';
+                    alertDiv.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) alertDiv.remove();
+                    }, 500);
+                }
+            }, 5000);
+        
+            // Mobil cihazlarda otomatik takvim kaydırma (değişmedi)
+            if (isMobileDevice()) {
+                setTimeout(() => {
+                    const calendarContainer = document.getElementById('calendarContainer');
+                    calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 500);
+            }
+        }
+
 
         function generateCalendar() {
             const startInput = document.getElementById('startDate').value;
@@ -1570,10 +1789,9 @@
             document.getElementById('calendarTable').innerHTML = html;
 
             const cells = document.querySelectorAll('.calendar-cell');
-            const isMobile = isMobileDevice(); // Mobil cihaz kontrolü
-
+            const isMobile = isMobileDevice();
+        
             cells.forEach(cell => {
-                // Masaüstünde sürükleme olayları
                 if (!isMobile) {
                     cell.addEventListener('mousedown', startDragging);
                     cell.addEventListener('mousemove', dragOver);
@@ -1582,18 +1800,16 @@
                     cell.addEventListener('touchmove', dragOver, { passive: false });
                     cell.addEventListener('touchend', stopDragging);
                 }
-        
                 
                 cell.addEventListener('click', () => {
                     const pIndex = parseInt(cell.dataset.pindex);
                     const dIndex = parseInt(cell.dataset.dindex);
                     handleCellClick(pIndex, dIndex);
                 });
-        
                 
                 if (isMobile) {
                     cell.addEventListener('touchend', (event) => {
-                        event.preventDefault(); // Varsayılan davranışı engelle
+                        event.preventDefault();
                         const pIndex = parseInt(cell.dataset.pindex);
                         const dIndex = parseInt(cell.dataset.dindex);
                         handleCellClick(pIndex, dIndex);
@@ -1602,7 +1818,7 @@
             });
         
             if (collapsibleCalendar) collapsibleCalendar.open(0);
-            M.toast({html: 'Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!'});
+            showCustomAlert(); // M.toast yerine yeni uyarı
             updateStatistics();
         }
 
