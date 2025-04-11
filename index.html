@@ -1564,20 +1564,37 @@
             document.getElementById('calendarTable').innerHTML = html;
 
             const cells = document.querySelectorAll('.calendar-cell');
+            const isMobile = isMobileDevice(); // Mobil cihaz kontrolü
+
             cells.forEach(cell => {
-                cell.addEventListener('mousedown', startDragging);
-                cell.addEventListener('mousemove', dragOver);
-                cell.addEventListener('mouseup', stopDragging);
-                cell.addEventListener('touchstart', startDragging, { passive: false });
-                cell.addEventListener('touchmove', dragOver, { passive: false });
-                cell.addEventListener('touchend', stopDragging);
+                // Masaüstünde sürükleme olayları
+                if (!isMobile) {
+                    cell.addEventListener('mousedown', startDragging);
+                    cell.addEventListener('mousemove', dragOver);
+                    cell.addEventListener('mouseup', stopDragging);
+                    cell.addEventListener('touchstart', startDragging, { passive: false });
+                    cell.addEventListener('touchmove', dragOver, { passive: false });
+                    cell.addEventListener('touchend', stopDragging);
+                }
+        
+                
                 cell.addEventListener('click', () => {
                     const pIndex = parseInt(cell.dataset.pindex);
                     const dIndex = parseInt(cell.dataset.dindex);
                     handleCellClick(pIndex, dIndex);
                 });
+        
+                
+                if (isMobile) {
+                    cell.addEventListener('touchend', (event) => {
+                        event.preventDefault(); // Varsayılan davranışı engelle
+                        const pIndex = parseInt(cell.dataset.pindex);
+                        const dIndex = parseInt(cell.dataset.dindex);
+                        handleCellClick(pIndex, dIndex);
+                    }, { passive: false });
+                }
             });
-
+        
             if (collapsibleCalendar) collapsibleCalendar.open(0);
             M.toast({html: 'Takvim oluşturuldu ve nöbetler dengeli dağıtıldı!'});
             updateStatistics();
