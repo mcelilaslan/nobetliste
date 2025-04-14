@@ -749,7 +749,11 @@
             animation: bounce 1s infinite;
         }
 
-
+        @media only screen and (max-width: 600px) {
+            .control-buttons .btn {
+                font-size: 0.8rem;
+            }
+        }
 
         /* Mobil Stiller */
         @media only screen and (max-width: 900px) {
@@ -1019,7 +1023,7 @@
                             <div class="row control-buttons">
                                 <div class="col s12">
                                     <button class="btn waves-effect waves-light blue" onclick="generateCalendar()">
-                                        <i class="material-icons left">event</i>Nöbet Dağıt ve Takvim Oluştur
+                                        <i class="material-icons left">event</i>Nöbetleri Adaletli Dağıt
                                     </button>
                                     <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
                                         <i class="material-icons left">refresh</i>Dağıtımı Sıfırla
@@ -1694,7 +1698,7 @@
         
             // Mobil ve masaüstü için konumlandırma
             if (isMobileDevice()) {
-                alertDiv.style.top = '20px';
+                alertDiv.style.top = '35%';
                 alertDiv.style.left = '50%';
                 alertDiv.style.transform = 'translateX(-50%)';
                 if (window.innerWidth < 360) {
@@ -1781,6 +1785,12 @@
 
 
         function generateCalendar() {
+
+            if (persons.length < 3) {
+                M.toast({ html: 'Lütfen en az 3 personel ekleyin!' });
+                return;
+            }
+            
             const startInput = document.getElementById('startDate').value;
             const endInput = document.getElementById('endDate').value;
             const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
@@ -2357,6 +2367,30 @@
         }
 
         function downloadSchedule() {
+
+            // Takvim doluluk kontrolü
+                const startInput = document.getElementById('startDate').value;
+                const endInput = document.getElementById('endDate').value;
+                const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+                const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+                const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+                const start = new Date(startYear, startMonth - 1, startDay);
+                const end = new Date(endYear, endMonth - 1, endDay);
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            
+                let allDaysFilled = true;
+                for (let d = 0; d < days; d++) {
+                    const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
+                    if (assigned < dutyPerDay) {
+                        allDaysFilled = false;
+                        break;
+                    }
+                }
+                if (!allDaysFilled) {
+                    M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!' });
+                    return;
+                }
+            
             performExport(function(blob, fileName) {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -2741,9 +2775,15 @@
         }
     </script>
     
-    <footer class="fixed-footer">
+       <footer class="fixed-footer">
         <div class="footer-content">
             © 2025 - nobetplani.com - CK
+            <a href="mailto:nobetplani@gmail.com" style="margin-left: 10px;">
+                <img src="gmail-logo.png" alt="Gmail" style="width: 24px; height: 24px; vertical-align: middle;">
+            </a>
+            <a href="https://www.instagram.com/nobetplani" target="_blank" style="margin-left: 10px;">
+                <img src="instagram-logo.png" alt="Instagram" style="width: 24px; height: 24px; vertical-align: middle;">
+            </a>
         </div>
     </footer>
 
