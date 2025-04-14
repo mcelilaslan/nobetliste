@@ -473,18 +473,23 @@
         }
     
         .switch-container {
-           background-color: rgba(119,190,186,255) !important;
-           border: 2px solid #b0bec5;
-           padding: 6px 10px; 
-           border-radius: 8px;
-           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-           display: flex;
-           flex-direction: column; 
-           align-items: flex-start; 
-           height: auto; 
-           justify-content: center;
+            background-color: rgba(119,190,186,255) !important;
+            border: 2px solid #b0bec5;
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: inline-flex; /* Flex yerine inline-flex */
+            flex-direction: column;
+            align-items: flex-start;
+            width: auto; /* Genişlik içeriğe göre */
+            box-sizing: border-box;
         }
 
+        .switch-container label {
+            width: auto;
+            white-space: nowrap;
+        }
+       
         balance-label {
             display: flex;
             align-items: center;
@@ -719,6 +724,15 @@
 
         .glow {
             animation: glow 4s ease-in-out infinite;
+        }
+
+        .waves-effect.waves-light.btn.teal {
+            width: auto;
+            min-width: 0;
+            padding: 0 8px; /* Padding'i küçülttük */
+            box-sizing: border-box;
+            display: inline-flex; /* İkon ve metni hizalamak için */
+            align-items: center;
         }
         
         @keyframes glow {
@@ -1108,10 +1122,9 @@
                             </div>
                             
                             <!-- İndir -->
-                            <div class="col s3">
+                              <div class="col s3">
                                 <button class="waves-effect waves-light btn teal tooltipped" 
                                     onclick="downloadSchedule()" 
-                                    style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
                                     data-position="bottom" 
                                     data-tooltip="Nöbet listesini Excel formatında indirir">
                                     <i class="material-icons left">file_download</i>İndir
