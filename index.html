@@ -972,7 +972,7 @@
            <div class="row">
                 <div class="input-field col s6 tooltipped" data-position="top" data-tooltip="Resmi tatil günlerini seçerek, onları da haftasonu olarak sayabilirsiniz.">
                     <input id="holidays" type="text" class="validate datepicker" readonly pattern="^(\d{1,2}(,\d{1,2})*)?$">
-                    <label for="holidays">Ekstra Resmi Tatil Günü var mı</label>
+                    <label for="holidays">Ekstra Resmi Tatil Günü Var Mı?</label>
                 </div>
                 <div class="standalone-select-wrapper col s6" data-tooltip="Bir nöbette bulunan kişi sayısı" style="padding-top: 20px;">
                     <div class="select-container">
@@ -1543,117 +1543,131 @@
             availabilityMode = !switchInput.checked;
         }
 
-        function renderTable() {
-            const tableContainer = document.getElementById('personnelTableContainer');
-            const noPersonnelMessage = document.getElementById('noPersonnelMessage');
-            const groupingSwitch = document.getElementById('groupingSwitch');
-            const groupingEnabled = document.getElementById('groupingCheckbox').checked;
-            const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value.trim()) || 0;
-
-            if (dutyPerDay >= 2) {
-                groupingSwitch.style.display = 'block';
-            } else {
-                groupingSwitch.style.display = 'none';
-                document.getElementById('groupingCheckbox').checked = false;
-            }
-
-            if (persons.length === 0) {
-                tableContainer.style.display = 'none';
-                noPersonnelMessage.style.display = 'block';
-            } else {
-                tableContainer.style.display = 'table';
-                noPersonnelMessage.style.display = 'none';
-
-                let html = `
-                    <thead>
-                        <tr>
-                            ${groupingEnabled ? '<th>Grup</th>' : ''}
-                            <th>İsim</th>
-                            <th>Hafta İçi</th>
-                            <th>Hf Sonu</th>
-                            <th class="duty-gap-header">
-                                2 Nöbet Arası Boşluk
-                                <a class="btn-floating btn-small waves-effect waves-light teal decrement-btn" onclick="decrementAllDutyGaps()">
-                                    <i class="material-icons">arrow_downward</i>
-                                </a>
-                                <a class="btn-floating btn-small waves-effect waves-light teal increment-btn" onclick="incrementAllDutyGaps()">
-                                    <i class="material-icons">arrow_upward</i>
-                                </a>
-                            </th>
-                            <th style="text-align: center;">Sil</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personTable">
-                `;
-
-                const groupCount = Math.ceil(persons.length / 2);
-                console.log('Group Count:', groupCount);
-
-                persons.forEach((person, index) => {
-                    let groupOptions = '<option value="0">Seç</option>';
-                    for (let i = 1; i <= groupCount; i++) {
-                        groupOptions += `<option value="${i}" ${person.group === i ? 'selected' : ''}>${i}</option>`;
-                    }
-                    console.log('Group Options for', person.name, ':', groupOptions);
-
-                    html += `
-                        <tr style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; background-color: #f9fafb; transition: background-color 0.2s;">
-                            ${groupingEnabled && groupCount > 0 ? `
-                                <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
-                                    <select style="height: 24px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 4px; width: 60px; display: block;" onchange="updateGroup(${index}, this.value)">
-                                        ${groupOptions}
-                                    </select>
-                                </td>
-                            ` : ''}
-                            <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box; font-family: 'Arial', sans-serif; color: #374151;">
-                                ${person.name}
-                            </td>
-                            <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
-                                <input type="number" class="planning-input" min="0" 
-                                    value="${person.weekdayDuties === undefined ? '' : person.weekdayDuties}" 
-                                    onchange="updateDuty(${index}, 'weekdayDuties', this.value)"
-                                    style="height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 13px; margin: 0; padding: 0 6px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 4px; background-color: #ffffff; transition: border-color 0.2s; outline: none; overflow: hidden;">
-                            </td>
-                            <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
-                                <input type="number" class="planning-input" min="0" 
-                                    value="${person.weekendDuties === undefined ? '' : person.weekendDuties}" 
-                                    onchange="updateDuty(${index}, 'weekendDuties', this.value)"
-                                    style="height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 13px; margin: 0; padding: 0 6px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 4px; background-color: #ffffff; transition: border-color 0.2s; outline: none; overflow: hidden;">
-                            </td>
-                            <td class="duty-gap-cell" style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
-                                <span style="margin-right: 8px; font-size: 13px; line-height: 24px; height: 24px; display: inline-block; color: #4b5563;">${person.minDaysBetween}</span>
-                                <a class="btn-floating btn-small waves-effect waves-light" onclick="decrementDutyGap(${index})"
-                                   style="width: 24px; height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 12px; margin: 0 4px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #10b981; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.2s; overflow: hidden;">
-                                    <i class="material-icons" style="line-height: 24px; font-size: 14px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 24px; width: 24px; color: #ffffff;">arrow_downward</i>
-                                </a>
-                                <a class="btn-floating btn-small waves-effect waves-light" onclick="incrementDutyGap(${index})"
-                                   style="width: 24px; height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 12px; margin: 0 4px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #10b981; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.2s; overflow: hidden;">
-                                    <i class="material-icons" style="line-height: 24px; font-size: 14px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 24px; width: 24px; color: #ffffff;">arrow_upward</i>
-                                </a>
-                            </td>
-                            <td class="left-align" style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
-                                <a class="btn-floating btn-small" onclick="deletePerson(${index})"
-                                   style="width: 24px; height: 24px; min-height: 24px; max-height: 24px; line-height: 24px; font-size: 12px; margin: 0 4px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: #ef4444; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.2s; overflow: hidden;">
-                                    <i class="material-icons" style="line-height: 24px; font-size: 14px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 24px; width: 24px; color: #ffffff;">delete</i>
-                                </a>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                html += `</tbody>`;
-                tableContainer.innerHTML = html;
-
-                const selects = tableContainer.querySelectorAll('select');
-                selects.forEach(select => {
-                    select.style.display = 'block';
-                    select.removeAttribute('data-m-select');
-                    if (select.M_FormSelect) {
-                        select.M_FormSelect.destroy();
-                    }
-                });
-            }
+    function renderTable() {
+        const tableContainer = document.getElementById('personnelTableContainer');
+        const noPersonnelMessage = document.getElementById('noPersonnelMessage');
+        const groupingSwitch = document.getElementById('groupingSwitch');
+        const groupingEnabled = document.getElementById('groupingCheckbox').checked;
+        const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value.trim()) || 0;
+        const isMobile = window.innerWidth <= 900;
+    
+        if (dutyPerDay >= 2) {
+            groupingSwitch.style.display = 'block';
+        } else {
+            groupingSwitch.style.display = 'none';
+            document.getElementById('groupingCheckbox').checked = false;
         }
+    
+        if (persons.length === 0) {
+            tableContainer.style.display = 'none';
+            noPersonnelMessage.style.display = 'block';
+        } else {
+            tableContainer.style.display = 'table';
+            noPersonnelMessage.style.display = 'none';
+    
+            const tableStyle = isMobile 
+                ? 'max-width: 100%; overflow-x: auto; display: block;'
+                : 'width: 100%;';
+    
+            let html = `
+                <table style="${tableStyle}">
+                <thead>
+                    <tr style="background-color: #e5e7eb;">
+                        ${groupingEnabled ? '<th>Grup</th>' : ''}
+                        <th style="text-align:center">İsim</th>
+                        <th style="text-align:center">Hafta İçi</th>
+                        <th style="text-align:center">Hf Sonu</th>
+                        <th class="duty-gap-header" style="${isMobile ? 'font-size: 12px; line-height: 1.2; padding: 4px; white-space: normal; height: auto;' : ''}">
+                            ${isMobile 
+                                ? '2 Nöbet Arası<br>Boşluk'
+                                : '2 Nöbet Arası Boşluk'}
+                            <a class="btn-floating btn-small waves-effect waves-light teal decrement-btn" onclick="decrementAllDutyGaps()"
+                               style="${isMobile ? 'width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; margin: 2px;' : ''}">
+                                <i class="material-icons" style="${isMobile ? 'font-size: 10px; line-height: 10px;' : ''}">arrow_downward</i>
+                            </a>
+                            <a class="btn-floating btn-small waves-effect waves-light teal increment-btn" onclick="incrementAllDutyGaps()"
+                               style="${isMobile ? 'width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; margin: 2px;' : ''}">
+                                <i class="material-icons" style="${isMobile ? 'font-size: 10px; line-height: 10px;' : ''}">arrow_upward</i>
+                            </a>
+                        </th>
+                        <th style="text-align: center;">Sil</th>
+                    </tr>
+                </thead>
+                <tbody id="personTable">
+            `;
+    
+            const groupCount = Math.ceil(persons.length / 2);
+    
+            persons.forEach((person, index) => {
+                let groupOptions = '<option value="0">Seç</option>';
+                for (let i = 1; i <= groupCount; i++) {
+                    groupOptions += `<option value="${i}" ${person.group === i ? 'selected' : ''}>${i}</option>`;
+                }
+    
+                // Mobil için isim kısaltma: 8 karakterden uzunsa 5 + "..."
+                const maxNameLength = isMobile ? 8 : 20;
+                const displayName = person.name.length > maxNameLength 
+                    ? person.name.substring(0, isMobile ? 5 : maxNameLength - 3) + '...' 
+                    : person.name;
+    
+                html += `
+                    <tr style="height: ${isMobile ? '40px' : '48px'}; background-color: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'}; border-bottom: 1px solid #e5e7eb;">
+                        ${groupingEnabled && groupCount > 0 ? `
+                            <td style="height: ${isMobile ? '40px' : '48px'}; vertical-align: middle; padding: 0 8px;">
+                                <select style="height: ${isMobile ? '28px' : '32px'}; font-size: ${isMobile ? '12px' : '14px'}; border: 1px solid #d1d5db; border-radius: 6px; padding: 4px 2px 4px 8px; width: auto; background-color: #ffffff; color: #374151; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23374151\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg>'); background-repeat: no-repeat; background-position: right 2px center;" onchange="updateGroup(${index}, this.value)">
+                                    ${groupOptions}
+                                </select>
+                            </td>
+                        ` : ''}
+                        <td style="height: ${isMobile ? '40px' : '48px'}; vertical-align: middle; padding: 0 8px; font-family: 'Arial', sans-serif; color: #374151; font-size: ${isMobile ? '12px' : '14px'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="${person.name}">
+                            ${displayName}
+                        </td>
+                        <td style="height: ${isMobile ? '40px' : '48px'}; vertical-align: middle; padding: 0 ${isMobile ? '2px' : '8px'};">
+                            <input type="number" class="planning-input" min="0" 
+                                value="${person.weekdayDuties === undefined ? '' : person.weekdayDuties}" 
+                                onchange="updateDuty(${index}, 'weekdayDuties', this.value)"
+                                style="height: ${isMobile ? '28px' : '32px'}; font-size: ${isMobile ? '12px' : '14px'}; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; background-color: #ffffff; color: #374151; width: ${isMobile ? '50px' : '80px'}; transition: border-color 0.3s; outline: none;">
+                        </td>
+                        <td style="height: ${isMobile ? '40px' : '48px'}; vertical-align: middle; padding: 0 ${isMobile ? '2px' : '8px'};">
+                            <input type="number" class="planning-input" min="0" 
+                                value="${person.weekendDuties === undefined ? '' : person.weekendDuties}" 
+                                onchange="updateDuty(${index}, 'weekendDuties', this.value)"
+                                style="height: ${isMobile ? '28px' : '32px'}; font-size: ${isMobile ? '12px' : '14px'}; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; background-color: #ffffff; color: #374151; width: ${isMobile ? '50px' : '80px'}; transition: border-color 0.3s; outline: none;">
+                        </td>
+                        <td style="height: ${isMobile ? '40px' : '48px'}; vertical-align: middle; padding: 0 ${isMobile ? '12px' : '8px'}; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; white-space: nowrap;">
+                            <span style="margin-right: ${isMobile ? '4px' : '8px'}; font-size: ${isMobile ? '12px' : '14px'}; color: #4b5563;">${person.minDaysBetween}</span>
+                            <a class="btn-floating btn-small waves-effect waves-light teal" onclick="decrementDutyGap(${index})"
+                               style="${isMobile ? 'width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; margin: 2px;' : ''}">
+                                <i class="material-icons" style="${isMobile ? 'font-size: 8px; line-height: 8px;' : ''}">arrow_downward</i>
+                            </a>
+                            <a class="btn-floating btn-small waves-effect waves-light teal" onclick="incrementDutyGap(${index})"
+                               style="${isMobile ? 'width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; margin: 2px;' : ''}">
+                                <i class="material-icons" style="${isMobile ? 'font-size: 8px; line-height: 8px;' : ''}">arrow_upward</i>
+                            </a>
+                        </td>
+                        <td style="height: ${isMobile ? '40px' : '48px'}; vertical-align: middle; padding: 0 8px; text-align: center;">
+                            <a class="btn-floating btn-small waves-effect waves-light red" onclick="deletePerson(${index})"
+                               style="${isMobile ? 'width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; margin: 2px;' : ''}">
+                                <i class="material-icons" style="${isMobile ? 'font-size: 8px; line-height: 8px;' : ''}">delete</i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+    
+            html += `</tbody></table>`;
+            tableContainer.innerHTML = html;
+    
+            const selects = tableContainer.querySelectorAll('select');
+            selects.forEach(select => {
+                select.style.display = 'block';
+                select.removeAttribute('data-m-select');
+                if (select.M_FormSelect) {
+                    select.M_FormSelect.destroy();
+                }
+            });
+        }
+    }
 
         function toggleGrouping() {
             renderTable();
@@ -2626,7 +2640,7 @@
 
             saveToHistory();
 
-            const CLOUD_FUNCTIONS_URL = 'https://optimize-nobet-88931343134.us-central1.run.app';
+            const CLOUD_FUNCTIONS_URL = 'https://proxy-solver-88931343134.us-central1.run.app';
 
             fetch(CLOUD_FUNCTIONS_URL, {
                 method: 'POST',
