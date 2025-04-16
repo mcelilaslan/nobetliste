@@ -734,7 +734,23 @@
             display: inline-flex; /* İkon ve metni hizalamak için */
             align-items: center;
         }
-        
+
+         @keyframes shake {
+          0%, 100% {
+              transform: translateX(0);
+          }
+          10%, 30%, 50%, 70%, 90% {
+              transform: translateX(-5px);
+          }
+          20%, 40%, 60%, 80% {
+              transform: translateX(5px);
+          }
+      }
+
+         .shake-toast {
+             animation: shake 0.5s ease-in-out;
+         }
+      
         @keyframes glow {
             0% {
                 box-shadow: 0 0 5px 5px #26a69a;
@@ -1991,7 +2007,11 @@
                           if (navigator.vibrate) {
                               navigator.vibrate([200, 100, 200]); // Vibration pattern: 200ms on, 100ms off, 200ms on
                           }
-                          M.toast({ html: 'Telefonu yatay moda almanız önerilir', displayLength: 4000 });
+                          M.toast({
+                            html: 'Telefonu yatay moda almanız önerilir',
+                            displayLength: 4000,
+                            classes: 'shake-toast'
+                        });
                           hasShownOrientationToast = true; // Set flag to prevent further Toasts
                       }
                         
