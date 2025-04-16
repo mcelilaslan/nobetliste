@@ -2742,7 +2742,7 @@
                     if (status === 400 && errorMessage.includes('Nöbet atamaları yapılamadı')) {
                         errorMessage = 'Hata: Nöbet ertesi boşluk sayısını azaltmayı deneyin!';
                     } else if (status === 400 && errorMessage.includes('Cuma veya Perşembe dengeleme başarısız')) {
-                        errorMessage = 'Hata: Cuma veya Perşembe dengeleme başarısız, bu seçenekleri kapatıp tekrar deneyin!';
+                        errorMessage = 'Hata: Cuma veya Perşembe dengeleme başarısız, bu seçenekleri kapatın veya nöbet ertesi boşlukları azaltın!';
                     }
                     showToast(errorMessage, 10000); // Hata mesajı, 10 saniye
                 }
