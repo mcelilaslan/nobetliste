@@ -1978,10 +1978,14 @@
                         const dIndex = parseInt(cell.dataset.dindex);
                         
                         // Check if device is in portrait mode and Toast hasn't been shown
-                        if (!hasShownOrientationToast && window.matchMedia("(orientation: portrait)").matches) {
-                            M.toast({ html: 'Telefonu yatay moda almanız önerilir', displayLength: 4000 });
-                            hasShownOrientationToast = true; // Set flag to prevent further Toasts
-                        }
+                             if (!hasShownOrientationToast && window.matchMedia("(orientation: portrait)").matches) {
+                          
+                          if (navigator.vibrate) {
+                              navigator.vibrate([200, 100, 200]); // Vibration pattern: 200ms on, 100ms off, 200ms on
+                          }
+                          M.toast({ html: 'Telefonu yatay moda almanız önerilir', displayLength: 4000 });
+                          hasShownOrientationToast = true; // Set flag to prevent further Toasts
+                      }
                         
                         handleCellClick(pIndex, dIndex);
                     }, { passive: false });
