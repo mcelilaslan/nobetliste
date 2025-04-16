@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
-              <!-- Google tag (gtag.js) -->
-       <script async src="https://www.googletagmanager.com/gtag/js?id=G-71QDF60SX6"></script>
-       <script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         gtag('js', new Date());
-       
-         gtag('config', 'G-71QDF60SX6');
-       </script>
+   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otomatik Nöbet Listesi Hazırlama Programı | Nobetplani.com</title>
@@ -171,9 +162,9 @@
             text-align: center;
             vertical-align: middle;
             border: 1px solid #ddd;
-            touch-action: manipulation; 
-            -webkit-user-select: none; 
-            user-select: none; 
+            touch-action: manipulation; /* iOS’ta gecikmeyi kaldırır */
+            -webkit-user-select: none; /* Seçimi engeller */
+            user-select: none; /* Seçimi engeller */
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -482,7 +473,7 @@
             display: inline-flex; /* Flex yerine inline-flex */
             flex-direction: column;
             align-items: flex-start;
-            width: auto; 
+            width: auto; /* Genişlik içeriğe göre */
             box-sizing: border-box;
         }
 
@@ -730,9 +721,9 @@
         .waves-effect.waves-light.btn.teal {
             width: auto;
             min-width: 0;
-            padding: 0 8px; 
+            padding: 0 8px; /* Padding'i küçülttük */
             box-sizing: border-box;
-            display: inline-flex; 
+            display: inline-flex; /* İkon ve metni hizalamak için */
             align-items: center;
         }
         
@@ -747,18 +738,6 @@
                 box-shadow: 0 0 5px 5px #26a69a; 
             }
         }
-
-      .orientation-toast {
-          animation: toast-shake 0.5s ease-in-out;
-      }
-      
-      @keyframes toast-shake {
-          0% { transform: translateX(0); }
-          25% { transform: translateX(-10px); }
-          50% { transform: translateX(10px); }
-          75% { transform: translateX(-10px); }
-          100% { transform: translateX(0); }
-      }
         
        @keyframes bounce {
         0%, 20%, 50%, 80%, 100% {
@@ -881,7 +860,7 @@
                 box-sizing: border-box;
             }
             .balance-label span {
-                font-size: 0.75rem; 
+                font-size: 0.75rem; /* Mobilde ~12px */
                 padding-left: 18px;
             }
             .balance-checkbox + span:not(.lever)::before {
@@ -953,10 +932,10 @@
                             <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
                             <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
                             <li><a class="btn-floating tiny waves-effect waves-light grey"><i class="material-icons">more_vert</i></a>tuşu ile oluşturduğunuz personel listesini indirebilir, sonraki kullanımlarda yükleyerek süreci hızlandırabilirsiniz.</li>
-                            <li>Nöbet sayıları "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet Sayılarını Dağıt" tuşu ile otomatik dağıtılır, kendiniz de düzenleyebilirsiniz.</li>
+                            <li>Nöbet sayıları "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbetleri Adaletli Dağıt" tuşu ile otomatik dağıtılır, kendiniz de düzenleyebilirsiniz.</li>
                             <li>Kişilere ayrı ayrı hafta içi / hafta sonu nöbet sayıları belirleyebilirsiniz.</li>
                             <li>İki nöbet arası en az boşluk toplu veya kişiye özel olabilir.</li>
-                            <li>Personel planı bittiğinde "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet Sayılarını Dağıt" tuşuna basınız. Takvimin oluşturulduğunu göreceksiniz.</li>
+                            <li>Personel planı bittiğinde "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbetleri Adaleti Dağıt" tuşuna basınız. Takvimin oluşturulduğunu göreceksiniz.</li>
                             <li>Varsa <font color="red">istenmeyen ✖</font>/<font color="green">istenen ✓</font> günleri takvim üzerinde işaretleyerek "<a class="btn-floating tiny waves-effect waves-light purple"><i class="material-icons">auto_fix_high</i></a>Otomatik Ata" tuşuna basınız.</li>
                             <li>Cuma ve Perşembe günlerini dengelemek isterseniz ilgili kutucukları tikleyiniz.</li>
                             <li>Geri al tuşu ile takvimdeki son değişikliği geri alabilirsiniz. Temizle butonu takvimi sıfırlar.</li>
@@ -1050,7 +1029,7 @@
                             <div class="row control-buttons">
                                 <div class="col s12">
                                     <button class="btn waves-effect waves-light blue" onclick="generateCalendar()">
-                                        <i class="material-icons left">event</i>Nöbet Sayılarını Dağıt
+                                        <i class="material-icons left">event</i>Nöbetleri Adaletli Dağıt
                                     </button>
                                     <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
                                         <i class="material-icons left">refresh</i>Dağıtımı Sıfırla
@@ -1227,7 +1206,7 @@
         }
 
         function showToast(message, duration = 4000) {
-            M.Toast.dismissAll(); 
+            M.Toast.dismissAll(); // Eski toast'ları kaldır
             M.toast({ html: message, displayLength: duration });
         }
 
@@ -1258,11 +1237,11 @@
             });
 
            const holidaysInput = document.getElementById('holidays');
-                let selectedDays = []; 
+                let selectedDays = []; // Seçilen günleri tutacak dizi
             
                 const holidaysPicker = M.Datepicker.init(holidaysInput, {
                     format: 'dd-mm-yyyy',
-                    autoClose: false, 
+                    autoClose: false, // Kullanıcı seçim yapana kadar kapanmasın
                     firstDay: 1,
                     i18n: {
                         months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
@@ -1278,7 +1257,7 @@
                             this.gotoDate(startDateInstance.date);
                         }
                 
-                        
+                        // Önceki seçimleri işaretle
                         setTimeout(() => {
                             const dayElements = this.el.parentElement.querySelectorAll('.datepicker-day-button');
                             dayElements.forEach(day => {
@@ -1295,18 +1274,18 @@
                         const day = date.getDate();
                         const index = selectedDays.indexOf(day);
                 
-                        
+                        // Gün zaten seçiliyse çıkar, değilse ekle
                         if (index !== -1) {
                             selectedDays.splice(index, 1);
                         } else {
                             selectedDays.push(day);
                         }
                 
-                        
+                        // Günleri sıralı şekilde güncelle (boşluksuz)
                         selectedDays.sort((a, b) => a - b);
                         holidaysInput.value = selectedDays.join(',');
                 
-                        
+                        // Görsel geri bildirim için seçili günleri işaretle
                         const dayElements = this.el.parentElement.querySelectorAll('.datepicker-day-button');
                         dayElements.forEach(dayEl => {
                             const dayNum = parseInt(dayEl.textContent);
@@ -1317,10 +1296,10 @@
                             }
                         });
                 
-                        
+                        // Doğrulamayı tetikle
                         M.updateTextFields();
-                        holidaysInput.dispatchEvent(new Event('input')); 
-                        
+                        holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
+                        // Manuel doğrulama kontrolü
                         if (selectedDays.length > 0 && holidaysInput.value.match(/^(\d{1,2}(,\d{1,2})*)?$/)) {
                             holidaysInput.classList.remove('invalid');
                             holidaysInput.classList.add('valid');
@@ -1330,11 +1309,11 @@
                         }
                     },
                     onClose: function() {
-                        
+                        // Kapanırken son durumu input’a yaz (boşluksuz)
                         holidaysInput.value = selectedDays.join(',');
                         M.updateTextFields();
-                        holidaysInput.dispatchEvent(new Event('input')); 
-                        
+                        holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
+                        // Manuel doğrulama kontrolü
                         if (selectedDays.length > 0 && holidaysInput.value.match(/^(\d{1,2}(,\d{1,2})*)?$/)) {
                             holidaysInput.classList.remove('invalid');
                             holidaysInput.classList.add('valid');
@@ -1345,7 +1324,7 @@
                     }
                 });
                 
-                
+                // Özel stil için CSS ekleme (seçili günlerin görünümünü değiştirmek için)
                 const style = document.createElement('style');
                 style.innerHTML = `
                     .datepicker-day-button.selected-day {
@@ -1370,13 +1349,13 @@
             });
             M.Modal.init(document.querySelectorAll('.modal'));
         
-            
+            // Collapsible örneklerini tanımlama
             collapsiblePersonel = M.Collapsible.getInstance(document.querySelector('#personelCollapsible'));
             collapsibleCalendar = M.Collapsible.getInstance(document.querySelector('#calendarCollapsible'));
             statsCollapsible = M.Collapsible.getInstance(document.querySelector('#statsCollapsible'));
             guideCollapsible = M.Collapsible.getInstance(document.querySelector('#guideCollapsible'));
         
-            
+            // Takvim collapsible'ı için açma/kapama ayarları
             collapsibleCalendar.options.onOpenStart = function() {
                 document.getElementById('calendarContainer').classList.add('expanded');
             };
@@ -1384,7 +1363,7 @@
                 document.getElementById('calendarContainer').classList.remove('expanded');
             };
         
-            
+            // Mobil cihazlar için buton boyutlarını ayarlama
             if (isMobileDevice()) {
                 document.querySelectorAll('.btn-floating').forEach(btn => {
                     btn.style.width = '36px';
@@ -1394,7 +1373,7 @@
                 M.toast({ html: 'Yatay modda daha iyi bir deneyim elde edebilirsiniz!(Masaüstü kullanım önerilir)' });
             }
         
-            
+            // Tarih seçiciler için olay dinleyicileri
             const startDatePicker = document.getElementById('startDate');
             const endDatePicker = document.getElementById('endDate');
             startDatePicker.addEventListener('change', function() {
@@ -1417,7 +1396,7 @@
                 }
             });
         
-            
+            // Enter tuşu dinleyicisi
             const personNameInput = document.getElementById('personName');
             if (personNameInput) {
                 personNameInput.addEventListener('keydown', function(event) {
@@ -1432,7 +1411,7 @@
             persons = [...defaultPersons];
             renderTable();
         
-            
+            // CSV yükleme için olay dinleyicisi
             const csvUploadInput = document.getElementById('csvUpload');
             if (csvUploadInput) {
                 csvUploadInput.removeEventListener('change', uploadPersonnel);
@@ -1441,7 +1420,7 @@
                 console.error('csvUpload input elementi bulunamadı!');
             }
         
-            
+            // Checkbox'ı varsayılan olarak gizleme
             const groupingSwitch = document.getElementById('groupingSwitch');
             groupingSwitch.style.display = 'none';
 
@@ -1617,7 +1596,7 @@
                     groupOptions += `<option value="${i}" ${person.group === i ? 'selected' : ''}>${i}</option>`;
                 }
     
-                
+                // Mobil için isim kısaltma: 8 karakterden uzunsa 5 + "..."
                 const maxNameLength = isMobile ? 8 : 20;
                 const displayName = person.name.length > maxNameLength 
                     ? person.name.substring(0, isMobile ? 5 : maxNameLength - 3) + '...' 
@@ -1715,11 +1694,11 @@
                 
                
        function showCustomAlert() {
-            
+            // Mevcut uyarıyı kaldır
             const existingAlert = document.querySelector('#calendarAlert');
             if (existingAlert) existingAlert.remove();
         
-            
+            // Yeni alert div'i oluştur
             const alertDiv = document.createElement('div');
             alertDiv.id = 'calendarAlert';
             alertDiv.className = 'card';
@@ -1729,14 +1708,14 @@
             alertDiv.style.width = '90%';
             alertDiv.style.maxWidth = '400px';
             alertDiv.style.zIndex = '10001';
-            alertDiv.style.backgroundColor = 'rgba(245, 233, 217, 0.9)'; 
-            alertDiv.style.backdropFilter = 'blur(8px)'; 
+            alertDiv.style.backgroundColor = 'rgba(245, 233, 217, 0.9)'; // Yarı saydam krem tonu
+            alertDiv.style.backdropFilter = 'blur(8px)'; // Blurlu arka plan
             alertDiv.style.webkitBackdropFilter = 'blur(8px)'; // Safari desteği
             alertDiv.style.border = '2px solid #26a69a';
             alertDiv.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
             alertDiv.style.borderRadius = '8px';
         
-            
+            // Mobil ve masaüstü için konumlandırma
             if (isMobileDevice()) {
                 alertDiv.style.top = '35%';
                 alertDiv.style.left = '50%';
@@ -1750,7 +1729,7 @@
                 alertDiv.style.transform = 'translate(-50%, -50%)';
             }
         
-            
+            // Alert içeriği
             alertDiv.innerHTML = `
                 <div class="card-content center-align" style="padding: 12px; color: #000000;">
                     <span style="font-weight: bold; font-size: 1rem; display: block; margin-bottom: 8px;" 
@@ -1767,10 +1746,10 @@
                 </div>
             `;
         
-            
+            // Alert'i sayfaya ekle
             document.body.appendChild(alertDiv);
         
-            
+            // Bouncing buton etkileşimi
             const bounceButton = alertDiv.querySelector('.btn-floating.bounce');
             let timeoutId = setTimeout(() => {
                 if (alertDiv.parentNode) {
@@ -1784,17 +1763,17 @@
         
             bounceButton.addEventListener('click', () => {
                 clearTimeout(timeoutId);
-                bounceButton.classList.remove('bounce'); 
+                bounceButton.classList.remove('bounce'); // Animasyonu durdur
                 const calendarContainer = document.getElementById('calendarContainer');
                 calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 alertDiv.remove();
             });
         
-            
+            // Kutucuk dışında tıklama ile kapatma
             const closeOnOutsideClick = (event) => {
                 if (!alertDiv.contains(event.target)) {
                     clearTimeout(timeoutId);
-                    bounceButton.classList.remove('bounce'); 
+                    bounceButton.classList.remove('bounce'); // Animasyonu durdur
                     alertDiv.style.opacity = '0';
                     alertDiv.style.transition = 'opacity 0.3s ease';
                     setTimeout(() => {
@@ -1804,7 +1783,7 @@
                 }
             };
         
-            
+            // İlk tıklamayı yakalamak için kısa bir gecikme (alert’in yerleşmesi için)
             setTimeout(() => {
                 document.addEventListener('click', closeOnOutsideClick);
             }, 100);
@@ -1825,197 +1804,195 @@
 
 
        function generateCalendar() {
-          if (persons.length < 3) {
-              M.toast({ html: 'Lütfen en az 3 personel ekleyin!' });
-              return;
-          }
-          
-          const startInput = document.getElementById('startDate').value;
-          const endInput = document.getElementById('endDate').value;
-          const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
-      
-          if (!dutyPerDayInput || dutyPerDayInput === "") {
-              M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
-              return;
-          }
-      
-          const dutyPerDay = parseInt(dutyPerDayInput);
-          if (isNaN(dutyPerDay) || dutyPerDay < 1) {
-              M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
-              return;
-          }
-      
-          if (!startInput || !endInput) {
-              M.toast({ html: 'Lütfen tarih seçin!' });
-              return;
-          }
-      
-          const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
-          const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
-          const start = new Date(startYear, startMonth - 1, startDay);
-          const end = new Date(endYear, endMonth - 1, endDay);
-          start.setHours(0, 0, 0, 0);
-          end.setHours(0, 0, 0, 0);
-      
-          const holidayInput = document.getElementById('holidays').value;
-          const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
-      
-          selectedCells = {};
-          history = [];
-          historyIndex = -1;
-          saveToHistory();
-      
-          const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-      
-          const dates = [];
-          let weekendDays = 0;
-          let weekdayDays = 0;
-          for (let i = 0; i < days; i++) {
-              const date = new Date(start);
-              date.setDate(date.getDate() + i);
-              const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
-              dates.push({ date: date.toISOString(), isWeekend });
-              if (isWeekend) weekendDays++;
-              else weekdayDays++;
-          }
-      
-          const totalDuties = days * dutyPerDay;
-          const totalWeekendDuties = weekendDays * dutyPerDay;
-          const totalWeekdayDuties = weekdayDays * dutyPerDay;
-      
-          let preplannedWeekendDuties = 0;
-          let preplannedWeekdayDuties = 0;
-          persons.forEach(person => {
-              if (person.weekendDuties !== undefined) preplannedWeekendDuties += person.weekendDuties;
-              if (person.weekdayDuties !== undefined) preplannedWeekdayDuties += person.weekdayDuties;
-          });
-      
-          const adjustedTotalDuties = totalDuties - (preplannedWeekendDuties + preplannedWeekdayDuties);
-          const adjustedWeekendDuties = totalWeekendDuties - preplannedWeekendDuties;
-          const adjustedWeekdayDuties = totalWeekdayDuties - preplannedWeekdayDuties;
-      
-          const unplannedPersons = persons.filter(p => p.weekdayDuties === undefined && p.weekendDuties === undefined);
-          const shuffledUnplanned = shuffleArray([...unplannedPersons]);
-          const unplannedCount = unplannedPersons.length;
-      
-          const avgDutiesPerPerson = unplannedCount ? Math.floor(adjustedTotalDuties / unplannedCount) : 0;
-          const extraTotalDuties = unplannedCount ? adjustedTotalDuties % unplannedCount : 0;
-          const avgWeekendPerPerson = unplannedCount ? Math.floor(adjustedWeekendDuties / unplannedCount) : 0;
-          const extraWeekendDuties = unplannedCount ? adjustedWeekendDuties % unplannedCount : 0;
-      
-          let personDutyAssignments = persons.map(person => {
-              if (person.weekdayDuties !== undefined || person.weekendDuties !== undefined) {
-                  return {
-                      person,
-                      totalDuties: (person.weekdayDuties || 0) + (person.weekendDuties || 0),
-                      weekendDuties: person.weekendDuties || 0,
-                      weekdayDuties: person.weekdayDuties || 0
-                  };
-              }
-              return null;
-          }).filter(p => p !== null);
-      
-          shuffledUnplanned.forEach((person, index) => {
-              personDutyAssignments.push({
-                  person,
-                  totalDuties: avgDutiesPerPerson + (index < extraTotalDuties ? 1 : 0),
-                  weekendDuties: avgWeekendPerPerson + (index < extraWeekendDuties ? 1 : 0),
-                  weekdayDuties: 0
-              });
-          });
-      
-          personDutyAssignments.forEach(assignment => {
-              if (assignment.person.weekdayDuties === undefined) {
-                  assignment.weekdayDuties = assignment.totalDuties - assignment.weekendDuties;
-              }
-          });
-      
-          personDutyAssignments.forEach(assignment => {
-              const originalPerson = persons.find(p => p.name === assignment.person.name);
-              originalPerson.weekdayDuties = assignment.weekdayDuties;
-              originalPerson.weekendDuties = assignment.weekendDuties;
-          });
-      
-          renderTable();
-      
-          let html = '<tr><th class="name-column">İsim</th>';
-          const displayDates = [];
-          for (let i = 0; i < days; i++) {
-              const date = new Date(start);
-              date.setDate(date.getDate() + i);
-              displayDates.push(date);
-              html += `<th>${date.getDate()}</th>`;
-          }
-          html += '</tr>';
-      
-          persons.forEach((person, pIndex) => {
-              html += `<tr><td class="name-column">${person.name}</td>`;
-              dates.forEach((dateObj, dIndex) => {
-                  const isWeekend = dateObj.isWeekend;
-                  const cellKey = `${pIndex}-${dIndex}`;
-                  const isUnavailable = unavailableCells[cellKey];
-                  const isSelected = selectedCells[cellKey];
-      
-                  html += `
-                      <td class="calendar-cell 
-                          ${isWeekend ? 'holiday' : ''} 
-                          ${isUnavailable ? 'unavailable' : ''} 
-                          ${isSelected ? 'selected' : ''}"
-                          data-pindex="${pIndex}" 
-                          data-dindex="${dIndex}">
-                      </td>`;
-              });
-              html += '</tr>';
-          });
-      
-          document.getElementById('calendarTable').innerHTML = html;
-      
-          
-          let hasShownOrientationToast = false;
-      
-          const cells = document.querySelectorAll('.calendar-cell');
-          const isMobile = isMobileDevice();
-      
-          cells.forEach(cell => {
-              if (!isMobile) {
-                  cell.addEventListener('mousedown', startDragging);
-                  cell.addEventListener('mousemove', dragOver);
-                  cell.addEventListener('mouseup', stopDragging);
-                  cell.addEventListener('touchstart', startDragging, { passive: false });
-                  cell.addEventListener('touchmove', dragOver, { passive: false });
-                  cell.addEventListener('touchend', stopDragging);
-              }
-              
-              cell.addEventListener('click', () => {
-                  const pIndex = parseInt(cell.dataset.pindex);
-                  const dIndex = parseInt(cell.dataset.dindex);
-                  handleCellClick(pIndex, dIndex);
-              });
-              
-              if (isMobile) {
-                  cell.addEventListener('touchend', (event) => {
-                      event.preventDefault();
-                      const pIndex = parseInt(cell.dataset.pindex);
-                      const dIndex = parseInt(cell.dataset.dindex);
-                      
-                      
-                      if (navigator.vibrate) {
-                               navigator.vibrate([200, 100, 200]); 
-                           }
-                           M.toast({ html: 'İşaretleme için telefonu yatay moda almanız önerilir', displayLength: 4000 });
-                           hasShownOrientationToast = true; 
-                       }
-                      
-                      handleCellClick(pIndex, dIndex);
-                  }, { passive: false });
-              }
-          });
-      
-          if (collapsibleCalendar) collapsibleCalendar.open(0);
-          showCustomAlert();
-          addGlowEffect();
-          updateStatistics();
-      }
+            if (persons.length < 3) {
+                M.toast({ html: 'Lütfen en az 3 personel ekleyin!' });
+                return;
+            }
+            
+            const startInput = document.getElementById('startDate').value;
+            const endInput = document.getElementById('endDate').value;
+            const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
+        
+            if (!dutyPerDayInput || dutyPerDayInput === "") {
+                M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
+                return;
+            }
+        
+            const dutyPerDay = parseInt(dutyPerDayInput);
+            if (isNaN(dutyPerDay) || dutyPerDay < 1) {
+                M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
+                return;
+            }
+        
+            if (!startInput || !endInput) {
+                M.toast({ html: 'Lütfen tarih seçin!' });
+                return;
+            }
+        
+            const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+            const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+            const start = new Date(startYear, startMonth - 1, startDay);
+            const end = new Date(endYear, endMonth - 1, endDay);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+        
+            const holidayInput = document.getElementById('holidays').value;
+            const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+        
+            selectedCells = {};
+            history = [];
+            historyIndex = -1;
+            saveToHistory();
+        
+            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        
+            const dates = [];
+            let weekendDays = 0;
+            let weekdayDays = 0;
+            for (let i = 0; i < days; i++) {
+                const date = new Date(start);
+                date.setDate(date.getDate() + i);
+                const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+                dates.push({ date: date.toISOString(), isWeekend });
+                if (isWeekend) weekendDays++;
+                else weekdayDays++;
+            }
+        
+            const totalDuties = days * dutyPerDay;
+            const totalWeekendDuties = weekendDays * dutyPerDay;
+            const totalWeekdayDuties = weekdayDays * dutyPerDay;
+        
+            let preplannedWeekendDuties = 0;
+            let preplannedWeekdayDuties = 0;
+            persons.forEach(person => {
+                if (person.weekendDuties !== undefined) preplannedWeekendDuties += person.weekendDuties;
+                if (person.weekdayDuties !== undefined) preplannedWeekdayDuties += person.weekdayDuties;
+            });
+        
+            const adjustedTotalDuties = totalDuties - (preplannedWeekendDuties + preplannedWeekdayDuties);
+            const adjustedWeekendDuties = totalWeekendDuties - preplannedWeekendDuties;
+            const adjustedWeekdayDuties = totalWeekdayDuties - preplannedWeekdayDuties;
+        
+            const unplannedPersons = persons.filter(p => p.weekdayDuties === undefined && p.weekendDuties === undefined);
+            const shuffledUnplanned = shuffleArray([...unplannedPersons]);
+            const unplannedCount = unplannedPersons.length;
+        
+            const avgDutiesPerPerson = unplannedCount ? Math.floor(adjustedTotalDuties / unplannedCount) : 0;
+            const extraTotalDuties = unplannedCount ? adjustedTotalDuties % unplannedCount : 0;
+            const avgWeekendPerPerson = unplannedCount ? Math.floor(adjustedWeekendDuties / unplannedCount) : 0;
+            const extraWeekendDuties = unplannedCount ? adjustedWeekendDuties % unplannedCount : 0;
+        
+            let personDutyAssignments = persons.map(person => {
+                if (person.weekdayDuties !== undefined || person.weekendDuties !== undefined) {
+                    return {
+                        person,
+                        totalDuties: (person.weekdayDuties || 0) + (person.weekendDuties || 0),
+                        weekendDuties: person.weekendDuties || 0,
+                        weekdayDuties: person.weekdayDuties || 0
+                    };
+                }
+                return null;
+            }).filter(p => p !== null);
+        
+            shuffledUnplanned.forEach((person, index) => {
+                personDutyAssignments.push({
+                    person,
+                    totalDuties: avgDutiesPerPerson + (index < extraTotalDuties ? 1 : 0),
+                    weekendDuties: avgWeekendPerPerson + (index < extraWeekendDuties ? 1 : 0),
+                    weekdayDuties: 0
+                });
+            });
+        
+            personDutyAssignments.forEach(assignment => {
+                if (assignment.person.weekdayDuties === undefined) {
+                    assignment.weekdayDuties = assignment.totalDuties - assignment.weekendDuties;
+                }
+            });
+        
+            personDutyAssignments.forEach(assignment => {
+                const originalPerson = persons.find(p => p.name === assignment.person.name);
+                originalPerson.weekdayDuties = assignment.weekdayDuties;
+                originalPerson.weekendDuties = assignment.weekendDuties;
+            });
+        
+            renderTable();
+        
+            let html = '<tr><th class="name-column">İsim</th>';
+            const displayDates = [];
+            for (let i = 0; i < days; i++) {
+                const date = new Date(start);
+                date.setDate(date.getDate() + i);
+                displayDates.push(date);
+                html += `<th>${date.getDate()}</th>`;
+            }
+            html += '</tr>';
+        
+            persons.forEach((person, pIndex) => {
+                html += `<tr><td class="name-column">${person.name}</td>`;
+                dates.forEach((dateObj, dIndex) => {
+                    const isWeekend = dateObj.isWeekend;
+                    const cellKey = `${pIndex}-${dIndex}`;
+                    const isUnavailable = unavailableCells[cellKey];
+                    const isSelected = selectedCells[cellKey];
+        
+                    html += `
+                        <td class="calendar-cell 
+                            ${isWeekend ? 'holiday' : ''} 
+                            ${isUnavailable ? 'unavailable' : ''} 
+                            ${isSelected ? 'selected' : ''}"
+                            data-pindex="${pIndex}" 
+                            data-dindex="${dIndex}">
+                        </td>`;
+                });
+                html += '</tr>';
+            });
+        
+            document.getElementById('calendarTable').innerHTML = html;
+        
+            // Flag to track if the orientation Toast has been shown
+            let hasShownOrientationToast = false;
+        
+            const cells = document.querySelectorAll('.calendar-cell');
+            const isMobile = isMobileDevice();
+        
+            cells.forEach(cell => {
+                if (!isMobile) {
+                    cell.addEventListener('mousedown', startDragging);
+                    cell.addEventListener('mousemove', dragOver);
+                    cell.addEventListener('mouseup', stopDragging);
+                    cell.addEventListener('touchstart', startDragging, { passive: false });
+                    cell.addEventListener('touchmove', dragOver, { passive: false });
+                    cell.addEventListener('touchend', stopDragging);
+                }
+                
+                cell.addEventListener('click', () => {
+                    const pIndex = parseInt(cell.dataset.pindex);
+                    const dIndex = parseInt(cell.dataset.dindex);
+                    handleCellClick(pIndex, dIndex);
+                });
+                
+                if (isMobile) {
+                    cell.addEventListener('touchend', (event) => {
+                        event.preventDefault();
+                        const pIndex = parseInt(cell.dataset.pindex);
+                        const dIndex = parseInt(cell.dataset.dindex);
+                        
+                        // Check if device is in portrait mode and Toast hasn't been shown
+                        if (!hasShownOrientationToast && window.matchMedia("(orientation: portrait)").matches) {
+                            M.toast({ html: 'Telefonu yatay moda almanız önerilir', displayLength: 4000 });
+                            hasShownOrientationToast = true; // Set flag to prevent further Toasts
+                        }
+                        
+                        handleCellClick(pIndex, dIndex);
+                    }, { passive: false });
+                }
+            });
+        
+            if (collapsibleCalendar) collapsibleCalendar.open(0);
+            showCustomAlert();
+            addGlowEffect();
+            updateStatistics();
+        }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -2419,7 +2396,7 @@
 
         function downloadSchedule() {
 
-            
+            // Takvim doluluk kontrolü
                 const startInput = document.getElementById('startDate').value;
                 const endInput = document.getElementById('endDate').value;
                 const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
@@ -2610,10 +2587,10 @@
             const balanceFridays = document.getElementById('balanceFridays').checked;
             const balanceThursdays = document.getElementById('balanceThursdays').checked;
 
-           
+            // Grup kontrolü için ek validation
             const groupingEnabled = document.getElementById('groupingCheckbox').checked;
                         
-            
+            // Kontrol 1: Grup büyüklüğü ile dutyPerDay uyumsuzluğu
             if (groupingEnabled) {
                 const groupSizes = {};
                 persons.forEach(person => {
@@ -2631,7 +2608,7 @@
                     }
                 }
             
-                
+                // Kontrol 2: Gruplama seçili ama hiç grup atanmamış
                 const hasAnyGroup = persons.some(person => person.group > 0);
                 if (!hasAnyGroup) {
                     validationErrors.push({
@@ -2641,7 +2618,7 @@
                 }
             }
             
-           
+            // Hata varsa modal aç ve işlemi durdur
             if (validationErrors.length > 0) {
                 document.getElementById('loadingOverlay').style.display = 'none';
                 showErrorModal();
@@ -2686,7 +2663,7 @@
                     updateCalendar();
                     updateStatistics();
                     saveToHistory();
-                    showToast('Tüm nöbetler atandı!', 4000); 
+                    showToast('Tüm nöbetler atandı!', 4000); // Başarı mesajı, 4 saniye
                 } else {
                     let errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
                     if (status === 400 && errorMessage.includes('Nöbet atamaları yapılamadı')) {
@@ -2694,12 +2671,12 @@
                     } else if (status === 400 && errorMessage.includes('Cuma veya Perşembe dengeleme başarısız')) {
                         errorMessage = 'Hata: Cuma veya Perşembe dengeleme başarısız, bu seçenekleri kapatıp tekrar deneyin!';
                     }
-                    showToast(errorMessage, 10000); 
+                    showToast(errorMessage, 10000); // Hata mesajı, 10 saniye
                 }
             })
             .catch(error => {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                showToast('Sunucuyla bağlantı kurulamadı: ' + error.message, 10000); 
+                showToast('Sunucuyla bağlantı kurulamadı: ' + error.message, 10000); // Hata mesajı, 10 saniye
             });
         }
 
