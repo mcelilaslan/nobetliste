@@ -1811,8 +1811,7 @@
         }
 
 
-        function generateCalendar() {
-
+       function generateCalendar() {
             if (persons.length < 3) {
                 M.toast({ html: 'Lütfen en az 3 personel ekleyin!' });
                 return;
@@ -1821,40 +1820,40 @@
             const startInput = document.getElementById('startDate').value;
             const endInput = document.getElementById('endDate').value;
             const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
-
+        
             if (!dutyPerDayInput || dutyPerDayInput === "") {
                 M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
                 return;
             }
-
+        
             const dutyPerDay = parseInt(dutyPerDayInput);
             if (isNaN(dutyPerDay) || dutyPerDay < 1) {
                 M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
                 return;
             }
-
+        
             if (!startInput || !endInput) {
                 M.toast({ html: 'Lütfen tarih seçin!' });
                 return;
             }
-
+        
             const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
             const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
             const start = new Date(startYear, startMonth - 1, startDay);
             const end = new Date(endYear, endMonth - 1, endDay);
             start.setHours(0, 0, 0, 0);
             end.setHours(0, 0, 0, 0);
-
+        
             const holidayInput = document.getElementById('holidays').value;
             const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
-
+        
             selectedCells = {};
             history = [];
             historyIndex = -1;
             saveToHistory();
-
+        
             const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
+        
             const dates = [];
             let weekendDays = 0;
             let weekdayDays = 0;
@@ -1866,31 +1865,31 @@
                 if (isWeekend) weekendDays++;
                 else weekdayDays++;
             }
-
+        
             const totalDuties = days * dutyPerDay;
             const totalWeekendDuties = weekendDays * dutyPerDay;
             const totalWeekdayDuties = weekdayDays * dutyPerDay;
-
+        
             let preplannedWeekendDuties = 0;
             let preplannedWeekdayDuties = 0;
             persons.forEach(person => {
                 if (person.weekendDuties !== undefined) preplannedWeekendDuties += person.weekendDuties;
                 if (person.weekdayDuties !== undefined) preplannedWeekdayDuties += person.weekdayDuties;
             });
-
+        
             const adjustedTotalDuties = totalDuties - (preplannedWeekendDuties + preplannedWeekdayDuties);
             const adjustedWeekendDuties = totalWeekendDuties - preplannedWeekendDuties;
             const adjustedWeekdayDuties = totalWeekdayDuties - preplannedWeekdayDuties;
-
+        
             const unplannedPersons = persons.filter(p => p.weekdayDuties === undefined && p.weekendDuties === undefined);
             const shuffledUnplanned = shuffleArray([...unplannedPersons]);
             const unplannedCount = unplannedPersons.length;
-
+        
             const avgDutiesPerPerson = unplannedCount ? Math.floor(adjustedTotalDuties / unplannedCount) : 0;
             const extraTotalDuties = unplannedCount ? adjustedTotalDuties % unplannedCount : 0;
             const avgWeekendPerPerson = unplannedCount ? Math.floor(adjustedWeekendDuties / unplannedCount) : 0;
             const extraWeekendDuties = unplannedCount ? adjustedWeekendDuties % unplannedCount : 0;
-
+        
             let personDutyAssignments = persons.map(person => {
                 if (person.weekdayDuties !== undefined || person.weekendDuties !== undefined) {
                     return {
@@ -1902,7 +1901,7 @@
                 }
                 return null;
             }).filter(p => p !== null);
-
+        
             shuffledUnplanned.forEach((person, index) => {
                 personDutyAssignments.push({
                     person,
@@ -1911,21 +1910,21 @@
                     weekdayDuties: 0
                 });
             });
-
+        
             personDutyAssignments.forEach(assignment => {
                 if (assignment.person.weekdayDuties === undefined) {
                     assignment.weekdayDuties = assignment.totalDuties - assignment.weekendDuties;
                 }
             });
-
+        
             personDutyAssignments.forEach(assignment => {
                 const originalPerson = persons.find(p => p.name === assignment.person.name);
                 originalPerson.weekdayDuties = assignment.weekdayDuties;
                 originalPerson.weekendDuties = assignment.weekendDuties;
             });
-
+        
             renderTable();
-
+        
             let html = '<tr><th class="name-column">İsim</th>';
             const displayDates = [];
             for (let i = 0; i < days; i++) {
@@ -1935,7 +1934,7 @@
                 html += `<th>${date.getDate()}</th>`;
             }
             html += '</tr>';
-
+        
             persons.forEach((person, pIndex) => {
                 html += `<tr><td class="name-column">${person.name}</td>`;
                 dates.forEach((dateObj, dIndex) => {
@@ -1943,7 +1942,7 @@
                     const cellKey = `${pIndex}-${dIndex}`;
                     const isUnavailable = unavailableCells[cellKey];
                     const isSelected = selectedCells[cellKey];
-
+        
                     html += `
                         <td class="calendar-cell 
                             ${isWeekend ? 'holiday' : ''} 
@@ -1955,9 +1954,12 @@
                 });
                 html += '</tr>';
             });
-
+        
             document.getElementById('calendarTable').innerHTML = html;
-
+        
+            // Flag to track if the orientation Toast has been shown
+            let hasShownOrientationToast = false;
+        
             const cells = document.querySelectorAll('.calendar-cell');
             const isMobile = isMobileDevice();
         
@@ -1982,6 +1984,13 @@
                         event.preventDefault();
                         const pIndex = parseInt(cell.dataset.pindex);
                         const dIndex = parseInt(cell.dataset.dindex);
+                        
+                        // Check if device is in portrait mode and Toast hasn't been shown
+                        if (!hasShownOrientationToast && window.matchMedia("(orientation: portrait)").matches) {
+                            M.toast({ html: 'Telefonu yatay moda almanız önerilir', displayLength: 4000 });
+                            hasShownOrientationToast = true; // Set flag to prevent further Toasts
+                        }
+                        
                         handleCellClick(pIndex, dIndex);
                     }, { passive: false });
                 }
