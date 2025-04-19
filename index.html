@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -26,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
       <script type="text/javascript">
            document.addEventListener('DOMContentLoaded', function() {
                emailjs.init({
@@ -35,7 +34,7 @@
                const modals = document.querySelectorAll('.modal');
                M.Modal.init(modals);
            });
-       </script> 
+       </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
    <style>
         body {
@@ -484,18 +483,23 @@
         }
     
         .switch-container {
-           background-color: rgba(119,190,186,255) !important;
-           border: 2px solid #b0bec5;
-           padding: 6px 10px; 
-           border-radius: 8px;
-           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-           display: flex;
-           flex-direction: column; 
-           align-items: flex-start; 
-           height: auto; 
-           justify-content: center;
+            background-color: rgba(119,190,186,255) !important;
+            border: 2px solid #b0bec5;
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: inline-flex; /* Flex yerine inline-flex */
+            flex-direction: column;
+            align-items: flex-start;
+            width: auto; /* Genişlik içeriğe göre */
+            box-sizing: border-box;
         }
 
+        .switch-container label {
+            width: auto;
+            white-space: nowrap;
+        }
+       
         balance-label {
             display: flex;
             align-items: center;
@@ -731,6 +735,15 @@
         .glow {
             animation: glow 4s ease-in-out infinite;
         }
+
+        .waves-effect.waves-light.btn.teal {
+            width: auto;
+            min-width: 0;
+            padding: 0 8px; /* Padding'i küçülttük */
+            box-sizing: border-box;
+            display: inline-flex; /* İkon ve metni hizalamak için */
+            align-items: center;
+        }
         
         @keyframes glow {
             0% {
@@ -760,7 +773,11 @@
             animation: bounce 1s infinite;
         }
 
-
+        @media only screen and (max-width: 600px) {
+            .control-buttons .btn {
+                font-size: 0.8rem;
+            }
+        }
 
         /* Mobil Stiller */
         @media only screen and (max-width: 900px) {
@@ -933,12 +950,12 @@
                             <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
                             <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
                             <li><a class="btn-floating tiny waves-effect waves-light grey"><i class="material-icons">more_vert</i></a>tuşu ile oluşturduğunuz personel listesini indirebilir, sonraki kullanımlarda yükleyerek süreci hızlandırabilirsiniz.</li>
-                            <li>Nöbet sayılarını "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet Sayılarını Dağıt" tuşu ile otomatik dağıtabilir veya kendiniz dağıtabilirsiniz.</li>
+                            <li>Nöbet sayıları "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet Sayılarını Dağıt" tuşu ile otomatik dağıtılır, kendiniz de düzenleyebilirsiniz.</li>
                             <li>Kişilere ayrı ayrı hafta içi / hafta sonu nöbet sayıları belirleyebilirsiniz.</li>
                             <li>İki nöbet arası en az boşluk toplu veya kişiye özel olabilir.</li>
-                            <li>Personel planı bittiğinde "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet Sayılarını Dağıt" tuşuna basınız.</li>
-                            <li>Cuma ve Perşembe günlerini dengelemek isterseniz ilgili kutucukları tikleyiniz.</li>
+                            <li>Personel planı bittiğinde "<a class="btn-floating tiny waves-effect waves-light blue"><i class="material-icons">event</i></a>Nöbet Sayılarını Dağıt" tuşuna basınız. Takvimin oluşturulduğunu göreceksiniz.</li>
                             <li>Varsa <font color="red">istenmeyen ✖</font>/<font color="green">istenen ✓</font> günleri takvim üzerinde işaretleyerek "<a class="btn-floating tiny waves-effect waves-light purple"><i class="material-icons">auto_fix_high</i></a>Otomatik Ata" tuşuna basınız.</li>
+                            <li>Cuma ve Perşembe günlerini dengelemek isterseniz ilgili kutucukları tikleyiniz.</li>
                             <li>Geri al tuşu ile takvimdeki son değişikliği geri alabilirsiniz. Temizle butonu takvimi sıfırlar.</li>
                             <li>Listeyi excel formatında indirmek için "<a class="btn-floating tiny waves-effect waves-light green"><i class="material-icons">file_download</i></a>İndir" tuşuna basınız.</li>
                         </ul>
@@ -1030,7 +1047,7 @@
                             <div class="row control-buttons">
                                 <div class="col s12">
                                     <button class="btn waves-effect waves-light blue" onclick="generateCalendar()">
-                                        <i class="material-icons left">event</i>Nöbet Sayılarını Dağıt
+                                        <i class="material-icons left">event</i>Nöbetleri Adaletli Dağıt
                                     </button>
                                     <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
                                         <i class="material-icons left">refresh</i>Dağıtımı Sıfırla
@@ -1115,10 +1132,9 @@
                             </div>
                             
                             <!-- İndir -->
-                            <div class="col s3">
+                              <div class="col s3">
                                 <button class="waves-effect waves-light btn teal tooltipped" 
                                     onclick="downloadSchedule()" 
-                                    style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
                                     data-position="bottom" 
                                     data-tooltip="Nöbet listesini Excel formatında indirir">
                                     <i class="material-icons left">file_download</i>İndir
@@ -1130,7 +1146,7 @@
             </ul>
         </div>
 
-        <!-- İstatistik Konteynırı -->
+       <!-- İstatistik Konteynırı -->
         <div class="custom-container">
             <ul class="collapsible popout" id="statsCollapsible">
                 <li>
@@ -1153,6 +1169,7 @@
                 </li>
             </ul>
         </div>
+    </div>
 
     <!-- Hata Modalı -->
     <div id="errorModal" class="modal">
@@ -1166,7 +1183,7 @@
         </div>
     </div>
 
-    <!-- Geri Bildirim Modalı -->
+        <!-- Geri Bildirim Modalı -->
      <div id="feedbackModal" class="modal">
           <div class="modal-content">
               <h4>Geri Bildirim Gönder</h4>
@@ -1209,7 +1226,6 @@
           </div>
       </div>
 
-        
     <!-- Yükleme Ekranı -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="preloader-wrapper active">
@@ -1748,7 +1764,7 @@
         
             // Mobil ve masaüstü için konumlandırma
             if (isMobileDevice()) {
-                alertDiv.style.top = '20px';
+                alertDiv.style.top = '35%';
                 alertDiv.style.left = '50%';
                 alertDiv.style.transform = 'translateX(-50%)';
                 if (window.innerWidth < 360) {
@@ -1835,6 +1851,12 @@
 
 
         function generateCalendar() {
+
+            if (persons.length < 3) {
+                M.toast({ html: 'Lütfen en az 3 personel ekleyin!' });
+                return;
+            }
+            
             const startInput = document.getElementById('startDate').value;
             const endInput = document.getElementById('endDate').value;
             const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
@@ -2411,6 +2433,30 @@
         }
 
         function downloadSchedule() {
+
+            // Takvim doluluk kontrolü
+                const startInput = document.getElementById('startDate').value;
+                const endInput = document.getElementById('endDate').value;
+                const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+                const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+                const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+                const start = new Date(startYear, startMonth - 1, startDay);
+                const end = new Date(endYear, endMonth - 1, endDay);
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            
+                let allDaysFilled = true;
+                for (let d = 0; d < days; d++) {
+                    const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
+                    if (assigned < dutyPerDay) {
+                        allDaysFilled = false;
+                        break;
+                    }
+                }
+                if (!allDaysFilled) {
+                    M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!' });
+                    return;
+                }
+            
             performExport(function(blob, fileName) {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -2794,8 +2840,7 @@
             M.toast({ html: 'Takvimdeki tüm işaretlemeler temizlendi!' });
         }
 
-
-         // Geri Bildirim Gönderme Fonksiyonu
+        // Geri Bildirim Gönderme Fonksiyonu
         function sendFeedback() {
              const nameInput = document.getElementById('feedbackName');
              const emailInput = document.getElementById('feedbackEmail');
@@ -2844,9 +2889,10 @@
                  feedbackLoading.style.display = 'none';
              });
          }
+
     </script>
     
-     <footer class="fixed-footer">
+       <footer class="fixed-footer">
           <div class="footer-content">
               © 2025 - nobetplani.com - CK
             
