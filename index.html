@@ -195,7 +195,6 @@
             width: 100px !important;
             max-width: 200px !important;
             overflow: hidden;
-            text-overflow: ellipsis;
             padding: 0 5px;
             font-size: 14px;
         }
@@ -1596,6 +1595,13 @@
             availabilityMode = !switchInput.checked;
         }
 
+        function truncateName(name) {
+            if (isMobileDevice() && name.length > 8) {
+                return name.substring(0, 5) + "...";
+            }
+            return name;
+        }
+
         function renderTable() {
             const tableContainer = document.getElementById('personnelTableContainer');
             const noPersonnelMessage = document.getElementById('noPersonnelMessage');
@@ -1652,14 +1658,14 @@
                     html += `
                         <tr style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; background-color: #f9fafb; transition: background-color 0.2s;">
                             ${groupingEnabled && groupCount > 0 ? `
-                                <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
-                                    <select style="height: 24px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 4px; width: 60px; display: block;" onchange="updateGroup(${index}, this.value)">
+                                <td style="...">
+                                    <select style="..." onchange="updateGroup(${index}, this.value)">
                                         ${groupOptions}
                                     </select>
                                 </td>
                             ` : ''}
                             <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box; font-family: 'Arial', sans-serif; color: #374151;">
-                                ${person.name}
+                                ${truncateName(person.name)}
                             </td>
                             <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
                                 <input type="number" class="planning-input" min="0" 
@@ -1976,7 +1982,7 @@
             html += '</tr>';
 
             persons.forEach((person, pIndex) => {
-                html += `<tr><td class="name-column">${person.name}</td>`;
+                html += `<tr><td class="name-column">${truncateName(person.name)}</td>`;
                 dates.forEach((dateObj, dIndex) => {
                     const isWeekend = dateObj.isWeekend;
                     const cellKey = `${pIndex}-${dIndex}`;
