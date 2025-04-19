@@ -1648,11 +1648,7 @@
                         groupOptions += `<option value="${i}" ${person.group === i ? 'selected' : ''}>${i}</option>`;
                     }
                     
-                    const maxNameLength = isMobile ? 8 : 20;
-                    const displayName = person.name.length > maxNameLength 
-                        ? person.name.substring(0, isMobile ? 5 : maxNameLength - 3) + '...' 
-                        : person.name;
-
+                  
                     html += `
                         <tr style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; background-color: #f9fafb; transition: background-color 0.2s;">
                             ${groupingEnabled && groupCount > 0 ? `
