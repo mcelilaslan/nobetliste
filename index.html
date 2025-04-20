@@ -1626,12 +1626,12 @@
                 let html = `
                     <thead>
                         <tr>
-                            ${groupingEnabled ? '<th>Grup</th>' : ''}
-                            <th>İsim</th>
-                            <th>Hafta İçi</th>
-                            <th>Hf Sonu</th>
-                            <th class="duty-gap-header">
-                                2 Nöbet Arası Boşluk
+                            ${groupingEnabled ? '<th style="background-color: #f2f2f2;">Grup</th>' : ''}
+                            <th style="background-color: #f2f2f2;">İsim</th>
+                            <th style="background-color: #f2f2f2;">Hafta İçi</th>
+                            <th style="background-color: #f2f2f2;">Hf Sonu</th>
+                            <th class="duty-gap-header" style="background-color: #f2f2f2;">
+                                ${isMobileDevice() ? '2 Nöbet<br>Arası Boşluk' : '2 Nöbet Arası Boşluk'}
                                 <a class="btn-floating btn-small waves-effect waves-light teal decrement-btn" onclick="decrementAllDutyGaps()">
                                     <i class="material-icons">arrow_downward</i>
                                 </a>
@@ -1639,7 +1639,7 @@
                                     <i class="material-icons">arrow_upward</i>
                                 </a>
                             </th>
-                            <th style="text-align: center;">Sil</th>
+                            <th style="background-color: #f2f2f2; text-align: center;">Sil</th>
                         </tr>
                     </thead>
                     <tbody id="personTable">
@@ -1658,12 +1658,12 @@
                     html += `
                         <tr style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; background-color: #f9fafb; transition: background-color 0.2s;">
                             ${groupingEnabled && groupCount > 0 ? `
-                                <td style="...">
-                                    <select style="..." onchange="updateGroup(${index}, this.value)">
-                                        ${groupOptions}
-                                    </select>
-                                </td>
-                            ` : ''}
+                            <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box;">
+                                <select style="height: 24px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 4px; min-width: ${isMobileDevice() ? '50px' : '30px'}; display: block;" onchange="updateGroup(${index}, this.value)">
+                                    ${groupOptions}
+                                </select>
+                            </td>
+                        ` : ''}
                             <td style="height: 30px; min-height: 30px; max-height: 30px; overflow: hidden; vertical-align: middle; line-height: 30px; padding: 0 8px; box-sizing: border-box; font-family: 'Arial', sans-serif; color: #374151;">
                                 ${truncateName(person.name)}
                             </td>
