@@ -743,6 +743,25 @@
             display: inline-flex; /* İkon ve metni hizalamak için */
             align-items: center;
         }
+
+        @keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+        25% {
+            transform: translateX(-5px);
+        }
+        50% {
+            transform: translateX(5px);
+        }
+        75% {
+            transform: translateX(-5px);
+        }
+    }
+
+       .toast.shake {
+            animation: shake 0.5s ease-in-out 3; /* 3 kez sallanır */
+        }
         
         @keyframes glow {
             0% {
@@ -2133,11 +2152,42 @@
             dragStart = null;
         }
 
+       let isFirstClick = true; // İlk tıklamayı takip etmek için global değişken
+
         function handleCellClick(pIndex, dIndex) {
             const cellKey = `${pIndex}-${dIndex}`;
             const cell = document.querySelector(`td[data-pindex="${pIndex}"][data-dindex="${dIndex}"]`);
+        
+            // Mobil cihaz ve dikey mod kontrolü
+            if (isFirstClick && isMobileDevice() && window.innerWidth < window.innerHeight) {
+                // Telefonu titreştir
+                if (navigator.vibrate) {
+                    navigator.vibrate(200); // 200ms titreşim
+                }
+        
+                // Özel mToast uyarısı
+                M.Toast.dismissAll();
+                const toastHTML = '<span style="font-size: 1rem;">Takvim işaretlemeleri için yatay moda almanız önerilir</span>';
+                const toast = M.toast({
+                    html: toastHTML,
+                    displayLength: 6000,
+                    classes: 'shake' // Sallanma animasyonu için sınıf
+                });
+        
+                // Toast elementine shake sınıfını manuel olarak ekle
+                setTimeout(() => {
+                    const toastElement = document.querySelector('.toast');
+                    if (toastElement) {
+                        toastElement.classList.add('shake');
+                    }
+                }, 0);
+        
+                // İlk tıklamayı false yap
+                isFirstClick = false;
+            }
+        
             saveToHistory();
-
+        
             if (availabilityMode) {
                 unavailableCells[cellKey] = !unavailableCells[cellKey];
                 cell.classList.toggle('unavailable', unavailableCells[cellKey]);
@@ -2156,11 +2206,11 @@
                         const prevCellKey = `${pIndex}-${prevDay}`;
                         const nextCellKey = `${pIndex}-${nextDay}`;
                         const totalDays = document.querySelectorAll('th').length - 1;
-
+        
                         if ((prevDay >= 0 && selectedCells[prevCellKey]) || (nextDay < totalDays && selectedCells[nextCellKey])) {
                             M.toast({ html: `${persons[pIndex].name} için üst üste nöbet ataması tespit edildi!` });
                         }
-
+        
                         selectedCells[cellKey] = true;
                         cell.classList.add('selected');
                     }
