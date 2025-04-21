@@ -2464,17 +2464,17 @@
             }
             const columnCount = Math.max(dutyPerDay, maxAssignedPerDay);
         
-            // Stil eklenmiş veri dizisi
+            
             const styledData = [];
         
-            // Başlık satırı (kalın, %50 daha büyük font)
+           
             const headers = [{ v: 'Tarih', t: 's', s: { font: { bold: true, sz: 16 } } }];
             for (let i = 1; i <= columnCount; i++) {
                 headers.push({ v: `Nöbetçi ${i}`, t: 's', s: { font: { bold: true, sz: 16 } } });
             }
             styledData.push(headers);
         
-            // Tarih ve nöbetçi satırları
+            
             for (let d = 0; d < days; d++) {
                 const currentDate = new Date(start);
                 currentDate.setDate(currentDate.getDate() + d);
@@ -2482,45 +2482,45 @@
                 const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
                 const isHoliday = holidays.includes(currentDate.getDate());
         
-                // Tarih hücresi için stil
-                let dateStyle = { font: { bold: true, sz: 16 } }; // Tüm tarihler kalın ve %50 daha büyük
+                
+                let dateStyle = { font: { bold: true, sz: 16 } }; 
                 if (isWeekend && !isHoliday) {
-                    dateStyle.fill = { fgColor: { rgb: "808080" } }; // Sadece haftasonu: gri arkaplan
+                    dateStyle.fill = { fgColor: { rgb: "808080" } }; 
                 }
                 if (isHoliday) {
                     dateStyle = {
-                        fill: { fgColor: { rgb: "808080" } }, // Tatil günleri: gri arkaplan
-                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } } // Kırmızı yazı
+                        fill: { fgColor: { rgb: "808080" } }, 
+                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } } 
                     };
                 }
                 if (isWeekend && isHoliday) {
                     dateStyle = {
-                        fill: { fgColor: { rgb: "808080" } }, // Haftasonu ve tatil: gri arkaplan
-                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } } // Kırmızı yazı
+                        fill: { fgColor: { rgb: "808080" } }, 
+                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } } 
                     };
                 }
         
-                const row = [{ v: dateStr, t: 's', s: dateStyle }]; // Tarih string olarak
+                const row = [{ v: dateStr, t: 's', s: dateStyle }]; 
                 const assigned = scheduleData[dateStr] || [];
                 for (let i = 0; i < columnCount; i++) {
-                    row.push({ v: assigned[i] || '', t: 's', s: { font: { sz: 16 } } }); // Nöbetçi hücreleri %50 daha büyük
+                    row.push({ v: assigned[i] || '', t: 's', s: { font: { sz: 16 } } }); 
                 }
                 styledData.push(row);
             }
         
-            // Çalışma sayfasını oluştur
+            
             const ws = XLSX.utils.aoa_to_sheet(styledData);
         
-            // Sütun genişliklerini ayarla (font büyüklüğüne uyum için artırıldı)
+            
             ws['!cols'] = [
-                { wch: 14 }, // Tarih sütunu (A sütunu, font büyüklüğü için 14 karakter)
-                ...Array(columnCount).fill({ wch: 22 }) // Nöbetçi sütunları (22 karakter)
+                { wch: 14 }, 
+                ...Array(columnCount).fill({ wch: 22 }) 
             ];
         
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Nöbet Listesi");
         
-            // Dosyayı oluştur ve indir
+            
             const blob = new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/octet-stream' });
             const fileName = `nobet_listesi_${new Date().toISOString().split('T')[0]}.xlsx`;
         
@@ -2529,7 +2529,7 @@
         
         function downloadSchedule() {
 
-            // Takvim doluluk kontrolü
+           
                 const startInput = document.getElementById('startDate').value;
                 const endInput = document.getElementById('endDate').value;
                 const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
