@@ -2484,16 +2484,19 @@
         
                 // Tarih hücresi için stil
                 let dateStyle = { font: { bold: true, sz: 16 } }; // Tüm tarihler kalın ve %50 daha büyük
-                if (isWeekend) {
-                    dateStyle.fill = { fgColor: { rgb: "808080" } }; // Daha koyu gri arkaplan
+                if (isWeekend && !isHoliday) {
+                    dateStyle.fill = { fgColor: { rgb: "808080" } }; // Sadece haftasonu: gri arkaplan
                 }
                 if (isHoliday) {
-                    dateStyle.font = { bold: true, sz: 16, color: { rgb: "FF0000" } }; // Kırmızı yazı
+                    dateStyle = {
+                        fill: { fgColor: { rgb: "808080" } }, // Tatil günleri: gri arkaplan
+                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } } // Kırmızı yazı
+                    };
                 }
                 if (isWeekend && isHoliday) {
                     dateStyle = {
-                        fill: { fgColor: { rgb: "808080" } },
-                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } }
+                        fill: { fgColor: { rgb: "808080" } }, // Haftasonu ve tatil: gri arkaplan
+                        font: { bold: true, sz: 16, color: { rgb: "FF0000" } } // Kırmızı yazı
                     };
                 }
         
