@@ -1170,6 +1170,12 @@
                 <li>
                     <div class="collapsible-header"><i class="material-icons">assessment</i>Nöbet İstatistikleri</div>
                     <div class="collapsible-body">
+                        <div style="margin-bottom: 15px;">
+                            <label class="tooltipped balance-label" data-position="top" data-tooltip="Nöbet izni kullanılıyorsa işaretleyin, cumartesi hariç her nöbetten 8 saat düşülür.">
+                                <input type="checkbox" id="leaveCheckbox" class="balance-checkbox" onchange="updateStatistics()" />
+                                <span style="color: #000;">Nöbet İzni Kullanılıyor</span>
+                            </label>
+                        </div>
                         <table class="striped">
                             <thead>
                                 <tr>
@@ -1179,6 +1185,7 @@
                                     <th>Perşembe</th>
                                     <th>Cuma</th>
                                     <th>Toplam</th>
+                                    <th>Fazla Mesai (Saat)</th>
                                 </tr>
                             </thead>
                             <tbody id="statsTable"></tbody>
@@ -1187,7 +1194,6 @@
                 </li>
             </ul>
         </div>
-    </div>
 
     <!-- Hata Modalı -->
     <div id="errorModal" class="modal">
@@ -2233,14 +2239,17 @@
         
             const holidayInput = document.getElementById('holidays').value;
             const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+            const leaveChecked = document.getElementById('leaveCheckbox').checked;
         
-            const stats = persons.map(p => ({name: p.name, weekday: 0, weekend: 0, thursday: 0, friday: 0}));
+            const stats = persons.map(p => ({name: p.name, weekday: 0, weekend: 0, thursday: 0, friday: 0, overtime: 0}));
             const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
         
             for (let d = 0; d < days; d++) {
                 const date = new Date(start);
                 date.setDate(date.getDate() + d);
                 const isWeekend = date.getDay() === 0 || date.getDay() === 6 || holidays.includes(date.getDate());
+                const isSaturday = date.getDay() === 6;
+                const isSunday = date.getDay() === 0;
                 const isThursday = date.getDay() === 4;
                 const isFriday = date.getDay() === 5;
         
@@ -2248,8 +2257,18 @@
                     if (selectedCells[`${pIndex}-${d}`]) {
                         if (isWeekend) {
                             stats[pIndex].weekend++;
+                            if (leaveChecked) {
+                                if (isSaturday) {
+                                    stats[pIndex].overtime += 24; // Cumartesi nöbet izniyle de 24 saat
+                                } else {
+                                    stats[pIndex].overtime += 16; // Pazar veya tatil 24 - 8 = 16 saat
+                                }
+                            } else {
+                                stats[pIndex].overtime += 24; // Hafta sonu normalde 24 saat
+                            }
                         } else {
                             stats[pIndex].weekday++;
+                            stats[pIndex].overtime += leaveChecked ? 8 : 16; // Hafta içi nöbet izniyle 8, normalde 16 saat
                             if (isThursday) {
                                 stats[pIndex].thursday++;
                             }
@@ -2269,6 +2288,7 @@
                     <td>${stat.thursday}</td>
                     <td>${stat.friday}</td>
                     <td>${stat.weekday + stat.weekend}</td>
+                    <td>${stat.overtime}</td>
                 </tr>
             `).join('');
         
