@@ -2225,7 +2225,7 @@
             updateStatistics();
         }
 
-        function updateStatistics() {
+       function updateStatistics() {
             const startInput = document.getElementById('startDate').value;
             const endInput = document.getElementById('endDate').value;
             if (!startInput || !endInput) return;
@@ -2268,12 +2268,14 @@
                             }
                         } else {
                             stats[pIndex].weekday++;
-                            stats[pIndex].overtime += leaveChecked ? 8 : 16; // Hafta içi nöbet izniyle 8, normalde 16 saat
-                            if (isThursday) {
-                                stats[pIndex].thursday++;
-                            }
                             if (isFriday) {
                                 stats[pIndex].friday++;
+                                stats[pIndex].overtime += leaveChecked ? 16 : 16; // Cuma için değişiklik: nöbet izniyle de 16 saat
+                            } else if (isThursday) {
+                                stats[pIndex].thursday++;
+                                stats[pIndex].overtime += leaveChecked ? 8 : 16; // Perşembe nöbet izniyle 8, normalde 16 saat
+                            } else {
+                                stats[pIndex].overtime += leaveChecked ? 8 : 16; // Diğer hafta içi günler nöbet izniyle 8, normalde 16 saat
                             }
                         }
                     }
