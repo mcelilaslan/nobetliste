@@ -1455,7 +1455,7 @@
                     btn.style.height = '36px';
                     btn.style.lineHeight = '36px';
                 });
-                M.toast({ html: 'Yatay modda daha iyi bir deneyim elde edebilirsiniz!(Masaüstü kullanım önerilir)' });
+                M.toast({ html: 'Mobilde "yatay" modda daha iyi bir deneyim elde edebilirsiniz!(Masaüstü kullanım önerilir)' });
             }
         
             // Tarih seçiciler için olay dinleyicileri
@@ -1656,7 +1656,7 @@
                             <th style="background-color: #f2f2f2;">Hafta İçi</th>
                             <th style="background-color: #f2f2f2;">Hf Sonu</th>
                             <th class="duty-gap-header" style="background-color: #f2f2f2;">
-                                ${isMobileDevice() ? '2 Nöbet<br>Arası Boşluk' : '2 Nöbet Arası Boşluk'}
+                                ${isMobileDevice() ? '2 Nöbet<br>Arası Boşluk(gün)' : '2 Nöbet Arası Boşluk(gün)'}
                                 <a class="btn-floating btn-small waves-effect waves-light teal decrement-btn" onclick="decrementAllDutyGaps()">
                                     <i class="material-icons">arrow_downward</i>
                                 </a>
@@ -2259,23 +2259,23 @@
                             stats[pIndex].weekend++;
                             if (leaveChecked) {
                                 if (isSaturday) {
-                                    stats[pIndex].overtime += 24; // Cumartesi nöbet izniyle de 24 saat
+                                    stats[pIndex].overtime += 24; 
                                 } else {
-                                    stats[pIndex].overtime += 16; // Pazar veya tatil 24 - 8 = 16 saat
+                                    stats[pIndex].overtime += 16; 
                                 }
                             } else {
-                                stats[pIndex].overtime += 24; // Hafta sonu normalde 24 saat
+                                stats[pIndex].overtime += 24; 
                             }
                         } else {
                             stats[pIndex].weekday++;
                             if (isFriday) {
                                 stats[pIndex].friday++;
-                                stats[pIndex].overtime += leaveChecked ? 16 : 16; // Cuma için değişiklik: nöbet izniyle de 16 saat
+                                stats[pIndex].overtime += leaveChecked ? 16 : 16; 
                             } else if (isThursday) {
                                 stats[pIndex].thursday++;
-                                stats[pIndex].overtime += leaveChecked ? 8 : 16; // Perşembe nöbet izniyle 8, normalde 16 saat
+                                stats[pIndex].overtime += leaveChecked ? 8 : 16; 
                             } else {
-                                stats[pIndex].overtime += leaveChecked ? 8 : 16; // Diğer hafta içi günler nöbet izniyle 8, normalde 16 saat
+                                stats[pIndex].overtime += leaveChecked ? 8 : 16; 
                             }
                         }
                     }
