@@ -2583,7 +2583,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                M.toast({ html: 'Nöbet listesi indirildi!' });
+                M.toast({ html: 'Nöbet listesi indirildi! Lütfen düşüncelerinizi aşağıdan geri bildirim butonuyla iletiniz :)' });
             });
         }
 
@@ -2818,7 +2818,7 @@
                     updateCalendar();
                     updateStatistics();
                     saveToHistory();
-                    showToast('Tüm nöbetler atandı!', 4000); // Başarı mesajı, 4 saniye
+                    showToast('Tüm nöbetler atandı! Takvimde manuel değişiklik yapabilir veya geri alıp varyasyon deneyebilirsiniz!', 4000); // Başarı mesajı, 4 saniye
                 } else {
                     let errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
                     if (status === 400 && errorMessage.includes('Nöbet atamaları yapılamadı')) {
@@ -2993,7 +2993,7 @@
                  reply_to: email || 'nobetplani@gmail.com'
              })
              .then(() => {
-                 M.toast({ html: 'Geri bildiriminiz başarıyla gönderildi!' });
+                 M.toast({ html: 'Geri bildiriminiz başarıyla gönderildi! Bize Instagram adresimizden de ulaşabilirsiniz!' });
                  document.getElementById('feedbackForm').reset();
                  M.Modal.getInstance(document.getElementById('feedbackModal')).close();
              })
