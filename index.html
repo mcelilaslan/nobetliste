@@ -2824,13 +2824,13 @@
                     updateCalendar();
                     updateStatistics();
                     saveToHistory();
-                    showToast('Tüm nöbetler atandı! Takvimde manuel değişiklik yapabilir veya geri alıp varyasyon deneyebilirsiniz!', 4000); // Başarı mesajı, 4 saniye
+                    showToast('Tüm nöbetler atandı! Excel dosyası olarak indirebilirsiniz. Takvimde manuel değişiklik yapabilir veya geri alıp varyasyon deneyebilirsiniz!', 5000); // Başarı mesajı, 4 saniye
                 } else {
                     let errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
                     if (status === 400 && errorMessage.includes('Nöbet atamaları yapılamadı')) {
                         errorMessage = 'Hata: Nöbet ertesi boşluk sayısını azaltmayı deneyin!';
                     } else if (status === 400 && errorMessage.includes('Cuma veya Perşembe dengeleme başarısız')) {
-                        errorMessage = 'Hata: Cuma veya Perşembe dengeleme başarısız, bu seçenekleri kapatıp tekrar deneyin veya nöbet ertesini azaltıp tekrar deneyin!';
+                        errorMessage = 'Hata: Cuma veya Perşembe dengeleme başarısız, bu seçenekleri kapatın veya nöbet ertesi boşlukları azaltıp tekrar deneyin!';
                     }
                     showToast(errorMessage, 10000); // Hata mesajı, 10 saniye
                 }
@@ -2951,7 +2951,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            M.toast({ html: 'Personel listesi CSV olarak indirildi!' });
+            M.toast({ html: 'Personel listesi CSV olarak indirildi! Sonraki kullanımda buradan yüklemeniz yeterli!' });
         }
 
         function clearCalendar() {
@@ -3017,7 +3017,7 @@
     
        <footer class="fixed-footer">
           <div class="footer-content">
-              © 2025 - nobetplani.com - CK
+              © 2025 - nobetplani.com - mcelilaslan - CK
             
               <a href="https://www.instagram.com/nobetplani" target="_blank" style="margin-left: 10px;">
                   <img src="instagram-logo.png" style="width: 24px; height: 24px; vertical-align: middle;">
