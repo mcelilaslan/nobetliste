@@ -1,6 +1,6 @@
 Nöbet Planı - Otomatik Nöbet Listesi Hazırlama Aracı
  
-Nöbet Planı, profesyoneller için hızlı, adil ve hatasız nöbet listeleri oluşturmayı sağlayan kullanıcı dostu bir web uygulamasıdır. Sağlık çalışanları, askerler, öğretmenler ve diğer vardiyalı çalışanlar için tasarlanmıştır. Doğrusal optimizasyon teknikleriyle nöbetleri dengeli bir şekilde dağıtır ve özelleştirilebilir özellikleriyle her türlü ihtiyaca uyum sağlar.
+Nöbet Planı, profesyoneller için hızlı, adil ve hatasız nöbet listeleri oluşturmayı sağlayan kullanıcı dostu bir web uygulamasıdır. Sağlık çalışanları, askerler, öğretmenler ve diğer vardiyalı çalışanlar için tasarlanmıştır. Kısıt programlama tabanlı optimizasyon teknikleriyle nöbetleri dengeli bir şekilde dağıtır ve özelleştirilebilir özellikleriyle her türlü ihtiyaca uyum sağlar.
 
 🚀 Özellikler
 
