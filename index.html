@@ -113,19 +113,22 @@ e<!DOCTYPE html>
             background-color: rgba(119,190,186,255) !important;
             border-radius: 8px 8px 0 0;
             display: flex;
-            justify-content: center; /* İçeriği yatayda ortala */
+            justify-content: center;
+            align-items: center;
+            padding: 0 10px;
         }
 
         .nav-wrapper .container {
             display: flex;
-            justify-content: center; /* Container içindeki içeriği ortala */
+            justify-content: space-between;
+            align-items: center;
             width: 100%;
             max-width: 780px;
         }
 
         .nav-wrapper ul.center {
             display: flex;
-            justify-content: center; /* Menü öğelerini yatayda ortala */
+            justify-content: center;
             align-items: center;
             margin: 0;
             padding: 0;
@@ -133,7 +136,7 @@ e<!DOCTYPE html>
         }
 
         .nav-wrapper ul.center li {
-            margin: 0 15px; /* Menü öğeleri arasında boşluk */
+            margin: 0 15px;
         }
 
         .nav-wrapper ul.center li a {
@@ -165,6 +168,20 @@ e<!DOCTYPE html>
             color: #00796b;
         }
 
+        .sidenav-trigger {
+            display: flex;
+            align-items: center;
+            color: #fff !important;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            padding-left: 10px;
+        }
+
+        .sidenav-trigger i {
+            margin-right: 8px;
+        }
+
         @media only screen and (max-width: 900px) {
             .nav-container {
                 max-width: 100%;
@@ -177,7 +194,7 @@ e<!DOCTYPE html>
             }
 
             .nav-wrapper ul.center {
-                justify-content: space-around; /* Mobilde menü öğelerini dağıt */
+                justify-content: space-around;
             }
         }
 
