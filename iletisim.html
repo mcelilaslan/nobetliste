@@ -93,13 +93,23 @@
             border-radius: 8px 8px 0 0;
             display: flex;
             justify-content: center;
+            align-items: center;
+            padding: 0 10px;
         }
 
         .nav-wrapper .container {
             display: flex;
             justify-content: center;
+            align-items: center;
             width: 100%;
             max-width: 780px;
+            position: relative;
+        }
+
+        .nav-mobile {
+            position: absolute;
+            left: 10px;
+            display: none;
         }
 
         .nav-wrapper ul.center {
@@ -142,6 +152,20 @@
         .sidenav li a:hover {
             background-color: #f5f5f5;
             color: #00796b;
+        }
+
+        .sidenav-trigger {
+            display: flex;
+            align-items: center;
+            color: #fff !important;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            padding-left: 10px;
+        }
+
+        .sidenav-trigger i {
+            margin-right: 8px;
         }
 
         header h3 {
@@ -248,19 +272,15 @@
             .nav-wrapper .container {
                 max-width: 100%;
                 padding: 0 10px;
+                justify-content: flex-start;
+            }
+
+            .nav-mobile {
+                display: block;
             }
 
             .nav-wrapper ul.center {
-                justify-content: space-around;
-            }
-
-            .contact-info {
-                font-size: 0.9rem;
-            }
-
-            .social-links {
-                flex-direction: column;
-                align-items: center;
+                display: none;
             }
         }
     </style>
@@ -271,7 +291,9 @@
         <div class="nav-container custom-container">
             <nav class="nav-wrapper">
                 <div class="container">
-                    <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    <div class="nav-mobile">
+                        <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i>Nöbet Planı</a>
+                    </div>
                     <ul class="center hide-on-med-and-down">
                         <li><a href="index.html">Ana Sayfa</a></li>
                         <li><a href="blog.html">Blog</a></li>
@@ -301,11 +323,14 @@
                     <strong>E-posta:</strong> <a href="mailto:nobetplani@gmail.com">nobetplani@gmail.com</a>
                 </p>
                 <p>
-                    <strong>Adres:</strong> İzmir, Türkiye
+                    <strong>Adres:</strong> İstanbul, Türkiye
                 </p>
                 <div class="social-links">
                     <a href="https://www.instagram.com/nobetplani" target="_blank">
                         <img src="instagram-logo.png" alt="Instagram"> Instagram
+                    </a>
+                    <a href="https://twitter.com/nobetplani" target="_blank">
+                        <img src="twitter-logo.png" alt="Twitter"> Twitter
                     </a>
                 </div>
             </div>
