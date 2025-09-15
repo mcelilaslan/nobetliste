@@ -5,5 +5,12 @@ Disallow: /apple-touch-icon.png
 Disallow: /favicon-32x32.png
 Disallow: /favicon-16x16.png
 Disallow: /site.webmanifest
+Disallow: /CNAME
+Disallow: /README.md
+Disallow: /gmail-logo.png
+Disallow: /instagram-logo.png
+Disallow: /android-chrome-192x192.png
+Disallow: /android-chrome-512x512.png
+Disallow: /favicon.ico
 
 Sitemap: https://nobetplani.com/sitemap.xml
