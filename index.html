@@ -1,48 +1,62 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-71QDF60SX6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-71QDF60SX6');
     </script>
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2726280977821826"
-     crossorigin="anonymous">
-    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2726280977821826" crossorigin="anonymous"></script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otomatik Nöbet Listesi Hazırlama Programı | Nobetplani.com</title>
-    <meta name="description" content="Nobetplani.com ile tüm profesyoneller için saniyeler içinde otomatik nöbet listeleri hazırlayın. Kolay, hızlı ve hatasız vardiya planlama çözümü."> 
+    <meta name="description" content="Nobetplani.com ile tüm profesyoneller için saniyeler içinde otomatik nöbet listeleri hazırlayın. Kolay, hızlı ve hatasız vardiya planlama çözümü.">
     <meta name="robots" content="index, follow">
+    <meta name="keywords" content="nöbet listesi, vardiya planlama, otomatik nöbet, personel planlama, nöbet programı">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="canonical" href="https://nobetplani.com/"> 
+    <link rel="canonical" href="https://nobetplani.com/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-      <script type="text/javascript">
-           document.addEventListener('DOMContentLoaded', function() {
-               emailjs.init({
-                   publicKey: 'er7AJzh0We5M1Z5kn'
-               });
-               const modals = document.querySelectorAll('.modal');
-               M.Modal.init(modals);
-           });
-       </script>
-   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js"></script>
-   <style>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            emailjs.init({ publicKey: 'er7AJzh0We5M1Z5kn' });
+            const modals = document.querySelectorAll('.modal');
+            M.Modal.init(modals);
+            const sidenav = document.querySelectorAll('.sidenav');
+            M.Sidenav.init(sidenav, { edge: 'right' });
+            const tooltips = document.querySelectorAll('.tooltipped');
+            M.Tooltip.init(tooltips);
+            const collapsible = document.querySelectorAll('.collapsible');
+            M.Collapsible.init(collapsible, { accordion: false });
+            const datepickers = document.querySelectorAll('.datepicker');
+            M.Datepicker.init(datepickers, {
+                format: 'dd-mm-yyyy',
+                autoClose: true,
+                firstDay: 1,
+                i18n: {
+                    months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+                    monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+                    weekdays: ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+                    weekdaysShort: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
+                    weekdaysAbbrev: ['P', 'P', 'S', 'Ç', 'P', 'C', 'C']
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js"></script>
+    <style>
         body {
             background: url('background.png') #F5E9D9 !important;
             background-size: cover !important;
@@ -56,7 +70,7 @@
             justify-content: center !important;
             align-items: flex-start !important;
         }
-    
+
         .container-wrapper {
             display: flex;
             flex-direction: column;
@@ -64,7 +78,7 @@
             width: 100%;
             max-width: 1600px;
         }
-    
+
         .custom-container {
             background: rgba(255, 255, 255, 0.97);
             border-radius: 8px;
@@ -77,11 +91,82 @@
             transition: max-width 0.3s ease;
             position: relative;
         }
-    
+
         .custom-container.expanded {
             max-width: 1573px;
         }
-    
+
+        /* Menü Çubuğu Stilleri */
+        .nav-container {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 0;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 780px;
+            box-sizing: border-box;
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+        }
+
+        .nav-wrapper {
+            background-color: rgba(119,190,186,255) !important;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .nav-wrapper a.brand-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+            padding-left: 20px;
+        }
+
+        .nav-wrapper ul li a {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-wrapper ul li a:hover {
+            color: #e0f7fa;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidenav {
+            background-color: rgba(255, 255, 255, 0.97);
+            width: 250px;
+        }
+
+        .sidenav li a {
+            color: #26a69a;
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+        }
+
+        .sidenav li a:hover {
+            background-color: #f5f5f5;
+            color: #00796b;
+        }
+
+        @media only screen and (max-width: 900px) {
+            .nav-container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .nav-wrapper a.brand-logo {
+                font-size: 1.2rem;
+                padding-left: 15px;
+            }
+
+            .nav-wrapper ul li a {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Mevcut Stiller */
         header h3 {
             font-family: 'Bricolage Grotesque', sans-serif !important;
             font-size: 2.5rem;
@@ -90,21 +175,21 @@
             text-align: center;
             margin: 20px 0;
         }
-    
+
         .input-field label {
             color: #26a69a;
         }
-    
+
         .weekend, .holiday {
             background-color: #757575 !important;
             color: #ffffff;
         }
-    
+
         .unavailable {
             background-color: #ffebee !important;
             position: relative;
         }
-    
+
         .unavailable::after {
             content: "✖";
             color: #ff1744;
@@ -115,16 +200,16 @@
             font-size: 1.2rem;
             pointer-events: none;
         }
-    
+
         .dragging {
             background-color: rgba(200, 230, 201, 0.8);
         }
-    
+
         .selected {
             background-color: #c8e6c9 !important;
             position: relative;
         }
-    
+
         .selected::after {
             content: "✓";
             color: #2e7d32;
@@ -136,11 +221,11 @@
             font-weight: bold;
             pointer-events: none;
         }
-    
+
         .collapsible.popout {
             margin: 0;
         }
-    
+
         .collapsible-header {
             font-family: 'Bricolage Grotesque', sans-serif !important;
             background-color: rgba(119,190,186,255) !important;
@@ -149,7 +234,7 @@
             border-bottom: 1px solid #ddd;
             cursor: pointer;
         }
-    
+
         .collapsible-body {
             font-family: 'Bricolage Grotesque', sans-serif !important;
             background: white;
@@ -158,25 +243,25 @@
             display: none;
             overflow: visible;
         }
-    
+
         #calendarTable {
             font-family: 'Bricolage Grotesque', sans-serif !important;
             width: 100%;
             overflow-x: auto;
             table-layout: fixed;
         }
-    
+
         #calendarTable th:first-child {
             width: 100px !important;
             min-width: 100px !important;
             text-align: left;
         }
-    
+
         #calendarTable th {
             text-align: center;
             vertical-align: middle;
         }
-    
+
         .calendar-cell {
             position: relative;
             min-width: 40px;
@@ -186,16 +271,16 @@
             text-align: center;
             vertical-align: middle;
             border: 1px solid #ddd;
-            touch-action: manipulation; /* iOS’ta gecikmeyi kaldırır */
-            -webkit-user-select: none; /* Seçimi engeller */
-            user-select: none; /* Seçimi engeller */
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         #calendarAlert {
             transition: opacity 0.3s ease;
         }
-    
+
         .name-column {
             min-width: 100px !important;
             width: 100px !important;
@@ -204,7 +289,7 @@
             padding: 0 5px;
             font-size: 14px;
         }
-    
+
         .no-personnel-message {
             font-style: italic;
             font-size: 14px;
@@ -212,35 +297,35 @@
             text-align: center;
             padding: 20px 0;
         }
-    
+
         .modal-content h4 {
             color: #d32f2f;
         }
-    
+
         .error-list {
             max-height: 60vh;
             overflow-y: auto;
         }
-    
+
         .error-item {
             padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
-    
+
         .error-type {
             font-weight: bold;
             color: #d32f2f;
         }
-    
+
         .warning-type {
             font-weight: bold;
             color: #f57c00;
         }
-    
+
         #statsTable td {
             padding: 10px 15px;
         }
-    
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -254,27 +339,27 @@
             z-index: 9999;
             display: none;
         }
-    
+
         .left-align {
             text-align: left;
         }
-    
+
         .duty-gap-header {
             display: flex;
             align-items: center;
             justify-content: center;
             white-space: nowrap;
-            width: 100%; 
-            height: 100%; 
-            text-align: center; 
+            width: 100%;
+            height: 100%;
+            text-align: center;
         }
-    
+
         .duty-gap-cell {
             display: flex;
             justify-content: center;
             align-items: center;
         }
-    
+
         .increment-btn, .decrement-btn {
             padding: 0 10px;
             margin: 0 2px;
@@ -284,29 +369,29 @@
             width: 20px;
             height: 20px;
         }
-    
+
         table.striped > tbody > tr > td,
         table.striped > tbody > tr > th,
         td, th {
             padding: 0 !important;
         }
-    
+
         #personTable tbody tr {
             height: 30px !important;
             min-height: 30px !important;
             max-height: 30px !important;
-            overflow: visible !important; 
+            overflow: visible !important;
         }
-    
+
         #personTable tbody td {
             padding: 0 6px !important;
             height: 30px !important;
             vertical-align: middle !important;
             line-height: 30px !important;
             box-sizing: border-box !important;
-            overflow: visible !important; 
+            overflow: visible !important;
         }
-    
+
         #personTable tbody td input[type="number"] {
             height: 20px !important;
             padding: 0 5px !important;
@@ -315,15 +400,15 @@
             font-size: 12px !important;
             margin: 0 !important;
             box-sizing: border-box !important;
-            border: 1px solid #9e9e9e !important; 
-            border-radius: 2px !important; 
+            border: 1px solid #9e9e9e !important;
+            border-radius: 2px !important;
         }
-    
+
         #personTable tbody td input[type="number"]:focus {
             border-bottom: 1px solid #26a69a !important;
             box-shadow: 0 1px 0 0 #26a69a !important;
         }
-    
+
         #personTable tbody td .btn-floating {
             width: 20px !important;
             height: 20px !important;
@@ -331,55 +416,55 @@
             font-size: 10px !important;
             margin: 0 2px !important;
             padding: 0 !important;
-            display: flex !important; 
-            align-items: center !important; 
-            justify-content: center !important; 
-            box-shadow: none !important; 
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: none !important;
         }
-    
+
         #personTable tbody td .btn-floating i {
             line-height: 20px !important;
-            font-size: 12px !important; 
+            font-size: 12px !important;
             margin: 0 !important;
-            display: flex !important; 
-            align-items: center !important; 
-            justify-content: center !important; 
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
-    
+
         #personTable tbody td .duty-gap-cell span {
             font-size: 12px !important;
             line-height: 20px !important;
             margin-right: 5px !important;
         }
-    
+
         table#personTable thead th {
             text-align: center !important;
             vertical-align: middle !important;
-            padding: 5px !important; 
+            padding: 5px !important;
         }
-    
+
         #guideCollapsible {
             margin: 0;
         }
-    
+
         #guideCollapsible .collapsible-header {
             background-color: rgba(119,190,186,0.9) !important;
             border-radius: 0;
             border-bottom: none;
         }
-    
+
         #guideCollapsible .collapsible-body {
             background: rgba(255, 255, 255, 0.97);
             border-radius: 0 0 8px 8px;
             box-shadow: none;
         }
-    
+
         #guideCollapsible ul {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
-    
+
         #guideCollapsible ul li {
             font-size: 1rem;
             color: #424242;
@@ -388,7 +473,7 @@
             position: relative;
             padding-left: 25px;
         }
-    
+
         #guideCollapsible ul li:before {
             content: "•";
             color: #26a69a;
@@ -398,7 +483,7 @@
             top: 50%;
             transform: translateY(-50%);
         }
-    
+
         #guideCollapsible ul li .btn-floating.tiny {
             width: 20px !important;
             height: 20px !important;
@@ -411,7 +496,7 @@
             align-items: center;
             padding: 0;
         }
-    
+
         #guideCollapsible ul li .btn-floating.tiny i {
             font-size: 12px !important;
             line-height: 20px !important;
@@ -423,21 +508,21 @@
             width: 100%;
             height: 100%;
         }
-    
+
         .dropdown-content {
             min-width: 100px !important;
             background-color: #fff;
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-    
+
         .dropdown-content li {
             display: flex;
-            justify-content: flex-start; 
+            justify-content: flex-start;
             align-items: center;
             padding: 5px 0 !important;
         }
-    
+
         .dropdown-content li > a {
             color: #26a69a !important;
             font-size: 14px;
@@ -446,57 +531,57 @@
             align-items: center;
             gap: 8px;
         }
-    
+
         .dropdown-content li > a > i {
             font-size: 24px !important;
             color: #26a69a !important;
         }
-    
+
         .dropdown-content li:hover {
             background-color: #f5f5f5 !important;
         }
-    
+
         .switch input[type="checkbox"] + .lever {
             background-color: #f44336 !important;
         }
-    
+
         .switch input[type="checkbox"]:checked + .lever {
             background-color: #4caf50 !important;
         }
-    
+
         .switch input[type="checkbox"] + .lever:after {
             background-color: #d32f2f !important;
         }
-    
+
         .switch input[type="checkbox"]:checked + .lever:after {
             background-color: #388e3c !important;
         }
-    
+
         .switch label .lever {
             width: 48px !important;
             height: 20px !important;
         }
-    
+
         .switch label .lever:after {
             width: 28px !important;
             height: 28px !important;
             top: -4px !important;
         }
-    
+
         .switch label input[type="checkbox"]:checked + .lever:after {
             left: 18px !important;
         }
-    
+
         .switch-container {
             background-color: rgba(119,190,186,255) !important;
             border: 2px solid #b0bec5;
             padding: 6px 10px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            display: inline-flex; /* Flex yerine inline-flex */
+            display: inline-flex;
             flex-direction: column;
             align-items: flex-start;
-            width: auto; /* Genişlik içeriğe göre */
+            width: auto;
             box-sizing: border-box;
         }
 
@@ -504,27 +589,27 @@
             width: auto;
             white-space: nowrap;
         }
-       
-        balance-label {
+
+        .balance-label {
             display: flex;
             align-items: center;
-            margin: 2px 0; 
+            margin: 2px 0;
         }
-        
+
         .balance-label span {
-            font-size: 0.8rem; 
+            font-size: 0.8rem;
             color: #000;
-            padding-left: 20px; 
+            padding-left: 20px;
         }
-        
+
         .balance-checkbox + span:not(.lever)::before {
-            width: 14px; 
+            width: 14px;
             height: 14px;
             border: 2px solid #5a5a5a;
             border-radius: 2px;
             background-color: #fff;
         }
-        
+
         .balance-checkbox:checked + span:not(.lever)::before {
             width: 8px;
             height: 16px;
@@ -536,7 +621,7 @@
             margin-top: -3px;
             margin-left: 3px;
         }
-    
+
         .fixed-footer {
             position: fixed;
             bottom: 0;
@@ -547,7 +632,7 @@
             box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
             z-index: 10000;
         }
-    
+
         .footer-content {
             font-family: 'Bricolage Grotesque', sans-serif;
             font-size: 1.0rem;
@@ -556,12 +641,12 @@
             text-align: center;
             margin: 0;
         }
-    
+
         .tooltip-wrapper {
             position: relative;
             display: inline-block;
         }
-    
+
         .tooltip {
             position: absolute;
             top: -50px;
@@ -581,66 +666,65 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
-    
+
         .tooltip-wrapper:hover .tooltip {
             visibility: visible;
             opacity: 1;
         }
-    
+
         .tooltip-icon {
             font-size: 16px !important;
             vertical-align: middle;
             margin: 0 2px;
             color: #26a69a;
         }
-    
+
         .btn {
             transition: 0.5s !important;
         }
-    
+
         .btn:hover {
             transform: scale(1.1) !important;
         }
-    
+
         .control-buttons .btn {
             margin-right: 20px !important;
         }
-    
+
         .control-buttons .btn:last-child {
             margin-right: 0 !important;
         }
-    
+
         .btn-floating {
             transition: 0.5s !important;
         }
-    
+
         .btn-floating:hover {
             transform: scale(1.1) !important;
         }
-    
+
         #emailModal {
             max-width: 400px;
         }
-    
+
         .grouping-container {
             display: flex;
             align-items: center;
             margin-left: 10px;
         }
-        
+
         .grouping-label {
             display: flex;
             align-items: center;
             color: #374151;
             white-space: nowrap;
         }
-        
+
         .grouping-label span {
             font-size: 12px;
             margin-left: 5px;
         }
 
-   
         .standalone-select-wrapper {
             position: relative;
             width: 100%;
@@ -648,12 +732,12 @@
             margin-left: 0 !important;
             padding-left: 0 !important;
         }
-        
+
         .standalone-select-wrapper .select-container {
             position: relative;
             width: 100%;
         }
-        
+
         .standalone-select-wrapper .select-container select {
             appearance: none !important;
             display: block !important;
@@ -674,23 +758,23 @@
             background-repeat: no-repeat !important;
             background-position: right 10px center !important;
         }
-        
+
         .standalone-select-wrapper .select-container select:focus {
             outline: none !important;
             border-color: #26a69a !important;
             box-shadow: 0 0 5px rgba(38, 166, 154, 0.5) !important;
         }
-        
+
         .standalone-select-wrapper .select-container select option {
             padding: 8px 15px !important;
             background-color: #ffffff !important;
             color: #374151 !important;
         }
-        
+
         .standalone-select-wrapper .select-container select option:hover {
             background-color: #f1f5f9 !important;
         }
-        
+
         .standalone-select-wrapper .select-container label {
             position: absolute !important;
             top: -10px !important;
@@ -703,7 +787,7 @@
             pointer-events: none !important;
             transition: all 0.3s ease !important;
         }
-        
+
         .standalone-select-wrapper[data-tooltip]:hover:after {
             content: attr(data-tooltip);
             position: absolute;
@@ -719,19 +803,18 @@
             white-space: nowrap;
             z-index: 1000;
         }
-    
-        /* Input ve Select Hizalaması (Masaüstü için) */
+
         .row .col.s6 {
             padding-left: 0 !important;
             margin-left: 0 !important;
         }
-    
+
         .input-field, .standalone-select-wrapper .select-container {
             display: flex;
             align-items: center;
             justify-content: flex-start;
         }
-    
+
         .input-field input, .standalone-select-wrapper .select-container select {
             margin: 0 !important;
             padding-left: 15px !important;
@@ -744,55 +827,35 @@
         .waves-effect.waves-light.btn.teal {
             width: auto;
             min-width: 0;
-            padding: 0 8px; /* Padding'i küçülttük */
+            padding: 0 8px;
             box-sizing: border-box;
-            display: inline-flex; /* İkon ve metni hizalamak için */
+            display: inline-flex;
             align-items: center;
         }
 
         @keyframes shake {
-        0%, 100% {
-            transform: translateX(0);
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
         }
-        25% {
-            transform: translateX(-5px);
-        }
-        50% {
-            transform: translateX(5px);
-        }
-        75% {
-            transform: translateX(-5px);
-        }
-    }
 
-       .toast.shake {
-            animation: shake 0.5s ease-in-out 3; /* 3 kez sallanır */
+        .toast.shake {
+            animation: shake 0.5s ease-in-out 3;
         }
-        
+
         @keyframes glow {
-            0% {
-                box-shadow: 0 0 5px 5px #26a69a;
-            }
-            50% {
-                box-shadow: 0 0 20px 10px #26a69a; 
-            }
-            100% {
-                box-shadow: 0 0 5px 5px #26a69a; 
-            }
+            0% { box-shadow: 0 0 5px 5px #26a69a; }
+            50% { box-shadow: 0 0 20px 10px #26a69a; }
+            100% { box-shadow: 0 0 5px 5px #26a69a; }
         }
-        
-       @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% {
-            transform: translateY(0);
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
-        40% {
-            transform: translateY(-10px);
-        }
-        60% {
-            transform: translateY(-5px);
-        }
-        }
-        
+
         .bounce {
             animation: bounce 1s infinite;
         }
@@ -803,91 +866,90 @@
             }
         }
 
-        /* Mobil Stiller */
         @media only screen and (max-width: 900px) {
             .custom-container {
                 max-width: 100%;
                 padding: 10px;
             }
-    
+
             .custom-container.expanded {
                 max-width: 100%;
             }
-    
+
             .custom-container .row .input-field {
-                margin-left: 0 !important; 
-                padding-left: 0 !important; 
-                text-align: left !important; 
-                display: block !important; 
-                width: 100% !important; 
+                margin-left: 0 !important;
+                padding-left: 0 !important;
+                text-align: left !important;
+                display: block !important;
+                width: 100% !important;
             }
-        
+
             .custom-container .row .input-field input {
-                text-align: left !important; 
-                margin-left: 0 !important; 
-                width: 100% !important; 
+                text-align: left !important;
+                margin-left: 0 !important;
+                width: 100% !important;
             }
-        
+
             #personelCollapsible .row .input-field.col.s8 {
-                margin-left: 0 !important; 
-                padding-left: 0 !important; 
-                text-align: left !important; 
-                display: block !important; 
-                width: 100% !important; 
+                margin-left: 0 !important;
+                padding-left: 0 !important;
+                text-align: left !important;
+                display: block !important;
+                width: 100% !important;
             }
-        
+
             #personelCollapsible .row .input-field.col.s8 input {
-                text-align: left !important; 
-                margin-left: 0 !important; 
-                width: 100% !important; 
+                text-align: left !important;
+                margin-left: 0 !important;
+                width: 100% !important;
             }
-    
+
             .row {
                 display: flex;
                 flex-direction: column;
                 align-items: stretch;
             }
-    
+
             .row .col {
                 width: 100%;
                 margin-bottom: 10px;
             }
-    
+
             .control-buttons .col.s12 {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
             }
-    
+
             .control-buttons .btn {
                 width: 100%;
                 margin-bottom: 10px;
                 margin-right: 0 !important;
             }
-    
+
             #calendarContainer .row {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
             }
-    
+
             #calendarContainer .col {
                 width: 100%;
                 margin-bottom: 10px;
             }
-    
-            #calendarContainer .col.s3, 
+
+            #calendarContainer .col.s3,
             #calendarContainer .col.s2 {
                 width: 100%;
                 display: flex;
                 justify-content: center;
             }
-    
+
             #calendarContainer .switch-container {
                 width: 100%;
                 justify-content: center;
             }
-    
+
             #calendarContainer .btn {
                 width: auto;
                 min-width: 100px;
@@ -901,14 +963,17 @@
                 width: 100%;
                 box-sizing: border-box;
             }
+
             .balance-label span {
-                font-size: 0.75rem; /* Mobilde ~12px */
+                font-size: 0.75rem;
                 padding-left: 18px;
             }
+
             .balance-checkbox + span:not(.lever)::before {
                 width: 12px;
                 height: 12px;
             }
+
             .balance-checkbox:checked + span:not(.lever)::before {
                 width: 6px;
                 height: 14px;
@@ -917,42 +982,38 @@
             }
 
             #calendarAlert {
-                    max-width: 280px;
-            }
-            
-            #calendarAlert .card-content span {
-                    font-size: 0.9rem;
+                max-width: 280px;
             }
 
             #calendarAlert .card-content span {
                 font-size: 0.9rem !important;
                 line-height: 1.3;
             }
-            
+
             #calendarAlert .btn-floating {
                 width: 36px !important;
                 height: 36px !important;
                 line-height: 36px !important;
             }
-            
+
             #calendarAlert .material-icons {
                 font-size: 24px !important;
                 line-height: 36px !important;
             }
-            
+
             .grouping-container {
                 margin-left: 0;
                 width: 100%;
                 justify-content: flex-start;
                 padding-left: 10px;
             }
-    
+
             .standalone-select-wrapper {
                 text-align: left !important;
                 margin-left: 0 !important;
                 padding-left: 10px !important;
             }
-    
+
             .standalone-select-wrapper .select-container select {
                 font-size: 14px !important;
                 height: 36px !important;
@@ -962,11 +1023,36 @@
 </head>
 <body>
     <div class="container-wrapper">
-        <!-- "Kılavuz" Konteynırı -->
+        <!-- Navigasyon Çubuğu -->
+        <div class="nav-container custom-container">
+            <nav class="nav-wrapper">
+                <div class="container">
+                    <a href="index.html" class="brand-logo">Nöbet Planı</a>
+                    <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-med-and-down">
+                        <li><a href="index.html">Ana Sayfa</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                        <li><a href="iletisim.html">İletişim</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <ul class="sidenav" id="mobile-nav">
+                <li><a href="index.html">Ana Sayfa</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="hakkimizda.html">Hakkımızda</a></li>
+                <li><a href="iletisim.html">İletişim</a></li>
+            </ul>
+        </div>
+
+        <!-- Kılavuz Konteynırı -->
         <div class="custom-container">
             <ul class="collapsible" id="guideCollapsible">
                 <li>
-                    <div class="collapsible-header"><i class="material-icons">help_outline</i>Kullanma Kılavuzu</div>
+                    <div class="collapsible-header">
+                        <i class="material-icons">help_outline</i>
+                        <span>Kullanma Kılavuzu</span>
+                    </div>
                     <div class="collapsible-body">
                         <ul>
                             <li>Masaüstü tarayıcıda optimal çalışmaktadır.</li>
@@ -996,21 +1082,21 @@
             <div class="row">
                 <div class="input-field col s6">
                     <input type="text" class="datepicker" id="startDate">
-                    <label>Başlangıç Tarihi</label>
+                    <label for="startDate">Başlangıç Tarihi</label>
                 </div>
                 <div class="input-field col s6">
                     <input type="text" class="datepicker" id="endDate">
-                    <label>Bitiş Tarihi</label>
+                    <label for="endDate">Bitiş Tarihi</label>
                 </div>
             </div>
-           <div class="row">
+            <div class="row">
                 <div class="input-field col s6 tooltipped" data-position="top" data-tooltip="Resmi tatil günlerini seçerek, onları da haftasonu olarak sayabilirsiniz.">
                     <input id="holidays" type="text" class="validate datepicker" readonly pattern="^(\d{1,2}(,\d{1,2})*)?$">
                     <label for="holidays">Ekstra Resmi Tatil Günü var mı</label>
                 </div>
                 <div class="standalone-select-wrapper col s6" data-tooltip="Bir nöbette bulunan kişi sayısı" style="padding-top: 20px;">
                     <div class="select-container">
-                        <select id="dutyPerDay">
+                        <select id="dutyPerDay" class="browser-default">
                             <option value="" disabled selected>Seçiniz</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -1030,58 +1116,57 @@
         </div>
 
         <!-- Personel Listesi Konteynırı -->
-            <div class="custom-container">
-                <ul class="collapsible popout" id="personelCollapsible">
-                    <li>
-                        <div class="collapsible-header"><i class="material-icons">people</i>Personel Planı</div>
-                        <div class="collapsible-body">
-                            <div class="row" style="margin-bottom: 20px;">
-                                <div class="input-field col s8">
-                                    <input type="text" id="personName" placeholder="Personel Adı Giriniz">
-                                </div>
-                                <div class="col s4" style="display: flex; justify-content: flex-start; align-items: center;">
-                                    <a class="btn-floating waves-effect waves-light teal" onclick="addPerson()" style="margin-right: 10px;">
-                                        <i class="material-icons">add</i>
-                                    </a>
-                                    <a class="dropdown-trigger btn-floating waves-effect waves-light grey tooltipped" href="#" data-target="personnelDropdown" data-position="top" data-tooltip="Hazırladığınız liste varsa, csv formatında yükleyebilirsiniz">
-                                        <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul id="personnelDropdown" class="dropdown-content">
-                                        <li><a onclick="triggerFileUpload()">Personel Listesi Yükle</a></li>
-                                        <li><a class="tooltipped" onclick="downloadPersonnel()" data-position="right" data-tooltip="Hazırladığınız listeyi daha sonra kullanmak üzere csv formatında indirebilirsiniz">Personel Listesini İndir</a></li>
-                                    </ul>
-                                    <input type="file" id="csvUpload" accept=".csv" style="display: none;" onchange="uploadPersonnel(event)">
-                                </div>
+        <div class="custom-container">
+            <ul class="collapsible popout" id="personelCollapsible">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">people</i>Personel Planı</div>
+                    <div class="collapsible-body">
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="input-field col s8">
+                                <input type="text" id="personName" placeholder="Personel Adı Giriniz">
                             </div>
-                            <!-- Grup Checkbox-->
-                            <div id="groupingSwitch" class="grouping-container" style="margin-bottom: 15px;">
-                                <label class="grouping-label tooltipped" data-position="top" data-tooltip="Birlikte nöbetçi olması gereken kişileri sol taraftan aynı gruba eklemeniz yeterli">
-                                    <input id="groupingCheckbox" type="checkbox" onchange="toggleGrouping()" />
-                                    <span>Birlikte nöbet tutması gerekenler var mı?</span>
-                                </label>
-                            </div>
-                            <!-- "No Personel" -->
-                            <div id="noPersonnelMessage" class="no-personnel-message" style="display: block;">
-                                Henüz Personel Eklenmedi
-                            </div>
-                           
-                            <table class="striped" style="position: relative; display: none;" id="personnelTableContainer">
-                                <tbody id="personTable"></tbody>
-                            </table>
-                            <div class="row control-buttons">
-                                <div class="col s12">
-                                    <button class="btn waves-effect waves-light blue" onclick="generateCalendar()">
-                                        <i class="material-icons left">event</i>Nöbet Sayılarını Dağıt
-                                    </button>
-                                    <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
-                                        <i class="material-icons left">refresh</i>Dağıtımı Sıfırla
-                                    </button>
-                                </div>
+                            <div class="col s4" style="display: flex; justify-content: flex-start; align-items: center;">
+                                <a class="btn-floating waves-effect waves-light teal" onclick="addPerson()" style="margin-right: 10px;">
+                                    <i class="material-icons">add</i>
+                                </a>
+                                <a class="dropdown-trigger btn-floating waves-effect waves-light grey tooltipped" href="#" data-target="personnelDropdown" data-position="top" data-tooltip="Hazırladığınız liste varsa, csv formatında yükleyebilirsiniz">
+                                    <i class="material-icons">more_vert</i>
+                                </a>
+                                <ul id="personnelDropdown" class="dropdown-content">
+                                    <li><a onclick="triggerFileUpload()">Personel Listesi Yükle</a></li>
+                                    <li><a class="tooltipped" onclick="downloadPersonnel()" data-position="right" data-tooltip="Hazırladığınız listeyi daha sonra kullanmak üzere csv formatında indirebilirsiniz">Personel Listesini İndir</a></li>
+                                </ul>
+                                <input type="file" id="csvUpload" accept=".csv" style="display: none;" onchange="uploadPersonnel(event)">
                             </div>
                         </div>
-                    </li>
-                </ul>
-            </div>
+                        <!-- Grup Checkbox -->
+                        <div id="groupingSwitch" class="grouping-container" style="margin-bottom: 15px;">
+                            <label class="grouping-label tooltipped" data-position="top" data-tooltip="Birlikte nöbetçi olması gereken kişileri sol taraftan aynı gruba eklemeniz yeterli">
+                                <input id="groupingCheckbox" type="checkbox" onchange="toggleGrouping()" />
+                                <span>Birlikte nöbet tutması gerekenler var mı?</span>
+                            </label>
+                        </div>
+                        <!-- No Personel Mesajı -->
+                        <div id="noPersonnelMessage" class="no-personnel-message" style="display: block;">
+                            Henüz Personel Eklenmedi
+                        </div>
+                        <table class="striped" style="position: relative; display: none;" id="personnelTableContainer">
+                            <tbody id="personTable"></tbody>
+                        </table>
+                        <div class="row control-buttons">
+                            <div class="col s12">
+                                <button class="btn waves-effect waves-light blue" onclick="generateCalendar()">
+                                    <i class="material-icons left">event</i>Nöbet Sayılarını Dağıt
+                                </button>
+                                <button class="btn waves-effect waves-light grey darken-3" onclick="resetDuties()">
+                                    <i class="material-icons left">refresh</i>Dağıtımı Sıfırla
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
         <!-- Takvim Konteynırı -->
         <div class="custom-container" id="calendarContainer">
@@ -1097,9 +1182,7 @@
                         <div class="row" style="margin-top: 20px; display: flex; justify-content: space-evenly; align-items: center; flex-wrap: nowrap;">
                             <!-- İstenen/İstenmeyen Gün Switch -->
                             <div class="col s3" style="display: flex; align-items: center; justify-content: center;">
-                                <div class="switch-container tooltipped" 
-                                    data-position="bottom" 
-                                    data-tooltip="İstenen gün/istenmeyen gün modları arasında geçiş yaparak hücrelerde işaretleme yapabilirsiniz">
+                                <div class="switch-container tooltipped" data-position="bottom" data-tooltip="İstenen gün/istenmeyen gün modları arasında geçiş yaparak hücrelerde işaretleme yapabilirsiniz">
                                     <div class="switch">
                                         <label style="display: flex; align-items: center;">
                                             <span style="color: #000; margin-right: 10px; font-size: 1rem;">İstenmeyen Gün</span>
@@ -1110,36 +1193,25 @@
                                     </div>
                                 </div>
                             </div>
-                            
                             <!-- Perşembe Cumaları Dengele Checkbox -->
                             <div class="col s2" style="display: flex; align-items: center; justify-content: center;">
-                                    <div class="switch-container">
-                                        <label class="tooltipped balance-label" 
-                                               data-position="bottom" 
-                                               data-tooltip="Cuma günlerini personele dengeli paylaştırmak için tikleyin.">
-                                            <input type="checkbox" id="balanceFridays" class="balance-checkbox" />
-                                            <span style="color: #000;">Cumaları Dengele</span>
-                                        </label>
-                                        <label class="tooltipped balance-label" 
-                                               data-position="bottom" 
-                                               data-tooltip="Perşembe günlerini personele dengeli paylaştırmak için tikleyin.">
-                                            <input type="checkbox" id="balanceThursdays" class="balance-checkbox" />
-                                            <span style="color: #000;">Perşembeleri Dengele</span>
-                                        </label>
-                                    </div>
+                                <div class="switch-container">
+                                    <label class="tooltipped balance-label" data-position="bottom" data-tooltip="Cuma günlerini personele dengeli paylaştırmak için tikleyin.">
+                                        <input type="checkbox" id="balanceFridays" class="balance-checkbox" />
+                                        <span style="color: #000;">Cumaları Dengele</span>
+                                    </label>
+                                    <label class="tooltipped balance-label" data-position="bottom" data-tooltip="Perşembe günlerini personele dengeli paylaştırmak için tikleyin.">
+                                        <input type="checkbox" id="balanceThursdays" class="balance-checkbox" />
+                                        <span style="color: #000;">Perşembeleri Dengele</span>
+                                    </label>
                                 </div>
-                            
+                            </div>
                             <!-- Otomatik Ata -->
                             <div class="col s2">
-                                <button class="waves-effect waves-light btn purple tooltipped" 
-                                    onclick="autoAssignDuties()" 
-                                    style="min-width: 180px; white-space: nowrap; padding: 0 10px;" 
-                                    data-position="bottom" 
-                                    data-tooltip="<i class='material-icons tooltip-icon'>undo</i> ve <i class='material-icons tooltip-icon'>auto_fix_high</i> tuşu ile değişik atamalar deneyebilirsiniz">
+                                <button class="waves-effect waves-light btn purple tooltipped" onclick="autoAssignDuties()" style="min-width: 180px; white-space: nowrap; padding: 0 10px;" data-position="bottom" data-tooltip="<i class='material-icons tooltip-icon'>undo</i> ve <i class='material-icons tooltip-icon'>auto_fix_high</i> tuşu ile değişik atamalar deneyebilirsiniz">
                                     <i class="material-icons left">auto_fix_high</i>Otomatik Ata
                                 </button>
                             </div>
-                            
                             <!-- Geri-İleri -->
                             <div class="col s2">
                                 <div style="display: inline-flex; align-items: center; white-space: nowrap;">
@@ -1154,13 +1226,9 @@
                                     </button>
                                 </div>
                             </div>
-                            
                             <!-- İndir -->
-                              <div class="col s3">
-                                <button class="waves-effect waves-light btn teal tooltipped" 
-                                    onclick="downloadSchedule()" 
-                                    data-position="bottom" 
-                                    data-tooltip="Nöbet listesini Excel formatında indirir">
+                            <div class="col s3">
+                                <button class="waves-effect waves-light btn teal tooltipped" onclick="downloadSchedule()" data-position="bottom" data-tooltip="Nöbet listesini Excel formatında indirir">
                                     <i class="material-icons left">file_download</i>İndir
                                 </button>
                             </div>
@@ -1170,14 +1238,14 @@
             </ul>
         </div>
 
-       <!-- İstatistik Konteynırı -->
+        <!-- İstatistik Konteynırı -->
         <div class="custom-container">
             <ul class="collapsible popout" id="statsCollapsible">
                 <li>
                     <div class="collapsible-header"><i class="material-icons">assessment</i>Nöbet İstatistikleri</div>
                     <div class="collapsible-body">
                         <div style="margin-bottom: 15px;">
-                            <label class="tooltipped balance-label" data-position="top" data-tooltip="Nöbet izni kullanılıyorsa işaretleyin,cuma-cumartesi hariç her nöbetten 8 saat düşülür.">
+                            <label class="tooltipped balance-label" data-position="top" data-tooltip="Nöbet izni kullanılıyorsa işaretleyin, cuma-cumartesi hariç her nöbetten 8 saat düşülür.">
                                 <input type="checkbox" id="leaveCheckbox" class="balance-checkbox" onchange="updateStatistics()" />
                                 <span style="color: #000;">Nöbet İzni Kullanılıyor</span>
                             </label>
@@ -1201,77 +1269,77 @@
             </ul>
         </div>
 
-    <!-- Hata Modalı -->
-    <div id="errorModal" class="modal">
-        <div class="modal-content">
-            <h4>Uyarılar ve Hatalar</h4>
-            <div class="error-list" id="errorList"></div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="confirmSend()">Devam Et</a>
-        </div>
-    </div>
-
-        <!-- Geri Bildirim Modalı -->
-     <div id="feedbackModal" class="modal">
-          <div class="modal-content">
-              <h4>Geri Bildirim Gönder</h4>
-              <p>Bize görüşlerinizi iletebilirsiniz!</p>
-              <form id="feedbackForm">
-                  <div class="input-field">
-                      <input id="feedbackName" type="text" class="validate" required>
-                      <label for="feedbackName">Adınız</label>
-                  </div>
-                  <div class="input-field">
-                      <input id="feedbackEmail" type="email" class="validate">
-                      <label for="feedbackEmail">E-posta Adresiniz (Opsiyonel)</label>
-                  </div>
-                  <div class="input-field">
-                      <textarea id="feedbackMessage" class="materialize-textarea" required></textarea>
-                      <label for="feedbackMessage">Mesajınız</label>
-                  </div>
-                  <!-- Form gönderilirken gösterilecek preloader -->
-                  <div id="feedbackLoading" style="display: none; text-align: center; margin-top: 10px;">
-                      <div class="preloader-wrapper small active">
-                          <div class="spinner-layer spinner-teal-only">
-                              <div class="circle-clipper left">
-                                  <div class="circle"></div>
-                              </div>
-                              <div class="gap-patch">
-                                  <div class="circle"></div>
-                              </div>
-                              <div class="circle-clipper right">
-                                  <div class="circle"></div>
-                              </div>
-                          </div>
-                      </div>
-                      <span style="color: #26a69a; margin-left: 10px;">Mesaj gönderiliyor...</span>
-                  </div>
-              </form>
-          </div>
-          <div class="modal-footer">
-              <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
-              <a href="#!" id="feedback_submit" class="waves-effect waves-green btn teal" onclick="sendFeedback()">Gönder</a>
-          </div>
-      </div>
-
-    <!-- Yükleme Ekranı -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="preloader-wrapper active">
-            <div class="spinner-layer spinner-blue-only">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
+        <!-- Hata Modalı -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <h4>Uyarılar ve Hatalar</h4>
+                <div class="error-list" id="errorList"></div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="confirmSend()">Devam Et</a>
             </div>
         </div>
-        <span style="color: white; margin-left: 10px; font-size: 1.2rem;">Nöbetler Atanıyor...</span>
+
+        <!-- Geri Bildirim Modalı -->
+        <div id="feedbackModal" class="modal">
+            <div class="modal-content">
+                <h4>Geri Bildirim Gönder</h4>
+                <p>Bize görüşlerinizi iletebilirsiniz!</p>
+                <form id="feedbackForm">
+                    <div class="input-field">
+                        <input id="feedbackName" type="text" class="validate" required>
+                        <label for="feedbackName">Adınız</label>
+                    </div>
+                    <div class="input-field">
+                        <input id="feedbackEmail" type="email" class="validate">
+                        <label for="feedbackEmail">E-posta Adresiniz (Opsiyonel)</label>
+                    </div>
+                    <div class="input-field">
+                        <textarea id="feedbackMessage" class="materialize-textarea" required></textarea>
+                        <label for="feedbackMessage">Mesajınız</label>
+                    </div>
+                    <div id="feedbackLoading" style="display: none; text-align: center; margin-top: 10px;">
+                        <div class="preloader-wrapper small active">
+                            <div class="spinner-layer spinner-teal-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <span style="color: #26a69a; margin-left: 10px;">Mesaj gönderiliyor...</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-red btn-flat">İptal</a>
+                <a href="#!" id="feedback_submit" class="waves-effect waves-green btn teal" onclick="sendFeedback()">Gönder</a>
+            </div>
+        </div>
+
+        <!-- Yükleme Ekranı -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <span style="color: white; margin-left: 10px; font-size: 1.2rem;">Nöbetler Atanıyor...</span>
+        </div>
     </div>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
