@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /background.png
+Disallow: /apple-touch-icon.png
+Disallow: /favicon-32x32.png
+Disallow: /favicon-16x16.png
+Disallow: /site.webmanifest
+
+Sitemap: https://nobetplani.com/sitemap.xml
