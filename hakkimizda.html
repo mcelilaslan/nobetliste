@@ -87,21 +87,31 @@
             box-sizing: border-box;
             font-family: 'Bricolage Grotesque', sans-serif !important;
         }
-
+        
         .nav-wrapper {
             background-color: rgba(119,190,186,255) !important;
             border-radius: 8px 8px 0 0;
             display: flex;
             justify-content: center;
+            align-items: center;
+            padding: 0 10px;
         }
-
+        
         .nav-wrapper .container {
             display: flex;
             justify-content: center;
+            align-items: center;
             width: 100%;
             max-width: 780px;
+            position: relative;
         }
-
+        
+        .nav-mobile {
+            position: absolute;
+            left: 10px;
+            display: none;
+        }
+        
         .nav-wrapper ul.center {
             display: flex;
             justify-content: center;
@@ -110,38 +120,73 @@
             padding: 0;
             list-style: none;
         }
-
+        
         .nav-wrapper ul.center li {
             margin: 0 15px;
         }
-
+        
         .nav-wrapper ul.center li a {
             color: #fff;
             font-size: 1rem;
             font-weight: 500;
             transition: color 0.3s ease;
         }
-
+        
         .nav-wrapper ul.center li a:hover {
             color: #e0f7fa;
             background-color: rgba(0, 0, 0, 0.1);
         }
-
+        
         .sidenav {
             background-color: rgba(255, 255, 255, 0.97);
             width: 250px;
         }
-
+        
         .sidenav li a {
             color: #26a69a;
             font-size: 1.1rem;
             font-weight: 500;
             font-family: 'Bricolage Grotesque', sans-serif !important;
         }
-
+        
         .sidenav li a:hover {
             background-color: #f5f5f5;
             color: #00796b;
+        }
+        
+        .sidenav-trigger {
+            display: flex;
+            align-items: center;
+            color: #fff !important;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Bricolage Grotesque', sans-serif !important;
+            padding-left: 10px;
+        }
+        
+        .sidenav-trigger i {
+            margin-right: 8px;
+        }
+        
+        @media only screen and (max-width: 900px) {
+            .nav-container {
+                max-width: 100%;
+                padding: 10px;
+            }
+        
+            .nav-wrapper .container {
+                max-width: 100%;
+                padding: 0 10px;
+                justify-content: flex-start;
+            }
+        
+            .nav-mobile {
+                display: block;
+            }
+        
+            .nav-wrapper ul.center {
+                display: none;
+            }
         }
 
         header h3 {
@@ -242,7 +287,9 @@
         <div class="nav-container custom-container">
             <nav class="nav-wrapper">
                 <div class="container">
-                    <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    <div class="nav-mobile">
+                        <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i>Nöbet Planı</a>
+                    </div>
                     <ul class="center hide-on-med-and-down">
                         <li><a href="index.html">Ana Sayfa</a></li>
                         <li><a href="blog.html">Blog</a></li>
