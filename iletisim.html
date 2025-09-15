@@ -91,23 +91,38 @@
         .nav-wrapper {
             background-color: rgba(119,190,186,255) !important;
             border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: center;
         }
 
-        .nav-wrapper a.brand-logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #fff;
-            padding-left: 20px;
+        .nav-wrapper .container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 780px;
         }
 
-        .nav-wrapper ul li a {
+        .nav-wrapper ul.center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-wrapper ul.center li {
+            margin: 0 15px;
+        }
+
+        .nav-wrapper ul.center li a {
             color: #fff;
             font-size: 1rem;
             font-weight: 500;
             transition: color 0.3s ease;
         }
 
-        .nav-wrapper ul li a:hover {
+        .nav-wrapper ul.center li a:hover {
             color: #e0f7fa;
             background-color: rgba(0, 0, 0, 0.1);
         }
@@ -230,13 +245,13 @@
                 padding: 10px;
             }
 
-            .nav-wrapper a.brand-logo {
-                font-size: 1.2rem;
-                padding-left: 15px;
+            .nav-wrapper .container {
+                max-width: 100%;
+                padding: 0 10px;
             }
 
-            .nav-wrapper ul li a {
-                font-size: 0.9rem;
+            .nav-wrapper ul.center {
+                justify-content: space-around;
             }
 
             .contact-info {
@@ -256,9 +271,8 @@
         <div class="nav-container custom-container">
             <nav class="nav-wrapper">
                 <div class="container">
-                    <a href="index.html" class="brand-logo">Nöbet Planı</a>
                     <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                    <ul class="right hide-on-med-and-down">
+                    <ul class="center hide-on-med-and-down">
                         <li><a href="index.html">Ana Sayfa</a></li>
                         <li><a href="blog.html">Blog</a></li>
                         <li><a href="hakkimizda.html">Hakkımızda</a></li>
@@ -287,14 +301,11 @@
                     <strong>E-posta:</strong> <a href="mailto:nobetplani@gmail.com">nobetplani@gmail.com</a>
                 </p>
                 <p>
-                    <strong>Adres:</strong> İstanbul, Türkiye
+                    <strong>Adres:</strong> İzmir, Türkiye
                 </p>
                 <div class="social-links">
                     <a href="https://www.instagram.com/nobetplani" target="_blank">
                         <img src="instagram-logo.png" alt="Instagram"> Instagram
-                    </a>
-                    <a href="https://twitter.com/nobetplani" target="_blank">
-                        <img src="twitter-logo.png" alt="Twitter"> Twitter
                     </a>
                 </div>
             </div>
