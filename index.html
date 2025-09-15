@@ -96,7 +96,7 @@ e<!DOCTYPE html>
             max-width: 1573px;
         }
 
-        /* Menü Çubuğu Stilleri */
+         /* Menü Çubuğu Stilleri */
         .nav-container {
             background: rgba(255, 255, 255, 0.97);
             border-radius: 8px;
@@ -112,23 +112,38 @@ e<!DOCTYPE html>
         .nav-wrapper {
             background-color: rgba(119,190,186,255) !important;
             border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: center; /* İçeriği yatayda ortala */
         }
 
-        .nav-wrapper a.brand-logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #fff;
-            padding-left: 20px;
+        .nav-wrapper .container {
+            display: flex;
+            justify-content: center; /* Container içindeki içeriği ortala */
+            width: 100%;
+            max-width: 780px;
         }
 
-        .nav-wrapper ul li a {
+        .nav-wrapper ul.center {
+            display: flex;
+            justify-content: center; /* Menü öğelerini yatayda ortala */
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-wrapper ul.center li {
+            margin: 0 15px; /* Menü öğeleri arasında boşluk */
+        }
+
+        .nav-wrapper ul.center li a {
             color: #fff;
             font-size: 1rem;
             font-weight: 500;
             transition: color 0.3s ease;
         }
 
-        .nav-wrapper ul li a:hover {
+        .nav-wrapper ul.center li a:hover {
             color: #e0f7fa;
             background-color: rgba(0, 0, 0, 0.1);
         }
@@ -156,13 +171,13 @@ e<!DOCTYPE html>
                 padding: 10px;
             }
 
-            .nav-wrapper a.brand-logo {
-                font-size: 1.2rem;
-                padding-left: 15px;
+            .nav-wrapper .container {
+                max-width: 100%;
+                padding: 0 10px;
             }
 
-            .nav-wrapper ul li a {
-                font-size: 0.9rem;
+            .nav-wrapper ul.center {
+                justify-content: space-around; /* Mobilde menü öğelerini dağıt */
             }
         }
 
@@ -1023,7 +1038,7 @@ e<!DOCTYPE html>
 </head>
 <body>
     <div class="container-wrapper">
-        <!-- Navigasyon Çubuğu -->
+         <!-- Navigasyon Çubuğu -->
         <div class="nav-container custom-container">
             <nav class="nav-wrapper">
                 <div class="container">
