@@ -1459,8 +1459,13 @@
 
         document.addEventListener('DOMContentLoaded', function() {
 
-            loadPersonsFromLocalStorage(); // Kayıtlı personel listesini yükle
-            const settingsLoaded = loadSettingsFromLocalStorage(); // Kayıtlı ayarları yükle
+            // Global alanda selectedDays'i tanımlıyoruz ki her yerden erişilebilsin.
+            let selectedDays = [];
+
+            // Önce personeli yükle
+            loadPersonsFromLocalStorage(); 
+            // Sonra ayarları yükle
+            const settingsLoaded = loadSettingsFromLocalStorage();
             
             const elems = document.querySelectorAll('.collapsible, .datepicker, .dropdown-trigger, .modal');
             M.Collapsible.init(document.querySelectorAll('.collapsible'), { accordion: false });
@@ -1487,11 +1492,10 @@
             });
 
             const holidaysInput = document.getElementById('holidays');
-            let selectedDays = []; // Seçilen günleri tutacak dizi
             
             const holidaysPicker = M.Datepicker.init(holidaysInput, {
                 format: 'dd-mm-yyyy',
-                autoClose: false, // Kullanıcı seçim yapana kadar kapanmasın
+                autoClose: false,
                 firstDay: 1,
                 i18n: {
                     months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
@@ -1507,13 +1511,12 @@
                         this.gotoDate(startDateInstance.date);
                     }
                 
-                    // Önceki seçimleri işaretle
                     setTimeout(() => {
                         const dayElements = this.el.parentElement.querySelectorAll('.datepicker-day-button');
                         dayElements.forEach(day => {
                             const dayNum = parseInt(day.textContent);
                             if (selectedDays.includes(dayNum)) {
-                                day.classList.add('selected-day'); // Özel stil ekle
+                                day.classList.add('selected-day');
                             } else {
                                 day.classList.remove('selected-day');
                             }
@@ -1524,18 +1527,15 @@
                     const day = date.getDate();
                     const index = selectedDays.indexOf(day);
                 
-                    // Gün zaten seçiliyse çıkar, değilse ekle
                     if (index !== -1) {
                         selectedDays.splice(index, 1);
                     } else {
                         selectedDays.push(day);
                     }
                 
-                    // Günleri sıralı şekilde güncelle (boşluksuz)
                     selectedDays.sort((a, b) => a - b);
                     holidaysInput.value = selectedDays.join(',');
                 
-                    // Görsel geri bildirim için seçili günleri işaretle
                     const dayElements = this.el.parentElement.querySelectorAll('.datepicker-day-button');
                     dayElements.forEach(dayEl => {
                         const dayNum = parseInt(dayEl.textContent);
@@ -1546,10 +1546,8 @@
                         }
                     });
                 
-                    // Doğrulamayı tetikle
                     M.updateTextFields();
-                    holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
-                    // Manuel doğrulama kontrolü
+                    holidaysInput.dispatchEvent(new Event('input'));
                     if (selectedDays.length > 0 && holidaysInput.value.match(/^(\d{1,2}(,\d{1,2})*)?$/)) {
                         holidaysInput.classList.remove('invalid');
                         holidaysInput.classList.add('valid');
@@ -1559,11 +1557,9 @@
                     }
                 },
                 onClose: function() {
-                    // Kapanırken son durumu input’a yaz (boşluksuz)
                     holidaysInput.value = selectedDays.join(',');
                     M.updateTextFields();
-                    holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
-                    // Manuel doğrulama kontrolü
+                    holidaysInput.dispatchEvent(new Event('input'));
                     if (selectedDays.length > 0 && holidaysInput.value.match(/^(\d{1,2}(,\d{1,2})*)?$/)) {
                         holidaysInput.classList.remove('invalid');
                         holidaysInput.classList.add('valid');
@@ -1574,7 +1570,6 @@
                 }
             });
             
-            // Özel stil için CSS ekleme (seçili günlerin görünümünü değiştirmek için)
             const style = document.createElement('style');
             style.innerHTML = `
                 .datepicker-day-button.selected-day {
@@ -1598,14 +1593,15 @@
                 constrainWidth: false
             });
             M.Modal.init(document.querySelectorAll('.modal'));
+            
+            // !! BU SATIR BURAYA TAŞINDI !!
+            M.FormSelect.init(document.querySelectorAll('select'));
         
-            // Collapsible örneklerini tanımlama
             collapsiblePersonel = M.Collapsible.getInstance(document.querySelector('#personelCollapsible'));
             collapsibleCalendar = M.Collapsible.getInstance(document.querySelector('#calendarCollapsible'));
             statsCollapsible = M.Collapsible.getInstance(document.querySelector('#statsCollapsible'));
             guideCollapsible = M.Collapsible.getInstance(document.querySelector('#guideCollapsible'));
         
-            // Takvim collapsible'ı için açma/kapama ayarları
             collapsibleCalendar.options.onOpenStart = function() {
                 document.getElementById('calendarContainer').classList.add('expanded');
             };
@@ -1613,7 +1609,6 @@
                 document.getElementById('calendarContainer').classList.remove('expanded');
             };
         
-            // Mobil cihazlar için buton boyutlarını ayarlama
             if (isMobileDevice()) {
                 document.querySelectorAll('.btn-floating').forEach(btn => {
                     btn.style.width = '36px';
@@ -1622,13 +1617,15 @@
                 });
                 M.toast({ html: 'Mobilde "yatay" modda daha iyi bir deneyim elde edebilirsiniz!(Masaüstü kullanım önerilir)' });
             }
-
-            // EĞER AYARLAR VE PERSONEL HAFIZADAN YÜKLENDİYSE EKRANI YENİDEN OLUŞTUR
+            
+            // AYARLAR VE PERSONEL YÜKLENDİYSE EKRANI YENİDEN OLUŞTUR
             if (settingsLoaded && persons.length > 0) {
                 renderTable();
-                generateCalendar();
+                if(document.getElementById('startDate').value && document.getElementById('endDate').value && document.getElementById('dutyPerDay').value){
+                    generateCalendar();
+                }
             } else {
-                renderTable(); // Değilse sadece personel tablosunu çiz
+                renderTable();
             }
 
             // AYAR INPUT'LARI DEĞİŞTİĞİNDE OTOMATİK KAYDET
@@ -1636,8 +1633,7 @@
             document.getElementById('endDate').addEventListener('change', saveSettingsToLocalStorage);
             document.getElementById('holidays').addEventListener('change', saveSettingsToLocalStorage);
             document.getElementById('dutyPerDay').addEventListener('change', saveSettingsToLocalStorage);
-        
-            // Tarih seçiciler için olay dinleyicileri 
+
             const startDatePicker = document.getElementById('startDate');
             const endDatePicker = document.getElementById('endDate');
             startDatePicker.addEventListener('change', function() {
