@@ -1392,6 +1392,21 @@
     <script>
         let persons = [];
         let availabilityMode = true;
+
+        function savePersonsToLocalStorage() {
+            // Personel listesini tarayıcının hafızasına kaydeder.
+            localStorage.setItem('nobetPlaniPersonelListesi', JSON.stringify(persons));
+        }
+
+        function loadPersonsFromLocalStorage() {
+            // Hafızadan daha önce kaydedilmiş listeyi okur.
+            const savedPersons = localStorage.getItem('nobetPlaniPersonelListesi');
+            if (savedPersons) {
+                // Kayıtlı liste varsa, bunu 'persons' dizisine geri yükler.
+                persons = JSON.parse(savedPersons);
+            }
+        }
+        
         let unavailableCells = {};
         let selectedCells = {};
         let collapsiblePersonel;
@@ -1417,6 +1432,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+
+            loadPersonsFromLocalStorage(); // Kayıtlı personel listesini yükle
             
             const elems = document.querySelectorAll('.collapsible, .datepicker, .dropdown-trigger, .modal');
             M.Collapsible.init(document.querySelectorAll('.collapsible'), { accordion: false });
@@ -1705,6 +1722,7 @@
             renderTable();
             if (collapsiblePersonel) collapsiblePersonel.open(0);
             M.toast({html: `${name} eklendi!`});
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function deletePerson(index) {
@@ -1712,28 +1730,33 @@
             persons.splice(index, 1);
             renderTable();
             M.toast({html: `${name} silindi!`});
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function incrementDutyGap(index) {
             persons[index].minDaysBetween++;
             renderTable();
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function decrementDutyGap(index) {
             if (persons[index].minDaysBetween > 0) {
                 persons[index].minDaysBetween--;
                 renderTable();
+                savePersonsToLocalStorage(); // KAYDET
             }
         }
 
         function incrementAllDutyGaps() {
             persons.forEach(p => p.minDaysBetween++);
             renderTable();
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function decrementAllDutyGaps() {
             persons.forEach(p => { if (p.minDaysBetween > 0) p.minDaysBetween--; });
             renderTable();
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function toggleAvailabilityMode() {
@@ -1866,6 +1889,7 @@
         function updateGroup(index, value) {
             persons[index].group = parseInt(value);
             renderTable();
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function updateDuty(index, type, value) {
@@ -1874,6 +1898,7 @@
             } else {
                 persons[index][type] = parseInt(value) || 0;
             }
+            savePersonsToLocalStorage(); // KAYDET
         }
 
         function resetDuties() {
@@ -1885,6 +1910,7 @@
             if (collapsibleCalendar) collapsibleCalendar.close(0);
             document.getElementById('calendarTable').innerHTML = '';
             M.toast({html: 'Nöbet dağıtımı ve takvim sıfırlandı!'});
+            savePersonsToLocalStorage(); // KAYDET
         }
 
 
@@ -3024,6 +3050,7 @@
 
                 persons = newPersons.filter(p => p.name && !persons.some(existing => existing.name === p.name));
                 renderTable();
+                savePersonsToLocalStorage(); // KAYDET
                 M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
                 loadingOverlay.style.display = 'none';
                 isUploading = false;
