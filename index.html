@@ -3806,7 +3806,7 @@
                         <th>Resmi Tatil</th>
                         <th>Perşembe</th>
                         <th>Cuma</th>
-                        <th>TOPLAM NÖBET</th>
+                        <th style="color:#d32f2f;">TOPLAM NÖBET</th>
                         <th style="color:#d32f2f;">Toplam Saat</th> </tr>
                 </thead>
                 <tbody>
@@ -3821,7 +3821,7 @@
                     <td style="color:red; font-weight:bold;">${s.officialHoliday}</td>
                     <td>${s.thursday}</td>
                     <td>${s.friday}</td>
-                    <td><strong>${s.weekday + s.weekend + s.officialHoliday}</strong></td>
+                    <td style="color:#d32f2f; font-weight:bold;"><strong>${s.weekday + s.weekend + s.officialHoliday}</strong></td>
                     <td style="color:#d32f2f; font-weight:bold;">${s.totalHours}</td> </tr>
             `;
         });
