@@ -3654,7 +3654,12 @@
             });
     }
 
-
+    function resetButton(btn, originalText) {
+        if (btn) {
+            btn.innerHTML = originalText;
+            btn.classList.remove('disabled');
+        }
+    }
 
     // Modal açıldığında listeyi yükle
     document.addEventListener('DOMContentLoaded', function() {
