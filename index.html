@@ -112,6 +112,7 @@
             max-width: 1573px;
         }
 
+         /* Menü Çubuğu Stilleri */
         /* Menü Çubuğu Stilleri */
         .nav-container {
             background: rgba(255, 255, 255, 0.97);
@@ -130,13 +131,13 @@
             border-radius: 8px 8px 0 0;
             display: flex;
             align-items: center; /* Dikey ortalama */
-            padding: 0 20px; 
+            padding: 0 20px; /* Kenarlardan biraz boşluk bıraktık */
             height: 64px; /* Yükseklik sabitleme */
         }
         
         .nav-wrapper .container {
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between; /* ÖNEMLİ: Biri sağa biri sola yaslansın */
             align-items: center;
             width: 100%;
             max-width: 780px;
@@ -150,6 +151,7 @@
             margin-right: 10px;
         }
         
+        /* Eski 'center' sınıfı kalsa bile 'right' sınıfını hedefliyoruz */
         .nav-wrapper ul.right {
             display: flex;
             justify-content: flex-end;
@@ -182,6 +184,7 @@
             background-color: rgba(0, 0, 0, 0.1);
         }
 
+        /* Yedek olarak eski center stillerini de koruyoruz (bozulmasın diye) */
         .nav-wrapper ul.center {
             display: flex;
             justify-content: center;
@@ -244,6 +247,22 @@
                 display: none; /* Mobilde masaüstü menüyü gizle */
             }
         }
+
+            .mobile-menu-custom {
+                    display: none !important; 
+            }
+
+            @media only screen and (max-width: 992px) {
+                .mobile-menu-custom {
+                    display: flex !important;
+                    align-items: center;
+                    height: 100%;
+                    padding: 0 10px;
+                    cursor: pointer;
+                    margin-right: 15px;
+                }
+            }
+
         /* Mevcut Stiller */
         header h3 {
             font-family: 'Bricolage Grotesque', sans-serif !important;
@@ -1107,9 +1126,11 @@
             <nav class="nav-wrapper">
                 <div class="container">
                     
-                    <div style="display: flex; align-items: center;">
-                        <a href="#" data-target="mobile-nav" class="sidenav-trigger show-on-medium-and-down" style="margin: 0; padding: 0; margin-right: 15px; display: none;"><i class="material-icons">menu</i></a>
-                        
+                    <div style="display: flex; align-items: center; height: 100%;">
+                        <a href="#" data-target="mobile-nav" class="sidenav-trigger mobile-menu-custom">
+                            <i class="material-icons" style="margin-right: 6px; font-size: 28px;">menu</i>
+                            <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; padding-top: 2px;">MENÜ</span>
+                        </a>
                     </div>
 
                     <ul class="right hide-on-med-and-down" id="nav-mobile-list">
@@ -1161,7 +1182,6 @@
                     <div class="collapsible-body">
                         <ul>
                             <li>Masaüstü tarayıcıda optimal çalışmaktadır.</li>
-                            <li>Kullanıcı girişi yaparak listelerinizi hesabınıza kaydedebilir daha sonra tekrar inceleyebilirsiniz.</li>
                             <li>Nöbet yazılacak tarih aralığını ve 1 nöbette bulunacak kişi sayısını girerek süreci başlatınız.</li>
                             <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
                             <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
