@@ -112,7 +112,7 @@
             max-width: 1573px;
         }
 
-         /* Menü Çubuğu Stilleri */
+        /* Menü Çubuğu Stilleri */
         .nav-container {
             background: rgba(255, 255, 255, 0.97);
             border-radius: 8px;
@@ -129,26 +129,59 @@
             background-color: rgba(119,190,186,255) !important;
             border-radius: 8px 8px 0 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 10px;
+            align-items: center; /* Dikey ortalama */
+            padding: 0 20px; 
+            height: 64px; /* Yükseklik sabitleme */
         }
         
         .nav-wrapper .container {
             display: flex;
-            justify-content: center;
+            justify-content: space-between; 
             align-items: center;
             width: 100%;
             max-width: 780px;
             position: relative;
+            height: 100%;
         }
         
         .nav-mobile {
-            position: absolute;
-            left: 10px;
-            display: none;
+            /* Mobilde ikonun konumu için */
+            display: none; 
+            margin-right: 10px;
         }
         
+        .nav-wrapper ul.right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            height: 100%;
+        }
+        
+        .nav-wrapper ul.right li {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-wrapper ul.right li a {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 15px; /* Linkler arası boşluk */
+        }
+        
+        .nav-wrapper ul.right li a:hover {
+            color: #e0f7fa;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
         .nav-wrapper ul.center {
             display: flex;
             justify-content: center;
@@ -156,22 +189,6 @@
             margin: 0;
             padding: 0;
             list-style: none;
-        }
-        
-        .nav-wrapper ul.center li {
-            margin: 0 15px;
-        }
-        
-        .nav-wrapper ul.center li a {
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-wrapper ul.center li a:hover {
-            color: #e0f7fa;
-            background-color: rgba(0, 0, 0, 0.1);
         }
         
         .sidenav {
@@ -198,11 +215,13 @@
             font-size: 1.2rem;
             font-weight: 600;
             font-family: 'Bricolage Grotesque', sans-serif !important;
-            padding-left: 10px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
         }
         
         .sidenav-trigger i {
-            margin-right: 8px;
+            margin: 0;
         }
         
         @media only screen and (max-width: 900px) {
@@ -214,15 +233,15 @@
             .nav-wrapper .container {
                 max-width: 100%;
                 padding: 0 10px;
-                justify-content: flex-start;
+                justify-content: flex-start; /* Mobilde sola yasla */
             }
         
             .nav-mobile {
-                display: block;
+                display: block; /* Mobilde ikonu göster */
             }
         
-            .nav-wrapper ul.center {
-                display: none;
+            .nav-wrapper ul.right, .nav-wrapper ul.center {
+                display: none; /* Mobilde masaüstü menüyü gizle */
             }
         }
         /* Mevcut Stiller */
@@ -1082,27 +1101,51 @@
 </head>
 <body>
     <div class="container-wrapper">
-         <!-- Navigasyon Çubuğu -->
+
         <!-- Navigasyon Çubuğu -->
         <div class="nav-container custom-container">
             <nav class="nav-wrapper">
                 <div class="container">
-                    <div class="nav-mobile">
-                        <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i>Nöbet Planı</a>
+                    
+                    <div style="display: flex; align-items: center;">
+                        <a href="#" data-target="mobile-nav" class="sidenav-trigger show-on-medium-and-down" style="margin: 0; padding: 0; margin-right: 15px; display: none;"><i class="material-icons">menu</i></a>
+                        
                     </div>
-                    <ul class="center hide-on-med-and-down">
+
+                    <ul class="right hide-on-med-and-down" id="nav-mobile-list">
                         <li><a href="index.html">Ana Sayfa</a></li>
                         <li><a href="blog.html">Blog</a></li>
                         <li><a href="hakkimizda.html">Hakkımızda</a></li>
                         <li><a href="iletisim.html">İletişim</a></li>
+                        
+                        <li>
+                            <a href="#historyModal" class="modal-trigger tooltipped" data-position="bottom" data-tooltip="Geçmiş Listeler">
+                                <i class="material-icons left" style="margin-right: 5px;">history</i>Geçmiş
+                            </a>
+                        </li>
+
+                        <li id="login-li-desktop" style="margin-left: 10px;">
+                            <a href="#" onclick="googleLogin()" class="btn waves-effect waves-light white black-text" style="height: 36px; line-height: 36px; padding: 0 15px; display: inline-flex; align-items: center;">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="vertical-align: middle; width: 18px; margin-right: 8px;">
+                                Giriş Yap
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
+
             <ul class="sidenav" id="mobile-nav">
                 <li><a href="index.html">Ana Sayfa</a></li>
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="hakkimizda.html">Hakkımızda</a></li>
                 <li><a href="iletisim.html">İletişim</a></li>
+                <li><a href="#historyModal" class="modal-trigger"><i class="material-icons left">history</i>Geçmiş Kayıtlar</a></li>
+                <li id="login-li-mobile">
+                    <a href="#" onclick="googleLogin()" style="display: flex; align-items: center; padding-left: 32px;">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="vertical-align: middle; width: 24px; margin-right: 15px;">
+                        Giriş Yap
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -1118,6 +1161,7 @@
                     <div class="collapsible-body">
                         <ul>
                             <li>Masaüstü tarayıcıda optimal çalışmaktadır.</li>
+                            <li>Kullanıcı girişi yaparak listelerinizi hesabınıza kaydedebilir daha sonra tekrar inceleyebilirsiniz.</li>
                             <li>Nöbet yazılacak tarih aralığını ve 1 nöbette bulunacak kişi sayısını girerek süreci başlatınız.</li>
                             <li><a class="btn-floating tiny waves-effect waves-light teal"><i class="material-icons">add</i></a> simgesine tıklayarak listeye personel ekleyebilirsiniz.</li>
                             <li>Birlikte nöbet tutmak isteyen/ tutması gereken personeller varsa aynı gruba ekleyerek aynı güne nöbetçi atanmalarını sağlayabilirsiniz</li>
@@ -1289,9 +1333,13 @@
                                 </div>
                             </div>
                             <!-- İndir -->
-                            <div class="col s3">
-                                <button class="waves-effect waves-light btn teal tooltipped" onclick="downloadSchedule()" data-position="bottom" data-tooltip="Nöbet listesini Excel formatında indirir">
+                            <div class="col s4" style="display: flex; justify-content: flex-end; gap: 10px;">
+                                <button class="waves-effect waves-light btn teal tooltipped" onclick="downloadSchedule()" data-position="bottom" data-tooltip="Excel Olarak İndir">
                                     <i class="material-icons left">file_download</i>İndir
+                                </button>
+
+                                <button class="waves-effect waves-light btn orange darken-3 tooltipped" onclick="saveScheduleToHistory()" data-position="bottom" data-tooltip="Bu listeyi hafızaya kaydet">
+                                    <i class="material-icons left">cloud_upload</i>Kaydet
                                 </button>
                             </div>
                         </div>
@@ -1385,6 +1433,71 @@
             </div>
         </div>
 
+        <!-- GeçmişEkranı -->
+        <div id="historyModal" class="modal bottom-sheet" style="max-height: 90% !important; min-height: 65% !important; height: 65% !important;">
+            <div class="modal-content">
+                <h4 style="color: #d32f2f; display: flex; align-items: center;">
+                    <i class="material-icons" style="margin-right: 10px;">history</i>Geçmiş Nöbet Kayıtları
+                </h4>
+                <p>Buluta kaydettiğiniz eski nöbet listelerinizi buradan inceleyebilirsiniz.</p>
+                
+                <div id="historyLoading" class="center-align" style="display: none; padding: 20px;">
+                    <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left"><div class="circle"></div></div>
+                            <div class="gap-patch"><div class="circle"></div></div>
+                            <div class="circle-clipper right"><div class="circle"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m4">
+                        <h5 class="center-align">Kayıtlı Aylar</h5>
+                        <div class="collection" id="historyList">
+                            </div>
+                    </div>
+                    
+                    <div class="col s12 m8">
+                        <div id="historyDetail" class="card-panel grey lighten-5" style="display:none; min-height: 300px;">
+                            <h5 id="historyDetailTitle" class="center-align teal-text"></h5>
+                            <div class="divider"></div>
+                            <div id="historyStatsContent" style="margin-top: 15px;">
+                                </div>
+                        </div>
+                        <div id="historyPlaceholder" class="center-align grey-text" style="padding-top: 50px;">
+                            <i class="material-icons" style="font-size: 64px;">touch_app</i>
+                            <p>Detaylarını görmek için soldan bir ay seçiniz.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Kapat</a>
+            </div>
+        </div>
+
+        <!-- Üzerine Kayıt Ekranı -->
+        <div id="overwriteModal" class="modal">
+            <div class="modal-content">
+                <h4 style="color: #f57c00; display: flex; align-items: center;">
+                    <i class="material-icons" style="margin-right: 10px; font-size: 32px;">warning</i>Dikkat
+                </h4>
+                <div class="divider"></div>
+                <p id="overwriteMessage" style="font-size: 1.1rem; padding-top: 15px;">
+                    </p>
+                <p class="grey-text" style="font-size: 0.9rem;">
+                    <i class="material-icons tiny">info</i> Bu işlem geri alınamaz, eski kayıt silinecektir.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat"><b>İptal</b></a>
+                <a href="#!" id="confirmOverwriteBtn" class="waves-effect waves-light btn orange darken-3" style="margin-left: 10px;">
+                    <i class="material-icons left">save</i>Üzerine Yaz
+                </a>
+            </div>
+        </div>
+
         <!-- Yükleme Ekranı -->
         <div id="loadingOverlay" class="loading-overlay">
             <div class="preloader-wrapper active">
@@ -1412,15 +1525,20 @@
         let availabilityMode = true;
 
         function savePersonsToLocalStorage() {
-            // Personel listesini tarayıcının hafızasına kaydeder.
+            // 1. Önce eskisi gibi tarayıcıya kaydet
             localStorage.setItem('nobetPlaniPersonelListesi', JSON.stringify(persons));
+            
+            // 2. EĞER kullanıcı giriş yapmışsa, buluta da kaydet
+            if (auth.currentUser) {
+                saveToFirestore();
+            }
         }
 
         function loadPersonsFromLocalStorage() {
             // Hafızadan daha önce kaydedilmiş listeyi okur.
             const savedPersons = localStorage.getItem('nobetPlaniPersonelListesi');
             if (savedPersons) {
-                // Kayıtlı liste varsa, bunu 'persons' dizisine geri yükler.
+                // Kayıtlı liste varsa, bunu geri yükler.
                 persons = JSON.parse(savedPersons);
             }
         }
@@ -1504,7 +1622,7 @@
                             dayElements.forEach(day => {
                                 const dayNum = parseInt(day.textContent);
                                 if (selectedDays.includes(dayNum)) {
-                                    day.classList.add('selected-day'); // Özel stil ekle
+                                    day.classList.add('selected-day'); 
                                 } else {
                                     day.classList.remove('selected-day');
                                 }
@@ -1522,7 +1640,7 @@
                             selectedDays.push(day);
                         }
                 
-                        // Günleri sıralı şekilde güncelle (boşluksuz)
+                        // Günleri sıralı şekilde güncelle
                         selectedDays.sort((a, b) => a - b);
                         holidaysInput.value = selectedDays.join(',');
                 
@@ -1550,7 +1668,7 @@
                         }
                     },
                     onClose: function() {
-                        // Kapanırken son durumu input’a yaz (boşluksuz)
+                        // Kapanırken son durumu input’a yaz
                         holidaysInput.value = selectedDays.join(',');
                         M.updateTextFields();
                         holidaysInput.dispatchEvent(new Event('input')); // Materialize’a içeriğin değiştiğini bildir
@@ -1950,9 +2068,9 @@
             alertDiv.style.width = '90%';
             alertDiv.style.maxWidth = '400px';
             alertDiv.style.zIndex = '10001';
-            alertDiv.style.backgroundColor = 'rgba(245, 233, 217, 0.9)'; // Yarı saydam krem tonu
-            alertDiv.style.backdropFilter = 'blur(8px)'; // Blurlu arka plan
-            alertDiv.style.webkitBackdropFilter = 'blur(8px)'; // Safari desteği
+            alertDiv.style.backgroundColor = 'rgba(245, 233, 217, 0.9)'; 
+            alertDiv.style.backdropFilter = 'blur(8px)'; 
+            alertDiv.style.webkitBackdropFilter = 'blur(8px)';
             alertDiv.style.border = '2px solid #26a69a';
             alertDiv.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
             alertDiv.style.borderRadius = '8px';
@@ -3191,6 +3309,524 @@
           </div>
       </footer>
 
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDsXfFoyK7gBBBU7mhH7AKoC7ZLL__-gwE",
+        authDomain: "gifted-bongo-456718-r0.firebaseapp.com",
+        projectId: "gifted-bongo-456718-r0",
+        storageBucket: "gifted-bongo-456718-r0.firebasestorage.app",
+        messagingSenderId: "88931343134",
+        appId: "1:88931343134:web:3fc00fd5a4efbd1594470f",
+        measurementId: "G-8122X7DH0P"
+    };
+  
+    // Firebase'i Başlat
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Giriş Fonksiyonu
+    function googleLogin() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+            .then((result) => {
+                const user = result.user;
+                M.toast({html: 'Hoş geldin ' + user.displayName});
+                updateLoginButton(user);
+            }).catch((error) => {
+                console.error(error);
+                M.toast({html: 'Giriş hatası: ' + error.message});
+            });
+    }
+
+    // Çıkış Fonksiyonu
+    function googleLogout() {
+        auth.signOut().then(() => {
+            M.toast({html: 'Çıkış yapıldı'});
+            window.location.reload();
+        });
+    }
+
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            updateLoginButton(user);
+            // GİRİŞ YAPILDIĞINDA VERİYİ ÇEK:
+            loadFromFirestore(user); 
+        } else {
+            // Çıkış yapıldıysa yerel veriye dönülebilir veya liste temizlenebilir
+        }
+    });
+
+    function updateLoginButton(user) {
+        // İsimden sadece ilk kelimeyi al 
+        const firstName = user.displayName ? user.displayName.split(' ')[0] : 'Kullanıcı';
+
+        // Masaüstü Görünümü
+        const userHtmlDesktop = `
+            <a href="#" onclick="googleLogout()" class="btn waves-effect waves-light white black-text tooltipped" data-position="bottom" data-tooltip="Çıkış Yap">
+                <img src="${user.photoURL}" style="vertical-align: middle; width: 24px; border-radius: 50%; margin-right: 5px;">
+                ${firstName}
+            </a>
+        `;
+
+        // Mobil Görünümü 
+        const userHtmlMobile = `
+            <a href="#" onclick="googleLogout()" style="display: flex; align-items: center; padding-left: 32px;">
+                <img src="${user.photoURL}" style="vertical-align: middle; width: 24px; border-radius: 50%; margin-right: 15px;">
+                ${firstName} (Çıkış)
+            </a>
+        `;
+
+        // 1. Masaüstü butonunu güncelle
+        const loginLiDesktop = document.getElementById('login-li-desktop');
+        if(loginLiDesktop) {
+            loginLiDesktop.innerHTML = userHtmlDesktop;
+        }
+
+        // 2. Mobil butonunu güncelle
+        const loginLiMobile = document.getElementById('login-li-mobile');
+        if(loginLiMobile) {
+            loginLiMobile.innerHTML = userHtmlMobile;
+        }
+        
+        M.Tooltip.init(document.querySelectorAll('.tooltipped'));
+    }
+
+    // --- FIRESTORE VERİTABANI İŞLEMLERİ ---
+
+    // 1. Veriyi Buluta Kaydetme Fonksiyonu
+    function saveToFirestore() {
+        const user = auth.currentUser;
+        if (user) {
+            // Kullanıcı giriş yapmışsa veriyi buluta yaz
+            db.collection("users").doc(user.uid).set({
+                personnelList: JSON.stringify(persons), 
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                console.log("Veri buluta yedeklendi.");
+            })
+            .catch((error) => {
+                console.error("Yedekleme hatası: ", error);
+            });
+        }
+    }
+
+    // 2. Veriyi Buluttan Çekme Fonksiyonu
+    function loadFromFirestore(user) {
+        
+        if (persons.length > 0) {
+            console.log("Yerel liste dolu, veri kaybını önlemek için buluttan çekme iptal edildi.");
+            
+            M.toast({
+                html: '<span>Mevcut listeniz korundu. (Buluttaki eski liste çekilmedi)</span><button class="btn-flat toast-action" onclick="forceLoadCloud()">Yine de Çek</button>', 
+                classes: 'blue darken-3',
+                displayLength: 6000
+            });
+            
+            saveToFirestore(); 
+            
+            return; 
+        }
+
+        // Yerel liste boşsa, normal çekme işlemini yap
+        db.collection("users").doc(user.uid).get().then((doc) => {
+            if (doc.exists && doc.data().personnelList) {
+                const cloudData = JSON.parse(doc.data().personnelList);
+                
+                if(cloudData.length > 0) {
+                    persons = cloudData;
+                    renderTable();
+                    savePersonsToLocalStorage();
+                    M.toast({html: 'Personel listeniz buluttan yüklendi!', classes: 'green'});
+                }
+            } else {
+                // Kullanıcı yeni ise veya bulutta verisi yoksa
+                if (persons.length > 0) {
+                    saveToFirestore();
+                }
+            }
+        }).catch((error) => {
+            console.log("Veri çekme hatası:", error);
+        });
+    }
+
+
+    function forceLoadCloud() {
+        const user = auth.currentUser;
+        if(user) {
+
+            persons = []; 
+            loadFromFirestore(user);
+        }
+    }
+
+
+    function saveScheduleToHistory() {
+        // 1. KONTROL: Kullanıcı Giriş Yapmış mı?
+        const user = auth.currentUser;
+        if (!user) {
+            M.toast({html: 'Kaydetmek için önce giriş yapmalısınız.', classes: 'orange darken-2'});
+            googleLogin();
+            return;
+        }
+
+        // Takvim verilerini kontrol et
+        const startInput = document.getElementById('startDate').value;
+        const endInput = document.getElementById('endDate').value;
+        
+        if (!startInput || Object.keys(selectedCells).length === 0) {
+            M.toast({html: 'Kaydedilecek bir nöbet tablosu yok! Önce takvimi oluşturun.', classes: 'red'});
+            return;
+        }
+
+        const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+        const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
+        const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
+        const start = new Date(startYear, startMonth - 1, startDay);
+        const end = new Date(endYear, endMonth - 1, endDay);
+        
+        // Tarih hesaplamaları (Saat farklarını sıfırla)
+        start.setHours(0, 0, 0, 0);
+        end.setHours(0, 0, 0, 0);
+        
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    
+        let allDaysFilled = true;
+        for (let d = 0; d < days; d++) {
+            // O gün için işaretlenmiş (.selected) hücre sayısını say
+            const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
+            if (assigned < dutyPerDay) {
+                allDaysFilled = false;
+                break; // Eksik bulduk, döngüden çık
+            }
+        }
+    
+        if (!allDaysFilled) {
+            M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!', classes: 'red' });
+            return; // İşlemi durdur
+        }
+        // -----------------------------------------------------
+
+        // 2. KONTROL: ID Oluşturma (YIL-AY Formatı)
+        // startInput değişkeni yukarıda zaten tanımlı
+        const [day, month, year] = startInput.split('-'); 
+        const docId = `${year}-${month}`;
+        
+        // Buton Efekti (Yükleniyor)
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="material-icons left">hourglass_empty</i>Kontrol...';
+        btn.classList.add('disabled');
+
+        // Veritabanı Referansı
+        const docRef = db.collection("users").doc(user.uid).collection("history").doc(docId);
+
+        // 3. KONTROL: Veri Var mı? (Çakışma Kontrolü)
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+
+                resetButton(btn, originalText);
+                
+                // Modalı tetikle
+                openOverwriteModal(docRef, startInput, endInput, btn, originalText, month, year);
+            } else {
+                // KAYIT YOKSA -> Direkt Kaydet
+                performSave(docRef, startInput, endInput, btn, originalText);
+            }
+        }).catch((error) => {
+            console.error("Kontrol hatası:", error);
+            M.toast({html: 'Veritabanı kontrol edilemedi: ' + error.message, classes: 'red'});
+            resetButton(btn, originalText);
+        });
+    }
+
+    // --- ONAY PENCERESİNİ AÇAN YARDIMCI FONKSİYON ---
+    function openOverwriteModal(docRef, startInput, endInput, btn, originalText, month, year) {
+        const modalElem = document.getElementById('overwriteModal');
+        const instance = M.Modal.getInstance(modalElem); 
+        
+        const monthName = getMonthName(parseInt(month)); 
+        
+        // Mesajı hazırla
+        document.getElementById('overwriteMessage').innerHTML = 
+            `<b>${monthName} ${year}</b> dönemi için daha önce kaydedilmiş bir listeniz zaten var.<br><br>` +
+            `Eski listeyi silip, şu an ekrandaki listeyi onun yerine kaydetmek istiyor musunuz?`;
+        
+        const confirmBtn = document.getElementById('confirmOverwriteBtn');
+        confirmBtn.onclick = function() {
+            instance.close(); // Modalı kapat
+            performSave(docRef, startInput, endInput, btn, originalText); // Kaydetmeyi başlat
+        };
+        
+        instance.open(); // Pencereyi göster
+    }
+
+    // Yardımcı Kayıt Fonksiyonu
+    function performSave(docRef, startInput, endInput, btn, originalText) {
+        btn.innerHTML = '<i class="material-icons left">cloud_upload</i>Yazılıyor...';
+
+        const scheduleData = {
+            docId: docRef.id,
+            startDate: startInput,
+            endDate: endInput,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            assignments: JSON.stringify(selectedCells),
+            unavailable: JSON.stringify(unavailableCells),
+            personnelSnapshot: JSON.stringify(persons),
+            holidays: document.getElementById('holidays').value || "" 
+        };
+
+        docRef.set(scheduleData)
+            .then(() => {
+                M.toast({html: '✅ Nöbet listesi başarıyla kaydedildi!', classes: 'green darken-2'});
+                btn.innerHTML = '<i class="material-icons left">check</i>Tamam';
+                setTimeout(() => resetButton(btn, originalText), 2000);
+            })
+            .catch((error) => {
+                console.error("Kaydetme hatası: ", error);
+                M.toast({html: 'Hata: ' + error.message, classes: 'red'});
+                resetButton(btn, originalText);
+            });
+    }
+
+    function resetButton(btn, originalText) {
+        btn.innerHTML = originalText;
+        btn.classList.remove('disabled');
+    }
+
+
+
+    // Modal açıldığında listeyi yükle
+    document.addEventListener('DOMContentLoaded', function() {
+        const historyModalElem = document.getElementById('historyModal');
+        M.Modal.init(historyModalElem, {
+            onOpenStart: loadHistoryList // Modal açılırken bu fonksiyonu çalıştır
+        });
+    });
+
+    function loadHistoryList() {
+        const user = auth.currentUser;
+        if (!user) {
+            document.getElementById('historyList').innerHTML = '<li class="collection-item">Görüntülemek için giriş yapmalısınız.</li>';
+            return;
+        }
+
+        const listContainer = document.getElementById('historyList');
+        const loader = document.getElementById('historyLoading');
+        
+        listContainer.innerHTML = '';
+        loader.style.display = 'block';
+
+        // History koleksiyonunu çek
+        db.collection("users").doc(user.uid).collection("history").orderBy("updatedAt", "desc").get()
+            .then((querySnapshot) => {
+                loader.style.display = 'none';
+                
+                if (querySnapshot.empty) {
+                    listContainer.innerHTML = '<li class="collection-item">Henüz kaydedilmiş bir geçmiş bulunamadı.</li>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const [year, month] = doc.id.split('-');
+                    const monthName = getMonthName(parseInt(month));
+                    
+                    const li = document.createElement('a');
+                    li.className = 'collection-item waves-effect';
+                    li.style.cursor = 'pointer';
+                    li.innerHTML = `
+                        <span class="title" style="font-weight: bold;">${monthName} ${year}</span>
+                        <p class="grey-text" style="font-size: 0.8rem;">
+                            Kaydedilme: ${data.updatedAt ? new Date(data.updatedAt.seconds * 1000).toLocaleDateString('tr-TR') : 'Bilinmiyor'}
+                        </p>
+                        <i class="material-icons secondary-content">chevron_right</i>
+                    `;
+                    // Tıklanınca detayı göster
+                    li.onclick = () => showHistoryDetail(doc.id, data);
+                    listContainer.appendChild(li);
+                });
+            })
+            .catch((error) => {
+                console.error("Geçmiş yükleme hatası:", error);
+                loader.style.display = 'none';
+                listContainer.innerHTML = '<li class="collection-item red-text">Yüklenirken hata oluştu.</li>';
+            });
+    }
+
+    function showHistoryDetail(docId, data) {
+        // Aktif seçimi işaretle
+        const items = document.querySelectorAll('#historyList .collection-item');
+        items.forEach(i => i.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        // Sağ tarafı göster
+        document.getElementById('historyPlaceholder').style.display = 'none';
+        const detailPanel = document.getElementById('historyDetail');
+        detailPanel.style.display = 'block';
+
+        const [year, month] = docId.split('-');
+        document.getElementById('historyDetailTitle').innerHTML = `
+            ${getMonthName(parseInt(month))} ${year} 
+            <button class="btn-small waves-effect waves-light teal right" onclick="downloadHistoryTable('${docId}')">
+                <i class="material-icons left">file_download</i>İndir
+            </button>
+        `;
+
+        // 1. VERİLERİ ÇÖZÜMLE
+        const assignments = JSON.parse(data.assignments || '{}');
+        const personnel = JSON.parse(data.personnelSnapshot || '[]');
+        const savedHolidays = (data.holidays || "").split(',').map(d => parseInt(d)).filter(n => !isNaN(n));
+        const [startDay, startMonth, startYear] = data.startDate.split('-').map(Number);
+        
+        // Tarih Döngüsü için ayarlar
+        const startDate = new Date(startYear, startMonth - 1, startDay);
+        const endDateObj = new Date(data.endDate.split('-').reverse().join('-'));
+        const daysDiff = Math.ceil((endDateObj - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+        // Her personel için sayaçları sıfırla
+        const stats = personnel.map(p => ({
+            name: p.name, 
+            weekday: 0, 
+            weekend: 0, 
+            thursday: 0, 
+            friday: 0, 
+            officialHoliday: 0 
+        }));
+
+        // Gün gün dönerek hesapla
+        for (let d = 0; d < daysDiff; d++) {
+            const current = new Date(startDate);
+            current.setDate(startDate.getDate() + d);
+            
+            const dayNum = current.getDate();
+            const dayOfWeek = current.getDay(); // 0: Pazar, 6: Cmt
+            
+            const isOfficialHoliday = savedHolidays.includes(dayNum);
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const isFriday = dayOfWeek === 5;
+            const isThursday = dayOfWeek === 4;
+
+            personnel.forEach((p, pIndex) => {
+                if (assignments[`${pIndex}-${d}`]) {
+                    if (isOfficialHoliday) stats[pIndex].officialHoliday++;
+                    else if (isWeekend) stats[pIndex].weekend++;
+                    else {
+                        stats[pIndex].weekday++;
+                        if (isFriday) stats[pIndex].friday++;
+                        if (isThursday) stats[pIndex].thursday++;
+                    }
+                }
+            });
+        }
+
+        // 3. İSTATİSTİK TABLOSUNU OLUŞTUR
+        let contentHtml = `
+            <h6 class="teal-text">Detaylı İstatistikler</h6>
+            <table class="striped responsive-table centered" style="font-size:0.85rem;">
+                <thead>
+                    <tr>
+                        <th>Personel</th>
+                        <th>Hafta İçi</th>
+                        <th>Hafta Sonu</th>
+                        <th>Resmi Tatil</th>
+                        <th>Perşembe</th>
+                        <th>Cuma</th>
+                        <th>TOPLAM</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        stats.forEach(s => {
+            contentHtml += `
+                <tr>
+                    <td style="font-weight:bold;">${s.name}</td>
+                    <td>${s.weekday}</td>
+                    <td>${s.weekend}</td>
+                    <td style="color:red; font-weight:bold;">${s.officialHoliday}</td>
+                    <td>${s.thursday}</td>
+                    <td>${s.friday}</td>
+                    <td><strong>${s.weekday + s.weekend + s.officialHoliday}</strong></td>
+                </tr>
+            `;
+        });
+        contentHtml += '</tbody></table><div class="divider" style="margin: 20px 0;"></div>';
+
+        contentHtml += `<h6 class="teal-text">Nöbet Çizelgesi</h6>
+                        <div style="overflow-x:auto;">
+                        <table id="historyCalendarTable_${docId}" class="bordered centered" style="font-size:0.8rem; border:1px solid #eee;">
+                        <thead><tr><th>Gün</th>`;
+        
+        // Takvim Başlıkları (Günler)
+        for(let d=0; d<daysDiff; d++){
+            const current = new Date(startDate);
+            current.setDate(startDate.getDate() + d);
+            const dayNum = current.getDate();
+            const isOfficial = savedHolidays.includes(dayNum);
+            const isWknd = current.getDay() === 0 || current.getDay() === 6;
+            
+            let colorStyle = "";
+            if(isOfficial) colorStyle = "background-color: #ffcdd2; color: #d32f2f;"; // Kırmızı (Tatil)
+            else if(isWknd) colorStyle = "background-color: #cfd8dc;"; // Gri (Haftasonu)
+            
+            contentHtml += `<th style="${colorStyle}; min-width:30px; padding: 5px;">${dayNum}</th>`;
+        }
+        contentHtml += `</tr></thead><tbody>`;
+
+        // Takvim Satırları (Personeller)
+        personnel.forEach((p, pIndex) => {
+            contentHtml += `<tr><td style="text-align:left; font-weight:bold; padding: 5px;">${p.name}</td>`;
+            for(let d=0; d<daysDiff; d++){
+                const isAssigned = assignments[`${pIndex}-${d}`];
+                const current = new Date(startDate);
+                current.setDate(startDate.getDate() + d);
+                const isOfficial = savedHolidays.includes(current.getDate());
+                const isWknd = current.getDay() === 0 || current.getDay() === 6;
+
+                let cellStyle = "border: 1px solid #eee;";
+                if(isOfficial) cellStyle += "background-color: #ffebee;";
+                else if(isWknd) cellStyle += "background-color: #eceff1;";
+
+                // Nöbetçi işareti
+                let cellContent = isAssigned ? '<span style="color:green; font-weight:bold;">✓</span>' : '';
+                
+                contentHtml += `<td style="${cellStyle}">${cellContent}</td>`;
+            }
+            contentHtml += `</tr>`;
+        });
+        contentHtml += `</tbody></table></div>`;
+
+        document.getElementById('historyStatsContent').innerHTML = contentHtml;
+    }
+
+    // --- GEÇMİŞ LİSTEYİ İNDİRME FONKSİYONU ---
+    function downloadHistoryTable(docId) {
+        // Oluşturduğumuz mini takvim tablosunu bul
+        const table = document.getElementById(`historyCalendarTable_${docId}`);
+        if (!table) {
+            M.toast({html: 'Tablo oluşturulamadı!', classes: 'red'});
+            return;
+        }
+
+        const wb = XLSX.utils.table_to_book(table, {sheet: "Gecmis_Nobet"});
+        XLSX.writeFile(wb, `Gecmis_Nobet_Listesi_${docId}.xlsx`);
+        M.toast({html: 'Geçmiş liste indiriliyor...', classes: 'green'});
+    }
+
+    function getMonthName(monthIndex) {
+        const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+        return months[monthIndex - 1] || 'Bilinmiyor';
+    }
+
+</script>
 
 </body>
 </html>
