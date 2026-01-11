@@ -17,7 +17,7 @@
       "@type": "WebSite",
       "url": "https://nobetplani.com/",
       "name": "Nobetplani.com: Akıllı Nöbet Planlama Yazılımı",
-      "description": "Dr. M. Celil Aslan tarafından geliştirilen, sağlık personeli için otomatik nöbet listesi hazırlama programı.",
+      "description": "Hekim Dr. M. Celil Aslan tarafından geliştirilen, sağlık personeli için otomatik nöbet listesi hazırlama programı.",
       "creator": {
         "@type": "Person",
         "name": "Dr. M. Celil Aslan",
@@ -3373,13 +3373,30 @@
         });
     }
 
+    // Oturum durumunu dinleyen fonksiyon
     auth.onAuthStateChanged((user) => {
         if (user) {
             updateLoginButton(user);
-            // GİRİŞ YAPILDIĞINDA VERİYİ ÇEK:
+            
+            // 1. Veri Senkronizasyonu
             loadFromFirestore(user); 
+
+            // 2. Yarım Kalan Kayıt İşlemi
+            const pendingSave = sessionStorage.getItem('pendingSaveRequest');
+            if (pendingSave === 'true') {
+                sessionStorage.removeItem('pendingSaveRequest');
+                
+                // Kullanıcıya bilgi ver
+                M.toast({html: 'Giriş başarılı! Listeniz otomatik olarak kaydediliyor...', classes: 'blue darken-1'});
+                
+                // Biraz bekleyip kaydetmeyi tetikle
+                setTimeout(() => {
+                    saveScheduleToHistory();
+                }, 1500);
+            }
+
         } else {
-            // Çıkış yapıldıysa yerel veriye dönülebilir veya liste temizlenebilir
+            // Çıkış yapıldıysa yapılacaklar
         }
     });
 
@@ -3488,11 +3505,15 @@
     }
 
 
+    // --- GÜNCELLENMİŞ KAYDETME FONKSİYONU (KONTROLLÜ VE OTOMATİK UYUMLU) ---
     function saveScheduleToHistory() {
         // 1. KONTROL: Kullanıcı Giriş Yapmış mı?
         const user = auth.currentUser;
         if (!user) {
-            M.toast({html: 'Kaydetmek için önce giriş yapmalısınız.', classes: 'orange darken-2'});
+            // HAFİZA NOTU: Kullanıcı kaydetmeye çalıştı, giriş yapınca hatırlat
+            sessionStorage.setItem('pendingSaveRequest', 'true'); 
+            
+            M.toast({html: 'Kaydetmek için önce giriş yapmalısınız. Giriş ekranı açılıyor...', classes: 'orange darken-2'});
             googleLogin();
             return;
         }
@@ -3506,13 +3527,14 @@
             return;
         }
 
+        // --- EKSİK GÜN KONTROLÜ (Senin Orijinal Kodun) ---
         const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
         const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
         const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
         const start = new Date(startYear, startMonth - 1, startDay);
         const end = new Date(endYear, endMonth - 1, endDay);
         
-        // Tarih hesaplamaları (Saat farklarını sıfırla)
+        // Tarih hesaplamaları
         start.setHours(0, 0, 0, 0);
         end.setHours(0, 0, 0, 0);
         
@@ -3520,30 +3542,37 @@
     
         let allDaysFilled = true;
         for (let d = 0; d < days; d++) {
-            // O gün için işaretlenmiş (.selected) hücre sayısını say
             const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
             if (assigned < dutyPerDay) {
                 allDaysFilled = false;
-                break; // Eksik bulduk, döngüden çık
+                break;
             }
         }
     
         if (!allDaysFilled) {
             M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!', classes: 'red' });
-            return; // İşlemi durdur
+            return;
         }
         // -----------------------------------------------------
 
         // 2. KONTROL: ID Oluşturma (YIL-AY Formatı)
-        // startInput değişkeni yukarıda zaten tanımlı
         const [day, month, year] = startInput.split('-'); 
         const docId = `${year}-${month}`;
         
-        // Buton Efekti (Yükleniyor)
-        const btn = event.target.closest('button');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="material-icons left">hourglass_empty</i>Kontrol...';
-        btn.classList.add('disabled');
+        // --- KRİTİK DÜZELTME BURADA ---
+        // Otomatik tetiklendiğinde 'event' olmayabilir, kontrol ediyoruz:
+        let btn = null;
+        let originalText = 'Kaydet'; // Varsayılan metin
+
+        // Eğer bu fonksiyon bir tıklama ile çağrıldıysa ve event varsa:
+        if (typeof event !== 'undefined' && event && event.target) {
+            btn = event.target.closest('button');
+            if (btn) {
+                originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="material-icons left">hourglass_empty</i>Kontrol...';
+                btn.classList.add('disabled');
+            }
+        }
 
         // Veritabanı Referansı
         const docRef = db.collection("users").doc(user.uid).collection("history").doc(docId);
@@ -3551,8 +3580,8 @@
         // 3. KONTROL: Veri Var mı? (Çakışma Kontrolü)
         docRef.get().then((doc) => {
             if (doc.exists) {
-
-                resetButton(btn, originalText);
+                // Kayıt varsa butonu eski haline getir
+                if(btn) resetButton(btn, originalText);
                 
                 // Modalı tetikle
                 openOverwriteModal(docRef, startInput, endInput, btn, originalText, month, year);
@@ -3563,7 +3592,7 @@
         }).catch((error) => {
             console.error("Kontrol hatası:", error);
             M.toast({html: 'Veritabanı kontrol edilemedi: ' + error.message, classes: 'red'});
-            resetButton(btn, originalText);
+            if(btn) resetButton(btn, originalText);
         });
     }
 
@@ -3590,7 +3619,9 @@
 
     // Yardımcı Kayıt Fonksiyonu
     function performSave(docRef, startInput, endInput, btn, originalText) {
-        btn.innerHTML = '<i class="material-icons left">cloud_upload</i>Yazılıyor...';
+        if (btn) {
+            btn.innerHTML = '<i class="material-icons left">cloud_upload</i>Yazılıyor...';
+        }
 
         const scheduleData = {
             docId: docRef.id,
@@ -3599,26 +3630,27 @@
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             assignments: JSON.stringify(selectedCells),
             unavailable: JSON.stringify(unavailableCells),
-            personnelSnapshot: JSON.stringify(persons),
+            personnelSnapshot: JSON.stringify(persons), 
             holidays: document.getElementById('holidays').value || "" 
         };
 
         docRef.set(scheduleData)
             .then(() => {
                 M.toast({html: '✅ Nöbet listesi başarıyla kaydedildi!', classes: 'green darken-2'});
-                btn.innerHTML = '<i class="material-icons left">check</i>Tamam';
-                setTimeout(() => resetButton(btn, originalText), 2000);
+                
+                if (btn) {
+                    btn.innerHTML = '<i class="material-icons left">check</i>Tamam';
+                    setTimeout(() => resetButton(btn, originalText), 2000);
+                }
             })
             .catch((error) => {
                 console.error("Kaydetme hatası: ", error);
                 M.toast({html: 'Hata: ' + error.message, classes: 'red'});
-                resetButton(btn, originalText);
+                
+                if (btn) {
+                    resetButton(btn, originalText);
+                }
             });
-    }
-
-    function resetButton(btn, originalText) {
-        btn.innerHTML = originalText;
-        btn.classList.remove('disabled');
     }
 
 
