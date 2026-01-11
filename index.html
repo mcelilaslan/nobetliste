@@ -3718,12 +3718,12 @@
         const items = document.querySelectorAll('#historyList .collection-item');
         items.forEach(i => i.classList.remove('active'));
         event.currentTarget.classList.add('active');
-
+    
         // Sağ tarafı göster
         document.getElementById('historyPlaceholder').style.display = 'none';
         const detailPanel = document.getElementById('historyDetail');
         detailPanel.style.display = 'block';
-
+    
         const [year, month] = docId.split('-');
         document.getElementById('historyDetailTitle').innerHTML = `
             ${getMonthName(parseInt(month))} ${year} 
@@ -3731,7 +3731,7 @@
                 <i class="material-icons left">file_download</i>İndir
             </button>
         `;
-
+    
         // 1. VERİLERİ ÇÖZÜMLE
         const assignments = JSON.parse(data.assignments || '{}');
         const personnel = JSON.parse(data.personnelSnapshot || '[]');
@@ -3742,17 +3742,17 @@
         const startDate = new Date(startYear, startMonth - 1, startDay);
         const endDateObj = new Date(data.endDate.split('-').reverse().join('-'));
         const daysDiff = Math.ceil((endDateObj - startDate) / (1000 * 60 * 60 * 24)) + 1;
-
-        // Her personel için sayaçları sıfırla
+    
         const stats = personnel.map(p => ({
             name: p.name, 
             weekday: 0, 
             weekend: 0, 
             thursday: 0, 
             friday: 0, 
-            officialHoliday: 0 
+            officialHoliday: 0,
+            totalHours: 0 
         }));
-
+    
         // Gün gün dönerek hesapla
         for (let d = 0; d < daysDiff; d++) {
             const current = new Date(startDate);
@@ -3765,20 +3765,29 @@
             const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
             const isFriday = dayOfWeek === 5;
             const isThursday = dayOfWeek === 4;
-
+    
             personnel.forEach((p, pIndex) => {
                 if (assignments[`${pIndex}-${d}`]) {
-                    if (isOfficialHoliday) stats[pIndex].officialHoliday++;
-                    else if (isWeekend) stats[pIndex].weekend++;
+                    
+                    if (isOfficialHoliday) {
+                        stats[pIndex].officialHoliday++;
+                        stats[pIndex].totalHours += 24; // Resmi Tatil = 24 Saat
+                    }
+                    else if (isWeekend) {
+                        stats[pIndex].weekend++;
+                        stats[pIndex].totalHours += 24; // Hafta Sonu = 24 Saat
+                    }
                     else {
                         stats[pIndex].weekday++;
+                        stats[pIndex].totalHours += 16; // Hafta İçi = 16 Saat
+                        
                         if (isFriday) stats[pIndex].friday++;
                         if (isThursday) stats[pIndex].thursday++;
                     }
                 }
             });
         }
-
+    
         // 3. İSTATİSTİK TABLOSUNU OLUŞTUR
         let contentHtml = `
             <h6 class="teal-text">Detaylı İstatistikler</h6>
@@ -3791,12 +3800,12 @@
                         <th>Resmi Tatil</th>
                         <th>Perşembe</th>
                         <th>Cuma</th>
-                        <th>TOPLAM</th>
-                    </tr>
+                        <th>TOPLAM NÖBET</th>
+                        <th style="color:#d32f2f;">Toplam Saat</th> </tr>
                 </thead>
                 <tbody>
         `;
-
+    
         stats.forEach(s => {
             contentHtml += `
                 <tr>
@@ -3807,11 +3816,11 @@
                     <td>${s.thursday}</td>
                     <td>${s.friday}</td>
                     <td><strong>${s.weekday + s.weekend + s.officialHoliday}</strong></td>
-                </tr>
+                    <td style="color:#d32f2f; font-weight:bold;">${s.totalHours}</td> </tr>
             `;
         });
         contentHtml += '</tbody></table><div class="divider" style="margin: 20px 0;"></div>';
-
+    
         contentHtml += `<h6 class="teal-text">Nöbet Çizelgesi</h6>
                         <div style="overflow-x:auto;">
                         <table id="historyCalendarTable_${docId}" class="bordered centered" style="font-size:0.8rem; border:1px solid #eee;">
@@ -3832,7 +3841,7 @@
             contentHtml += `<th style="${colorStyle}; min-width:30px; padding: 5px;">${dayNum}</th>`;
         }
         contentHtml += `</tr></thead><tbody>`;
-
+    
         // Takvim Satırları (Personeller)
         personnel.forEach((p, pIndex) => {
             contentHtml += `<tr><td style="text-align:left; font-weight:bold; padding: 5px;">${p.name}</td>`;
@@ -3842,11 +3851,11 @@
                 current.setDate(startDate.getDate() + d);
                 const isOfficial = savedHolidays.includes(current.getDate());
                 const isWknd = current.getDay() === 0 || current.getDay() === 6;
-
+    
                 let cellStyle = "border: 1px solid #eee;";
                 if(isOfficial) cellStyle += "background-color: #ffebee;";
                 else if(isWknd) cellStyle += "background-color: #eceff1;";
-
+    
                 // Nöbetçi işareti
                 let cellContent = isAssigned ? '<span style="color:green; font-weight:bold;">✓</span>' : '';
                 
@@ -3855,7 +3864,7 @@
             contentHtml += `</tr>`;
         });
         contentHtml += `</tbody></table></div>`;
-
+    
         document.getElementById('historyStatsContent').innerHTML = contentHtml;
     }
 
