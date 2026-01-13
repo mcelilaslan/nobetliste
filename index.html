@@ -1898,7 +1898,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                M.toast({ html: 'Nöbet listesi indirildi! Lütfen düşüncelerinizi aşağıdan geri bildirim butonuyla iletiniz :)' });
+                showToast('Dosya cihazınıza indi! 📂 Listenizi kaybetmemek için çıkmadan önce "Kaydet" butonuyla hesabınıza yedeklemeyi UNUTMAYIN.', 8000);
             });
         }
 
