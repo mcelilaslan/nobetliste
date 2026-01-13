@@ -491,20 +491,26 @@
 
         <div id="loginSuggestionModal" class="modal" style="max-width: 450px; border-radius: 12px;">
             <div class="modal-content center-align">
-                <i class="material-icons teal-text text-lighten-1" style="font-size: 64px;">account_circle</i>
-                <h5 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; color: #374151;">Giriş Yapmanız Gerekiyor(Ücretsiz)</h5>
-                <p class="grey-text text-darken-1" style="font-size: 1.1rem; margin-top: 15px;">
-                    Listenizi kaybetmemek ve verilerinize her yerden erişebilmek için Google hesabınızla giriş yapabilirsiniz.
+                <div style="background: #e0f2f1; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                    <i class="material-icons teal-text" style="font-size: 40px;">cloud_upload</i>
+                </div>
+                
+                <h5 style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; color: #374151;">Listenizi Yedekleyelim mi?</h5>
+                
+                <p class="grey-text text-darken-1" style="font-size: 1.05rem; margin-top: 15px;">
+                    Şu an <b>misafir modundasınız.</b> Giriş yapmadan devam ederseniz listeniz sadece bu tarayıcıda saklanır ve verileriniz kaybolabilir.
                 </p>
-                <div class="card-panel teal lighten-5" style="border-radius: 8px; padding: 10px; margin-top: 20px;">
-                    <span class="teal-text text-darken-3" style="font-size: 0.9rem;">
-                        <i class="material-icons tiny left" style="margin-top: 2px;">cloud_done</i>
-                        Listeniz otomatik olarak buluta yedeklenir. Bilgiler Google sunucularında saklanacaktır.
+                
+                <div class="card-panel grey lighten-5" style="border-radius: 8px; padding: 10px; margin-top: 20px; border: 1px solid #eee;">
+                    <span class="grey-text text-darken-2" style="font-size: 0.9rem;">
+                        <i class="material-icons tiny left" style="color: #26a69a; margin-top: 2px;">check_circle</i>
+                        Giriş yaparsanız listeniz buluta yedeklenir ve her yerden erişebilirsiniz.
                     </span>
                 </div>
             </div>
-            <div class="modal-footer" style="text-align: center; padding-bottom: 20px;">
-                <a href="#!" class="modal-close waves-effect waves-grey btn-flat grey-text">Geri Dön</a>
+            <div class="modal-footer" style="text-align: center; padding-bottom: 20px; height: auto;">
+                <a href="#!" class="modal-close waves-effect waves-grey btn-flat grey-text text-darken-1">Giriş Yapmadan Devam Et</a>
+                
                 <a href="#!" class="modal-close waves-effect waves-light btn teal" onclick="googleLogin()" style="margin-left: 10px;">
                     <i class="material-icons left">login</i>Giriş Yap
                 </a>
@@ -536,6 +542,7 @@
          
         let persons = [];
         let availabilityMode = true;
+        let loginSuggestionShown = false; 
 
         function savePersonsToLocalStorage() {
             // 1. Önce eskisi gibi tarayıcıya kaydet
@@ -859,13 +866,15 @@
             if (!name) return M.toast({html: 'Lütfen isim girin!'});
             if (persons.some(p => p.name === name)) return M.toast({html: 'Bu isim zaten var!'});
 
-            // login check
-            if (persons.length === 0 && (!auth || !auth.currentUser)) {
+            if (persons.length === 0 && (!auth || !auth.currentUser) && !loginSuggestionShown) {
                  const modalElem = document.getElementById('loginSuggestionModal');
                  if(modalElem) {
                      const instance = M.Modal.getInstance(modalElem);
                      instance.open();
                  }
+                 
+                 loginSuggestionShown = true; 
+                 
                  return; 
             }
 
