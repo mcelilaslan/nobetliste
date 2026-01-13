@@ -2133,7 +2133,7 @@
                     updateCalendar();
                     updateStatistics();
                     saveToHistory();
-                    showToast('Tüm nöbetler atandı! Excel dosyası olarak indirebilirsiniz. Takvimde manuel değişiklik yapabilir veya geri alıp varyasyon deneyebilirsiniz!', 5000); // Başarı mesajı, 4 saniye
+                    showToast('Tüm nöbetler başarıyla atandı! 💾 Çıkmadan önce listenizi "Kaydet" butonuyla hesabınıza saklamayı UNUTMAYIN.', 8000);
                 } else {
                     let errorMessage = data.error || 'Bilinmeyen bir hata oluştu';
                     if (status === 400 && errorMessage.includes('Nöbet atamaları yapılamadı')) {
