@@ -2807,9 +2807,10 @@
                         const monthName = getMonthName(parseInt(m));
                         
                         const li = document.createElement('a');
-                        li.className = 'collection-item waves-effect';
-                        li.style.paddingLeft = '45px'; // Hiyerarşi için girinti
-                        li.style.borderLeft = '4px solid transparent'; // Sol çizgi efekti için hazırlık
+                        li.className = 'collection-item waves-effect black-text'; // EKLENDİ
+                        li.style.paddingLeft = '45px'; 
+                        li.style.borderLeft = '4px solid transparent'; 
+                        li.style.color = '#374151'; // EKLENDİ (Varsayılan koyu renk)
                         li.innerHTML = `
                             <span class="title" style="font-weight: 500; font-size: 1rem;">${monthName}</span>
                             <br><span class="grey-text" style="font-size: 0.75rem;">
@@ -3116,6 +3117,10 @@
             if(i !== elem && i.innerText.includes('Kümülatif')) {
                 i.style.backgroundColor = '#fff3e0'; 
                 i.style.color = '#d32f2f';
+            } else if (i !== elem) {
+                // Diğer ayların seçimi kalktığında arka planı ve yazıyı koyu renge döndür
+                i.style.backgroundColor = '';
+                i.style.color = '#374151'; 
             }
         });
         elem.classList.add('active', 'teal');
