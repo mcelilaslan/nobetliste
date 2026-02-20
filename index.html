@@ -3111,21 +3111,26 @@
 
     function highlightActiveItem(elem) {
         const items = document.querySelectorAll('#historyList .collection-item');
+        
         items.forEach(i => {
-            i.classList.remove('active');
-            i.classList.remove('teal');
-            if(i !== elem && i.innerText.includes('Kümülatif')) {
-                i.style.backgroundColor = '#fff3e0'; 
-                i.style.color = '#d32f2f';
+           
+            i.classList.remove('active', 'teal');
+            
+            if (i.innerText.includes('Kümülatif') && i !== elem) {
+                
+                i.style.setProperty('background-color', '#fff3e0', 'important');
+                i.style.setProperty('color', '#d32f2f', 'important');
             } else if (i !== elem) {
-                // Diğer ayların seçimi kalktığında arka planı ve yazıyı koyu renge döndür
-                i.style.backgroundColor = '';
-                i.style.color = '#374151'; 
+                
+                i.style.setProperty('background-color', 'transparent', 'important');
+                i.style.setProperty('color', '#374151', 'important');
             }
         });
+        
+        
         elem.classList.add('active', 'teal');
-        elem.style.backgroundColor = ''; 
-        elem.style.color = 'white';
+        elem.style.setProperty('background-color', '#009688', 'important');
+        elem.style.setProperty('color', '#ffffff', 'important');
     }
 </script>
 
