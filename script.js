@@ -1,5 +1,4 @@
-
-        let persons = [];
+let persons = [];
         let customDailyCapacities = {}; // { dayIndex: count } - günlere özel kapasite
         let tempCustomCapacities = {}; // Modal açıkken geçici tutar
         let availabilityMode = true;
@@ -354,9 +353,34 @@
             // Geçici kopyayı yükle
             tempCustomCapacities = Object.assign({}, customDailyCapacities);
 
-            let html = '<table class="striped" style="width:100%;font-size:0.9rem;"><thead><tr>' +
-                '<th>Gün</th><th>Tarih</th><th>Tür</th><th style="width:110px;">Nöbetçi Sayısı</th>' +
-                '</tr></thead><tbody>';
+            let html = `
+            <style>
+                .cap-stepper { display:flex; align-items:center; gap:0; }
+                .cap-stepper button {
+                    width:28px; height:28px; border:1px solid #ccc; background:#f5f5f5;
+                    font-size:1.1rem; line-height:1; cursor:pointer; color:#444;
+                    transition: background .15s;
+                    flex-shrink:0;
+                }
+                .cap-stepper button:first-child { border-radius:6px 0 0 6px; border-right:none; }
+                .cap-stepper button:last-child  { border-radius:0 6px 6px 0; border-left:none; }
+                .cap-stepper button:hover:not(:disabled) { background:#e0e0e0; }
+                .cap-stepper button:disabled { opacity:.35; cursor:default; }
+                .cap-stepper .cap-val {
+                    width:36px; height:28px; border:1px solid #ccc; background:#fff;
+                    text-align:center; font-size:.9rem; line-height:28px;
+                    user-select:none; font-weight:600;
+                }
+                .cap-stepper.modified button { border-color:#26a69a; }
+                .cap-stepper.modified .cap-val {
+                    border-color:#26a69a; background:#e0f7fa; color:#00796b;
+                }
+            </style>
+            <table class="striped" style="width:100%;font-size:0.9rem;">
+            <thead><tr>
+                <th>Gün</th><th>Tarih</th><th>Tür</th>
+                <th style="width:130px; text-align:center;">Nöbetçi</th>
+            </tr></thead><tbody>`;
 
             for (let i = 0; i < days; i++) {
                 const d = new Date(start);
@@ -365,20 +389,23 @@
                 const dayLabel = dayNames[d.getDay()];
                 const dateStr = d.toLocaleDateString('tr-TR');
                 const currentVal = tempCustomCapacities[i] !== undefined ? tempCustomCapacities[i] : dutyPerDay;
-                const rowStyle = isWeekend ? 'background:#f5f5f5;' : '';
+                const isModified = currentVal !== dutyPerDay;
+                const rowStyle = isWeekend ? 'background:#fafafa;' : '';
+                const modClass = isModified ? 'modified' : '';
 
                 html += `<tr style="${rowStyle}">
                     <td><b>${dayLabel}</b></td>
                     <td>${dateStr}</td>
-                    <td><span style="font-size:0.8rem;color:${isWeekend ? '#f57c00' : '#26a69a'};">${isWeekend ? 'Hafta Sonu' : 'Hafta İçi'}</span></td>
-                    <td>
-                        <input type="number" min="1" max="20"
-                            value="${currentVal}"
-                            data-default="${dutyPerDay}"
-                            data-dayindex="${i}"
-                            onchange="updateTempCapacity(${i}, this.value, ${dutyPerDay})"
-                            style="width:70px;height:28px;border:1px solid #ccc;border-radius:4px;padding:0 6px;font-size:0.9rem;
-                                   ${currentVal !== dutyPerDay ? 'border-color:#26a69a;background:#e0f7fa;font-weight:bold;' : ''}">
+                    <td><span style="font-size:.78rem;color:${isWeekend ? '#f57c00' : '#26a69a'};">
+                        ${isWeekend ? 'Hafta Sonu' : 'Hafta İçi'}</span></td>
+                    <td style="text-align:center;">
+                        <div class="cap-stepper ${modClass}" id="stepper-${i}">
+                            <button onclick="stepCapacity(${i}, -1, ${dutyPerDay})"
+                                    id="btn-minus-${i}"
+                                    ${currentVal <= 1 ? 'disabled' : ''}>−</button>
+                            <div class="cap-val" id="capval-${i}">${currentVal}</div>
+                            <button onclick="stepCapacity(${i}, +1, ${dutyPerDay})">+</button>
+                        </div>
                     </td>
                 </tr>`;
             }
@@ -387,28 +414,32 @@
             document.getElementById('capacityListContainer').innerHTML = html;
         }
 
-        function updateTempCapacity(dayIndex, value, defaultVal) {
-            const val = parseInt(value);
-            if (!isNaN(val) && val >= 1) {
-                if (val === defaultVal) {
-                    delete tempCustomCapacities[dayIndex];
-                } else {
-                    tempCustomCapacities[dayIndex] = val;
-                }
-                // Görsel güncelleme
-                const input = document.querySelector(`input[data-dayindex="${dayIndex}"]`);
-                if (input) {
-                    if (val !== defaultVal) {
-                        input.style.borderColor = '#26a69a';
-                        input.style.background = '#e0f7fa';
-                        input.style.fontWeight = 'bold';
-                    } else {
-                        input.style.borderColor = '#ccc';
-                        input.style.background = '';
-                        input.style.fontWeight = '';
-                    }
-                }
+        function stepCapacity(dayIndex, delta, defaultVal) {
+            const valEl   = document.getElementById(`capval-${dayIndex}`);
+            const minusBtn = document.getElementById(`btn-minus-${dayIndex}`);
+            const stepper = document.getElementById(`stepper-${dayIndex}`);
+
+            let current = parseInt(valEl.textContent);
+            const next = current + delta;
+
+            if (next < 1) return; // 0'ın altına düşmesin
+
+            valEl.textContent = next;
+            minusBtn.disabled = (next <= 1);
+
+            // State güncelle
+            if (next === defaultVal) {
+                delete tempCustomCapacities[dayIndex];
+                stepper.classList.remove('modified');
+            } else {
+                tempCustomCapacities[dayIndex] = next;
+                stepper.classList.add('modified');
             }
+        }
+
+        function updateTempCapacity(dayIndex, value, defaultVal) {
+            // Stepper tabanlı yapıya geçildi; bu fonksiyon artık stepCapacity ile ele alınıyor.
+            // Geriye dönük uyumluluk için boş bırakıldı.
         }
 
         function saveCustomCapacities() {
