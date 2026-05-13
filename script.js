@@ -1,5 +1,7 @@
 
         let persons = [];
+        let customDailyCapacities = {}; // { dayIndex: count } - günlere özel kapasite
+        let tempCustomCapacities = {}; // Modal açıkken geçici tutar
         let availabilityMode = true;
         let loginSuggestionShown = false; 
 
@@ -312,6 +314,121 @@
                 groupingSwitch.style.display = 'none';
                 document.getElementById('groupingCheckbox').checked = false;
             }
+            // dutyPerDay değişince özel kapasiteleri sıfırla
+            customDailyCapacities = {};
+        });
+
+        // ---- GÜNLERE ÖZEL KAPASİTE FONKSİYONLARI ----
+
+        function toggleCustomCapacity() {
+            const enabled = document.getElementById('customCapacityEnabled').checked;
+            const btn = document.getElementById('customCapacityBtn');
+            btn.style.display = enabled ? 'inline' : 'none';
+            if (!enabled) {
+                customDailyCapacities = {};
+            }
+        }
+
+        function openCapacityModal() {
+            const startInput = document.getElementById('startDate').value;
+            const endInput = document.getElementById('endDate').value;
+            const dutyPerDayInput = document.getElementById('dutyPerDay').value;
+
+            if (!startInput || !endInput || !dutyPerDayInput) {
+                M.toast({ html: 'Önce tarih aralığı ve günlük nöbetçi sayısını seçin!', classes: 'orange' });
+                return;
+            }
+
+            const dutyPerDay = parseInt(dutyPerDayInput);
+            const [sd, sm, sy] = startInput.split('-').map(Number);
+            const [ed, em, ey] = endInput.split('-').map(Number);
+            const start = new Date(sy, sm - 1, sd);
+            const end = new Date(ey, em - 1, ed);
+            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+            const holidayInput = document.getElementById('holidays').value;
+            const holidays = holidayInput ? holidayInput.split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d)) : [];
+
+            const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+
+            // Geçici kopyayı yükle
+            tempCustomCapacities = Object.assign({}, customDailyCapacities);
+
+            let html = '<table class="striped" style="width:100%;font-size:0.9rem;"><thead><tr>' +
+                '<th>Gün</th><th>Tarih</th><th>Tür</th><th style="width:110px;">Nöbetçi Sayısı</th>' +
+                '</tr></thead><tbody>';
+
+            for (let i = 0; i < days; i++) {
+                const d = new Date(start);
+                d.setDate(d.getDate() + i);
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6 || holidays.includes(d.getDate());
+                const dayLabel = dayNames[d.getDay()];
+                const dateStr = d.toLocaleDateString('tr-TR');
+                const currentVal = tempCustomCapacities[i] !== undefined ? tempCustomCapacities[i] : dutyPerDay;
+                const rowStyle = isWeekend ? 'background:#f5f5f5;' : '';
+
+                html += `<tr style="${rowStyle}">
+                    <td><b>${dayLabel}</b></td>
+                    <td>${dateStr}</td>
+                    <td><span style="font-size:0.8rem;color:${isWeekend ? '#f57c00' : '#26a69a'};">${isWeekend ? 'Hafta Sonu' : 'Hafta İçi'}</span></td>
+                    <td>
+                        <input type="number" min="1" max="20"
+                            value="${currentVal}"
+                            data-default="${dutyPerDay}"
+                            data-dayindex="${i}"
+                            onchange="updateTempCapacity(${i}, this.value, ${dutyPerDay})"
+                            style="width:70px;height:28px;border:1px solid #ccc;border-radius:4px;padding:0 6px;font-size:0.9rem;
+                                   ${currentVal !== dutyPerDay ? 'border-color:#26a69a;background:#e0f7fa;font-weight:bold;' : ''}">
+                    </td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            document.getElementById('capacityListContainer').innerHTML = html;
+        }
+
+        function updateTempCapacity(dayIndex, value, defaultVal) {
+            const val = parseInt(value);
+            if (!isNaN(val) && val >= 1) {
+                if (val === defaultVal) {
+                    delete tempCustomCapacities[dayIndex];
+                } else {
+                    tempCustomCapacities[dayIndex] = val;
+                }
+                // Görsel güncelleme
+                const input = document.querySelector(`input[data-dayindex="${dayIndex}"]`);
+                if (input) {
+                    if (val !== defaultVal) {
+                        input.style.borderColor = '#26a69a';
+                        input.style.background = '#e0f7fa';
+                        input.style.fontWeight = 'bold';
+                    } else {
+                        input.style.borderColor = '#ccc';
+                        input.style.background = '';
+                        input.style.fontWeight = '';
+                    }
+                }
+            }
+        }
+
+        function saveCustomCapacities() {
+            customDailyCapacities = Object.assign({}, tempCustomCapacities);
+            const count = Object.keys(customDailyCapacities).length;
+            if (count > 0) {
+                M.toast({ html: `✅ ${count} gün için özel kapasite kaydedildi.`, classes: 'teal' });
+            } else {
+                M.toast({ html: 'Tüm günler varsayılan sayıyı kullanıyor.', classes: 'grey' });
+            }
+        }
+
+        // Modal açılırken içeriği doldur
+        document.addEventListener('DOMContentLoaded', function() {
+            const capModal = document.getElementById('capacityModal');
+            if (capModal) {
+                capModal.addEventListener('modalopen', openCapacityModal);
+                // Materialize modal open event'i
+                capModal.addEventListener('click', function() {});
+            }
         });
 
 
@@ -360,8 +477,8 @@
 
         function addPerson() {
             const name = document.getElementById('personName').value.trim().toUpperCase();
-            if (!name) return M.toast({html: 'Lütfen isim girin!'});
-            if (persons.some(p => p.name === name)) return M.toast({html: 'Bu isim zaten var!'});
+            if (!name) return M.toast({html: 'Lütfen isim girin!', classes: 'teal'});
+            if (persons.some(p => p.name === name)) return M.toast({html: 'Bu isim zaten var!', classes: 'teal'});
 
             if (persons.length === 0 && (!auth || !auth.currentUser) && !loginSuggestionShown) {
                  const modalElem = document.getElementById('loginSuggestionModal');
@@ -386,7 +503,7 @@
             document.getElementById('personName').value = '';
             renderTable();
             if (collapsiblePersonel) collapsiblePersonel.open(0);
-            M.toast({html: `${name} eklendi!`});
+            M.toast({html: `${name} eklendi!`, classes: 'teal'});
             savePersonsToLocalStorage(); // KAYDET
         }
 
@@ -394,7 +511,7 @@
             const name = persons[index].name;
             persons.splice(index, 1);
             renderTable();
-            M.toast({html: `${name} silindi!`});
+            M.toast({html: `${name} silindi!`, classes: 'teal'});
             savePersonsToLocalStorage(); // KAYDET
         }
 
@@ -695,7 +812,7 @@
         function generateCalendar() {
 
             if (persons.length < 3) {
-                M.toast({ html: 'Lütfen en az 3 personel ekleyin!' });
+                M.toast({ html: 'Lütfen en az 3 personel ekleyin!', classes: 'purple' });
                 return;
             }
             
@@ -704,18 +821,18 @@
             const dutyPerDayInput = document.getElementById('dutyPerDay').value.trim();
 
             if (!dutyPerDayInput || dutyPerDayInput === "") {
-                M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!' });
+                M.toast({ html: 'Kaçar kişinin nöbetçi olacağını belirleyiniz!', classes: 'purple' });
                 return;
             }
 
             const dutyPerDay = parseInt(dutyPerDayInput);
             if (isNaN(dutyPerDay) || dutyPerDay < 1) {
-                M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!' });
+                M.toast({ html: 'Lütfen geçerli bir sayı girin (1 veya daha fazla)!', classes: 'purple' });
                 return;
             }
 
             if (!startInput || !endInput) {
-                M.toast({ html: 'Lütfen tarih seçin!' });
+                M.toast({ html: 'Lütfen tarih seçin!', classes: 'purple' });
                 return;
             }
 
@@ -748,9 +865,20 @@
                 else weekdayDays++;
             }
 
-            const totalDuties = days * dutyPerDay;
-            const totalWeekendDuties = weekendDays * dutyPerDay;
-            const totalWeekdayDuties = weekdayDays * dutyPerDay;
+            const customCapEnabled = document.getElementById('customCapacityEnabled').checked;
+
+            // --- Dinamik günlük kapasite hesabı ---
+            let totalDuties = 0;
+            let totalWeekendDuties = 0;
+            let totalWeekdayDuties = 0;
+            for (let i = 0; i < days; i++) {
+                const cap = (customCapEnabled && customDailyCapacities[i] !== undefined)
+                    ? customDailyCapacities[i]
+                    : dutyPerDay;
+                totalDuties += cap;
+                if (dates[i] && dates[i].isWeekend) totalWeekendDuties += cap;
+                else totalWeekdayDuties += cap;
+            }
 
             let preplannedWeekendDuties = 0;
             let preplannedWeekdayDuties = 0;
@@ -1117,6 +1245,7 @@
             if (!startInput || !endInput) return;
 
             const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+            const customCapEnabled = document.getElementById('customCapacityEnabled').checked;
             const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
             const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
             const start = new Date(startYear, startMonth - 1, startDay);
@@ -1126,29 +1255,38 @@
 
             const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
+            // Yardımcı: o günün hedef kapasitesini döndür
+            function getDayTarget(d) {
+                return (customCapEnabled && customDailyCapacities[d] !== undefined)
+                    ? customDailyCapacities[d]
+                    : dutyPerDay;
+            }
+
             for (let d = 0; d < days; d++) {
+                const target = getDayTarget(d);
                 const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
-                if (assigned < dutyPerDay) {
+                if (assigned < target) {
                     const date = new Date(start);
                     date.setDate(date.getDate() + d);
                     validationErrors.push({
                         type: 'error',
-                        message: `${date.toLocaleDateString('tr-TR')} tarihine ${dutyPerDay} nöbetçi atanmamış, atanan: ${assigned}`
+                        message: `${date.toLocaleDateString('tr-TR')} tarihine ${target} nöbetçi atanmamış, atanan: ${assigned}`
                     });
                 }
             }
 
             for (let d = 0; d < days; d++) {
+                const target = getDayTarget(d);
                 const assigned = [];
                 document.querySelectorAll(`td[data-dindex="${d}"].selected`).forEach(td => {
                     assigned.push(td.closest('tr').querySelector('td:first-child').innerText);
                 });
-                if (assigned.length > dutyPerDay) {
+                if (assigned.length > target) {
                     const date = new Date(start);
                     date.setDate(date.getDate() + d);
                     validationErrors.push({
                         type: 'warning',
-                        message: `${date.toLocaleDateString('tr-TR')} tarihinde fazla atama: ${assigned.join(', ')} (${assigned.length} > ${dutyPerDay})`
+                        message: `${date.toLocaleDateString('tr-TR')} tarihinde fazla atama: ${assigned.join(', ')} (${assigned.length} > ${target})`
                     });
                 }
             }
@@ -1254,7 +1392,7 @@
             if (validationErrors.length > 0) {
                 showErrorModal();
             } else {
-                M.toast({ html: 'Lütfen bir paylaşım seçeneği seçin!' });
+                M.toast({ html: 'Lütfen bir paylaşım seçeneği seçin!', classes: 'blue' });
             }
         }
 
@@ -1381,7 +1519,7 @@
                 }
             }
             if (!allDaysFilled) {
-                M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!' });
+                M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!', classes: 'teal' });
                 return;
             }
 
@@ -1473,18 +1611,36 @@
                         selectedCount++;
                     }
                 }
-                if (selectedCount > dutyPerDay) {
+                const dayCapCheck = (customCapEnabled && customDailyCapacities[d] !== undefined)
+                    ? customDailyCapacities[d] : dutyPerDay;
+                if (selectedCount > dayCapCheck) {
                     const date = new Date(start);
                     date.setDate(date.getDate() + d);
                     const dateStr = date.toLocaleDateString('tr-TR');
-                    M.toast({ html: `${dateStr} gününe fazla nöbetçi yazdınız! Beklenen: ${dutyPerDay}, Atanan: ${selectedCount}`, displayLength: 8000 });
+                    M.toast({ html: `${dateStr} gününe fazla nöbetçi yazdınız! Beklenen: ${dayCapCheck}, Atanan: ${selectedCount}`, displayLength: 8000 });
                     return;
                 }
             }
 
-            const totalExpectedDuties = days * dutyPerDay;
-            const expectedWeekdayDuties = dates.filter(d => !d.isWeekend).length * dutyPerDay;
-            const expectedWeekendDuties = dates.filter(d => d.isWeekend).length * dutyPerDay;
+            const customCapEnabled = document.getElementById('customCapacityEnabled').checked;
+
+            // Dinamik günlük kapasite yardımcısı
+            function getDayCap(d) {
+                return (customCapEnabled && customDailyCapacities[d] !== undefined)
+                    ? customDailyCapacities[d]
+                    : dutyPerDay;
+            }
+
+            // Dinamik toplam hesaplar
+            let totalExpectedDuties = 0;
+            let expectedWeekdayDuties = 0;
+            let expectedWeekendDuties = 0;
+            for (let d = 0; d < days; d++) {
+                const cap = getDayCap(d);
+                totalExpectedDuties += cap;
+                if (dates[d].isWeekend) expectedWeekendDuties += cap;
+                else expectedWeekdayDuties += cap;
+            }
 
             let totalPlannedDuties = 0;
             let plannedWeekdayDuties = 0;
@@ -1596,6 +1752,16 @@
                 return;
             }
 
+            // dailyCapacities dizisini oluştur (her gün için hedef kapasite)
+            const dailyCapacitiesArray = [];
+            for (let d = 0; d < days; d++) {
+                dailyCapacitiesArray.push(
+                    (customCapEnabled && customDailyCapacities[d] !== undefined)
+                        ? customDailyCapacities[d]
+                        : dutyPerDay
+                );
+            }
+
             const data = {
                personnel: personnelDuties,
                totalDays: days,
@@ -1606,6 +1772,7 @@
                preAssignedDays: preAssignedDays,
                maxConsecutiveDuties: 1,
                dutyPerDay: dutyPerDay,
+               dailyCapacities: dailyCapacitiesArray,
                balanceFridays: balanceFridays,
                balanceThursdays: balanceThursdays
             };
@@ -1701,7 +1868,7 @@
                 csvUploadInput.click();
             } else {
                 console.error('csvUpload input elementi bulunamadı!');
-                M.toast({ html: 'Dosya yükleme alanı bulunamadı!' });
+                M.toast({ html: 'Dosya yükleme alanı bulunamadı!', classes: 'teal' });
             }
         }
 
@@ -1710,11 +1877,11 @@
 
             const file = event.target.files[0];
             if (!file) {
-                M.toast({ html: 'Lütfen bir dosya seçin!' });
+                M.toast({ html: 'Lütfen bir dosya seçin!', classes: 'teal' });
                 return;
             }
             if (!file.name.endsWith('.csv')) {
-                M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!' });
+                M.toast({ html: 'Lütfen geçerli bir CSV dosyası yükleyin!', classes: 'teal' });
                 return;
             }
 
@@ -1729,7 +1896,7 @@
                 const headers = rows[0];
 
                 if (headers[0] !== 'İsim') {
-                    M.toast({ html: 'Geçersiz CSV formatı! Başlık "İsim" olmalı.' });
+                    M.toast({ html: 'Geçersiz CSV formatı! Başlık "İsim" olmalı.', classes: 'teal' });
                     loadingOverlay.style.display = 'none';
                     isUploading = false;
                     return;
@@ -1752,7 +1919,7 @@
                 persons = newPersons.filter(p => p.name && !persons.some(existing => existing.name === p.name));
                 renderTable();
                 savePersonsToLocalStorage(); // KAYDET
-                M.toast({ html: 'Personel listesi başarıyla yüklendi!' });
+                M.toast({ html: 'Personel listesi başarıyla yüklendi!', classes: 'teal' });
                 loadingOverlay.style.display = 'none';
                 isUploading = false;
             };
@@ -1794,7 +1961,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            M.toast({ html: 'Personel listesi CSV olarak indirildi! Sonraki kullanımda buradan yüklemeniz yeterli!' });
+            M.toast({ html: 'Personel listesi CSV olarak indirildi! Sonraki kullanımda buradan yüklemeniz yeterli!', classes: 'teal' });
         }
 
         function clearCalendar() {
@@ -2308,7 +2475,7 @@
 
         docRef.set(scheduleData)
             .then(() => {
-                M.toast({html: '✅ Nöbet listesi başarıyla kaydedildi!', classes: 'green darken-2'});
+                M.toast({html: '✅ Nöbet listesi başarıyla kaydedildi!', classes: 'orange darken-3'});
                 
                 if (btn) {
                     btn.innerHTML = '<i class="material-icons left">check</i>Tamam';
@@ -2317,7 +2484,7 @@
             })
             .catch((error) => {
                 console.error("Kaydetme hatası: ", error);
-                M.toast({html: 'Hata: ' + error.message, classes: 'red'});
+                M.toast({html: 'Hata: ' + error.message, classes: 'orange darken-3'});
                 
                 if (btn) {
                     resetButton(btn, originalText);
@@ -2917,11 +3084,11 @@ function downloadAsImage() {
     const targetElement = document.getElementById('calendarTable');
     
     if (!targetElement || targetElement.innerHTML.trim() === '') {
-        M.toast({html: 'İndirilecek bir takvim bulunamadı!', classes: 'red rounded'});
+        M.toast({html: 'İndirilecek bir takvim bulunamadı!', classes: 'teal rounded'});
         return;
     }
 
-    M.toast({html: '📸 Fotoğraf hazırlanıyor, lütfen bekleyin...', classes: 'blue rounded', displayLength: 2000});
+    M.toast({html: '📸 Fotoğraf hazırlanıyor, lütfen bekleyin...', classes: 'blue darken-1 rounded', displayLength: 2000});
 
     // 1. KESİN ÇÖZÜM: Alt satır kaymasını önleyen dış boşluk (Margin)
     const originalMargin = targetElement.style.marginBottom;
@@ -2959,7 +3126,7 @@ function downloadAsImage() {
         link.download = `Nobet_Listesi_${new Date().toISOString().split('T')[0]}.png`;
         link.href = imgData;
         link.click();
-        M.toast({html: '✅ Fotoğraf başarıyla cihazınıza indirildi!', classes: 'green darken-2 rounded'});
+        M.toast({html: '✅ Fotoğraf başarıyla cihazınıza indirildi!', classes: 'blue darken-1 rounded'});
     }).catch(err => {
         // Hata olursa da ekranı bozuk bırakma
         targetElement.style.marginBottom = originalMargin;
@@ -2971,7 +3138,7 @@ function downloadAsImage() {
         });
 
         console.error("Resim hatası:", err);
-        M.toast({html: 'Resim oluşturulurken bir hata oluştu.', classes: 'red rounded'});
+        M.toast({html: 'Resim oluşturulurken bir hata oluştu.', classes: 'blue darken-1 rounded'});
     });
 }
 
@@ -2979,12 +3146,12 @@ function downloadAsImage() {
 function createMagicLink(btn) {
     const startInput = document.getElementById('startDate').value;
     if (!startInput || Object.keys(selectedCells).length === 0) {
-        M.toast({html: 'Paylaşılacak bir liste yok! Önce takvimi oluşturun.', classes: 'red rounded'});
+        M.toast({html: 'Paylaşılacak bir liste yok! Önce takvimi oluşturun.', classes: 'blue darken-1 rounded'});
         return;
     }
 
     if (!auth.currentUser) {
-        M.toast({html: 'Paylaşım linki oluşturmak için giriş yapmalısınız.', classes: 'orange darken-2'});
+        M.toast({html: 'Paylaşım linki oluşturmak için giriş yapmalısınız.', classes: 'blue darken-1'});
         googleLogin();
         return;
     }
@@ -3029,7 +3196,7 @@ function createMagicLink(btn) {
         })
         .catch((error) => {
             console.error("Paylaşım hatası: ", error);
-            M.toast({html: 'Paylaşım linki oluşturulamadı: ' + error.message, classes: 'red rounded'});
+            M.toast({html: 'Paylaşım linki oluşturulamadı: ' + error.message, classes: 'blue darken-1 rounded'});
         })
         .finally(() => {
             btn.innerHTML = originalHtml;
@@ -3043,9 +3210,9 @@ function copyGeneratedLink() {
     linkInput.select();
     linkInput.setSelectionRange(0, 99999); // Mobil cihazlar için stabilite
     navigator.clipboard.writeText(linkInput.value).then(() => {
-        M.toast({html: '✅ Link başarıyla kopyalandı! WhatsApp\'a yapıştırabilirsiniz.', classes: 'green darken-2 rounded', displayLength: 4000});
+        M.toast({html: '✅ Link başarıyla kopyalandı! WhatsApp\'a yapıştırabilirsiniz.', classes: 'blue darken-1 rounded', displayLength: 4000});
     }).catch(err => {
-        M.toast({html: 'Kopyalama başarısız, lütfen manuel kopyalayın.', classes: 'red rounded'});
+        M.toast({html: 'Kopyalama başarısız, lütfen manuel kopyalayın.', classes: 'blue darken-1 rounded'});
     });
 }
 
@@ -3358,7 +3525,7 @@ function shareHistoryAsLink() {
         return;
     }
 
-    M.toast({html: '🔗 Link oluşturuluyor...', classes: 'blue'});
+    M.toast({html: '🔗 Link oluşturuluyor...', classes: 'blue darken-1'});
 
     // Deterministik ID: history doc ID zaten yıl-ay formatında (ör: 2025-06)
     const uid = auth.currentUser ? auth.currentUser.uid : 'anon';
@@ -3392,6 +3559,6 @@ function shareHistoryAsLink() {
         M.Modal.getInstance(modalElem).open();
     })
     .catch(err => {
-        M.toast({html: 'Hata: ' + err.message, classes: 'red'});
+        M.toast({html: 'Hata: ' + err.message, classes: 'blue darken-1'});
     });
 }
