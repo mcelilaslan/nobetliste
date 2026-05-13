@@ -421,6 +421,66 @@
             }
         }
 
+        // ---- EKSİK GÜN KONTROL FONKSİYONU ----
+        // Eksik gün yoksa onConfirm() direkt çalışır.
+        // Eksik gün varsa uyarı modalı açılır; kullanıcı "Devam Et" derse onConfirm() çalışır.
+        function checkIncompleteDays(onConfirm) {
+            const startInput = document.getElementById('startDate').value;
+            const endInput = document.getElementById('endDate').value;
+            if (!startInput || !endInput || Object.keys(selectedCells).length === 0) {
+                onConfirm();
+                return;
+            }
+
+            const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
+            const customCapEnabled = document.getElementById('customCapacityEnabled').checked;
+            const [sd, sm, sy] = startInput.split('-').map(Number);
+            const [ed, em, ey] = endInput.split('-').map(Number);
+            const start = new Date(sy, sm - 1, sd);
+            const end = new Date(ey, em - 1, ed);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+            const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const incompleteDays = [];
+
+            for (let d = 0; d < days; d++) {
+                const target = (customCapEnabled && customDailyCapacities[d] !== undefined)
+                    ? customDailyCapacities[d] : dutyPerDay;
+                const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
+                if (assigned < target) {
+                    const date = new Date(start);
+                    date.setDate(date.getDate() + d);
+                    incompleteDays.push({
+                        label: `${dayNames[date.getDay()]} ${date.toLocaleDateString('tr-TR')}`,
+                        assigned,
+                        target
+                    });
+                }
+            }
+
+            if (incompleteDays.length === 0) {
+                onConfirm();
+                return;
+            }
+
+            // Eksik günler var — modal içeriğini doldur
+            const listHtml = incompleteDays.map(item =>
+                `<div>📅 <b>${item.label}</b> — Atanan: <b>${item.assigned}</b> / Gereken: <b>${item.target}</b></div>`
+            ).join('');
+            document.getElementById('incompleteDaysList').innerHTML = listHtml;
+
+            // Confirm butonuna callback bağla (önceki listener'ı temizle)
+            const confirmBtn = document.getElementById('incompleteConfirmBtn');
+            const newBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+            newBtn.addEventListener('click', onConfirm);
+
+            // Modalı aç
+            M.Modal.getInstance(document.getElementById('incompleteWarningModal')).open();
+        }
+
         // Modal açılırken içeriği doldur
         document.addEventListener('DOMContentLoaded', function() {
             const capModal = document.getElementById('capacityModal');
@@ -1500,45 +1560,25 @@
         }
         
         function downloadSchedule() {
-
             const startInput = document.getElementById('startDate').value;
-            const endInput = document.getElementById('endDate').value;
-            const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
-            const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
-            const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
-            const start = new Date(startYear, startMonth - 1, startDay);
-            const end = new Date(endYear, endMonth - 1, endDay);
-            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-            let allDaysFilled = true;
-            for (let d = 0; d < days; d++) {
-                const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
-                if (assigned < dutyPerDay) {
-                    allDaysFilled = false;
-                    break;
-                }
-            }
-            if (!allDaysFilled) {
-                M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!', classes: 'teal' });
+            if (!startInput || Object.keys(selectedCells).length === 0) {
+                M.toast({ html: 'İndirilecek bir takvim yok! Önce takvimi oluşturun.', classes: 'red' });
                 return;
             }
 
-            performExport(function(blob, fileName) {
-                // 1. İndirme İşlemi
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                // Kullanıcıya bilgi ver
-                showToast('Dosya cihazınıza indi! 📂 Buluta kayıt işlemi başlatılıyor...', 4000);
-
-                // 2. Otomatik Kaydetme İşlemi (Mevcut kaydet fonksiyonunu tetikler)
-                saveScheduleToHistory();
+            checkIncompleteDays(function() {
+                performExport(function(blob, fileName) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast('Dosya cihazınıza indi! 📂 Buluta kayıt işlemi başlatılıyor...', 4000);
+                    saveScheduleToHistory();
+                });
             });
         }
         function autoAssignDuties() {
@@ -2366,33 +2406,15 @@
             return;
         }
 
-        // --- EKSİK GÜN KONTROLÜ (Senin Orijinal Kodun) ---
-       // const dutyPerDay = parseInt(document.getElementById('dutyPerDay').value) || 1;
-       // const [startDay, startMonth, startYear] = startInput.split('-').map(Number);
-      //  const [endDay, endMonth, endYear] = endInput.split('-').map(Number);
-      //  const start = new Date(startYear, startMonth - 1, startDay);
-       // const end = new Date(endYear, endMonth - 1, endDay);
-        
-      //  // Tarih hesaplamaları
-      //  start.setHours(0, 0, 0, 0);
-      //  end.setHours(0, 0, 0, 0);
-        
-      //  const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-    
-      //  let allDaysFilled = true;
-     //   for (let d = 0; d < days; d++) {
-      //      const assigned = document.querySelectorAll(`td[data-dindex="${d}"].selected`).length;
-       //     if (assigned < dutyPerDay) {
-        //        allDaysFilled = false;
-       //         break;
-       //     }
-      //  }
-    
-     //   if (!allDaysFilled) {
-     //       M.toast({ html: 'Tüm günlere yeteri kadar nöbetçi atanmadı, takvimi doldurun!', classes: 'red' });
-     //       return;
-     //   }
-        // -----------------------------------------------------
+        checkIncompleteDays(function() {
+            _doSaveScheduleToHistory(startInput);
+        });
+    }
+
+    function _doSaveScheduleToHistory(startInput) {
+        const user = auth.currentUser;
+        if (!user) return;
+        const endInput = document.getElementById('endDate').value;
 
         // 2. KONTROL: ID Oluşturma (YIL-AY Formatı)
         const [day, month, year] = startInput.split('-'); 
@@ -3156,11 +3178,17 @@ function createMagicLink(btn) {
         return;
     }
 
+    checkIncompleteDays(function() {
+        _doCreateMagicLink(btn);
+    });
+}
+
+function _doCreateMagicLink(btn) {
+    const startInput = document.getElementById('startDate').value;
     const originalHtml = btn.innerHTML;
     btn.innerHTML = '<i class="material-icons left">loop</i>Bekleyin...';
     btn.classList.add('disabled');
 
-    // Deterministik ID: aynı ay için her zaman aynı belge -> duplicate oluşmaz
     const [day, month, year] = startInput.split('-');
     const uid = auth.currentUser.uid;
     const listId = `liste_${uid}_${year}-${month}`;
